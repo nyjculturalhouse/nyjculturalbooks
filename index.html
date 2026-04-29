@@ -66,11 +66,15 @@ function handleBook(data) {
 
   currentBook = data;
 
-  document.getElementById("bookInfo").innerHTML = `
-    <p><b>${data.title}</b></p>
-    <p>${data.author}</p>
-    <img src="${data.cover}">
-  `;
+document.getElementById("bookInfo").innerHTML = `
+  <div class="book-box">
+    <img src="${data.cover}" class="book-img">
+    <div class="book-text">
+      <p class="book-title">${data.title}</p>
+      <p>${data.author}</p>
+    </div>
+  </div>
+`;
 }
 
 // 📦 대출 (JSONP)
