@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+body { font-family: sans-serif; padding:20px; background:#f2f4f6; }
+.card { background:#fff; padding:20px; border-radius:15px; margin-bottom:20px; }
+button { padding:15px; margin-top:10px; width:100%; border:none; border-radius:10px; font-size:16px; }
+.primary { background:#3182f6; color:#fff; }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>📚 도서 대출</h2>
+
+  <input id="isbn" placeholder="ISBN 입력" style="width:100%; padding:15px;">
+  <button onclick="searchBook()" class="primary">책 조회</button>
+
+  <button onclick="startScan()">📷 바코드 스캔</button>
+  <div id="reader" style="margin-top:10px;"></div>
+</div>
+
+<div class="card" id="book-info" style="display:none;">
+  <h3 id="title"></h3>
+  <img id="cover" style="width:120px;">
+  <p id="author"></p>
+
+  <input id="user" placeholder="대출자 이름">
+  <button onclick="borrowBook()" class="primary">대출하기</button>
+</div>
+
+<script>
+const API = "앱스크립트URL";
+const ALADIN_KEY = "너의KEY";
+
+function searchBook() {
+  const isbn = document.getElementById("isbn").value;
+
+  fetch(`https://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=${ALADIN_KEY}&itemIdType=ISBN&ItemId=${isbn}&output=js`)
+    .then(res => res.json())
+    .then(data => {
+      const book = data.item[0];
+
+      document.getElementById("book-info").style.display = "block";
+      document.getElementById("title").innerText = book.title;
+      document.getElementById("author").innerText = book.author;
+      document.getElementById("cover").src = book.cover;
+
+      window.currentBook = book;
+    });
+}
+
+// 바코드 스캔
+function startScan() {
+  const scanner = new Html5Qrcode("reader");
+
+  scanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    (decodedText) => {
+      document.getElementById("isbn").value = decodedText;
+      scanner.stop();
+      searchBook();
+    }
+  );
+}
+
+// 대출
+function borrowBook() {
+  const name = document.getElementById("user").value;
+
+  fetch(API, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      mode: "borrow",
+      name: name,
+      isbn: window.currentBook.isbn,
+      title: window.currentBook.title
+    })
+  }).then(() => alert("대출 완료"));
+}
+</script>
+
+</body>
+</html>
