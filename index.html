@@ -37,68 +37,92 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzKZsphyic_EsPpABC1VaBh
 
 let currentBook = null;
 
-// 엔터로 자동 조회 (바코드 스캔 대응)
+// 엔터 자동 조회
 document.getElementById("isbn").addEventListener("keypress", function(e){
   if (e.key === "Enter") {
     getBook();
   }
 });
 
-// 📚 도서 조회
+// 📚 도서 조회 (JSONP)
 function getBook() {
   const isbn = document.getElementById("isbn").value;
 
-  fetch(API_URL + "?action=getBook&isbn=" + isbn)
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        alert("책 없음");
-        return;
-      }
+  const script = document.createElement("script");
+  script.src = API_URL +
+    "?action=getBook" +
+    "&isbn=" + isbn +
+    "&callback=handleBook";
 
-      currentBook = data;
-
-      document.getElementById("bookInfo").innerHTML = `
-        <p><b>${data.title}</b></p>
-        <p>${data.author}</p>
-        <img src="${data.cover}">
-      `;
-    });
+  document.body.appendChild(script);
 }
 
-// 📦 대출
+// 📚 조회 결과 처리
+function handleBook(data) {
+  if (data.error) {
+    alert("책 없음");
+    return;
+  }
+
+  currentBook = data;
+
+  document.getElementById("bookInfo").innerHTML = `
+    <p><b>${data.title}</b></p>
+    <p>${data.author}</p>
+    <img src="${data.cover}">
+  `;
+}
+
+// 📦 대출 (JSONP)
 function borrow() {
   const name = document.getElementById("name").value;
   const isbn = document.getElementById("isbn").value;
 
-  fetch(API_URL + "?action=borrow&name=" + name
-    + "&isbn=" + isbn
-    + "&title=" + currentBook.title)
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        alert(data.error);
-        return;
-      }
+  if (!currentBook) {
+    alert("먼저 도서 조회");
+    return;
+  }
 
-      alert("대출 완료");
-    });
+  const script = document.createElement("script");
+  script.src = API_URL +
+    "?action=borrow" +
+    "&name=" + encodeURIComponent(name) +
+    "&isbn=" + isbn +
+    "&title=" + encodeURIComponent(currentBook.title) +
+    "&callback=handleBorrow";
+
+  document.body.appendChild(script);
 }
 
-// 📥 반납
+function handleBorrow(data) {
+  if (data.error) {
+    alert(data.error);
+    return;
+  }
+
+  alert("대출 완료");
+}
+
+// 📥 반납 (JSONP)
 function returnBook() {
   const isbn = document.getElementById("isbn").value;
 
-  fetch(API_URL + "?action=return&isbn=" + isbn)
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        alert(data.error);
-        return;
-      }
+  const script = document.createElement("script");
+  script.src = API_URL +
+    "?action=return" +
+    "&isbn=" + isbn +
+    "&callback=handleReturn";
 
-      alert("반납 완료");
-    });
+  document.body.appendChild(script);
+}
+
+function handleReturn(data) {
+  if (data.error) {
+    alert(data.error);
+    return;
+  }
+
+  alert("반납 완료");
 }
 </script>
 
