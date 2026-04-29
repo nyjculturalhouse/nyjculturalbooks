@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>도서 대출 시스템</title>
+
+<style>
+body { font-family: Arial; background:#f2f4f6; }
+.container { max-width:500px; margin:auto; padding:20px; }
+.card { background:white; padding:20px; border-radius:10px; }
+input, button {
+  width:100%; padding:10px; margin-top:10px;
+}
+img { width:100px; margin-top:10px; }
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="card">
+    <h2>📚 도서 대출 시스템</h2>
+
+    <input id="isbn" placeholder="바코드 찍기 (ISBN)">
+    <button onclick="getBook()">도서 조회</button>
+
+    <div id="bookInfo"></div>
+
+    <input id="name" placeholder="이름 입력">
+
+    <button onclick="borrow()">대출하기</button>
+    <button onclick="returnBook()">반납하기</button>
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxGls4-vXneFnQo85WwcPx5USGzZKpt-AuVWYVU14h80exyO4fBqf5PGEPUIMjmuC4C/exec";
+
+let currentBook = null;
+
+// 엔터로 자동 조회 (바코드 스캔 대응)
+document.getElementById("isbn").addEventListener("keypress", function(e){
+  if (e.key === "Enter") {
+    getBook();
+  }
+});
+
+// 📚 도서 조회
+function getBook() {
+  const isbn = document.getElementById("isbn").value;
+
+  fetch(API_URL + "?action=getBook&isbn=" + isbn)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        alert("책 없음");
+        return;
+      }
+
+      currentBook = data;
+
+      document.getElementById("bookInfo").innerHTML = `
+        <p><b>${data.title}</b></p>
+        <p>${data.author}</p>
+        <img src="${data.cover}">
+      `;
+    });
+}
+
+// 📦 대출
+function borrow() {
+  const name = document.getElementById("name").value;
+  const isbn = document.getElementById("isbn").value;
+
+  fetch(API_URL + "?action=borrow&name=" + name
+    + "&isbn=" + isbn
+    + "&title=" + currentBook.title)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+
+      alert("대출 완료");
+    });
+}
+
+// 📥 반납
+function returnBook() {
+  const isbn = document.getElementById("isbn").value;
+
+  fetch(API_URL + "?action=return&isbn=" + isbn)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+
+      alert("반납 완료");
+    });
+}
+</script>
+
+</body>
+</html>
