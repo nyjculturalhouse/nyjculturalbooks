@@ -53,32 +53,18 @@ body {
   border-radius: 10px;
 }
 
-.input-group button {
-  width: 140px;
-}
-
 /* 버튼 */
 button {
   border: none;
   border-radius: 10px;
   cursor: pointer;
   font-size: 15px;
+  padding:14px;
 }
 
-.btn-primary {
-  background: #658dc6;
-  color: white;
-}
-
-.btn-green {
-  background: #4caf50;
-  color: white;
-}
-
-.btn-red {
-  background: #e53935;
-  color: white;
-}
+.btn-primary { background: #658dc6; color: white; }
+.btn-green { background: #4caf50; color: white; }
+.btn-red { background: #e53935; color: white; }
 
 /* 책 카드 */
 .book-card {
@@ -88,13 +74,8 @@ button {
 }
 
 .book-img {
-  width: 160px;
+  width: 180px;
   border-radius: 10px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-}
-
-.book-info {
-  flex: 1;
 }
 
 .book-title {
@@ -102,18 +83,18 @@ button {
   font-weight: bold;
 }
 
+/* 상태 */
 .status {
   margin-top: 10px;
   padding: 6px 12px;
-  display: inline-block;
   border-radius: 20px;
-  font-size: 13px;
+  display:inline-block;
 }
 
 .available { background:#e3efff; color:#2c5aa0; }
 .borrowed { background:#ffe5e5; color:#c62828; }
 
-/* 사이드 */
+/* 오른쪽 */
 .side-card input, select {
   width:100%;
   padding:14px;
@@ -122,23 +103,10 @@ button {
   border:1px solid #ddd;
 }
 
-/* 버튼 영역 */
 .action-btns {
   display:flex;
   gap:10px;
   margin-top:20px;
-}
-
-.action-btns button {
-  flex:1;
-  padding:14px;
-}
-
-.section-title {
-  margin-top:20px;
-  font-size:14px;
-  font-weight:bold;
-  color:#666;
 }
 </style>
 </head>
@@ -169,7 +137,6 @@ button {
 
     <button class="btn-primary" onclick="register()">회원가입</button>
 
-    <div class="section-title">회원 선택</div>
     <select id="userSelect"></select>
 
     <div class="action-btns">
@@ -185,35 +152,55 @@ button {
 const API_URL = "https://script.google.com/macros/s/AKfycbzKZsphyic_EsPpABC1VaBhEmVppWeIuCIRatHIDeaYb4P8zG_q9MngtyTGIXkRm8IP/exec";
 
 let currentBook = null;
+let currentStatus = "가능";
 
 // 엔터 조회
 document.getElementById("isbn").addEventListener("keypress", e => {
   if(e.key==="Enter") getBook();
 });
 
-// 📚 도서 조회
+// 📚 조회 (책 + 상태 같이)
 function getBook() {
   const isbn = document.getElementById("isbn").value;
 
-  const s = document.createElement("script");
-  s.src = API_URL + "?action=getBook&isbn="+isbn+"&callback=handleBook";
-  document.body.appendChild(s);
+  // 책 정보
+  const s1 = document.createElement("script");
+  s1.src = API_URL + "?action=getBook&isbn="+isbn+"&callback=handleBook";
+  document.body.appendChild(s1);
+
+  // 상태
+  const s2 = document.createElement("script");
+  s2.src = API_URL + "?action=checkStatus&isbn="+isbn+"&callback=handleStatus";
+  document.body.appendChild(s2);
 }
 
-// 조회 결과
+// 상태
+function handleStatus(data){
+  currentStatus = data.status;
+}
+
+// 책 정보 출력
 function handleBook(data) {
   if(data.error){ alert("책 없음"); return; }
 
   currentBook = data;
 
+  let statusClass = "available";
+  let statusText = "대출 가능";
+
+  if(currentStatus === "대출"){
+    statusClass = "borrowed";
+    statusText = "대출중";
+  }
+
   document.getElementById("bookArea").innerHTML = `
     <div class="book-card">
       <img src="${data.cover}" class="book-img">
-      <div class="book-info">
+      <div>
         <div class="book-title">${data.title}</div>
         <div>${data.author}</div>
         <div>${data.publisher}</div>
-        <div class="status available">대출 가능</div>
+        <div class="status ${statusClass}">${statusText}</div>
       </div>
     </div>
   `;
@@ -261,6 +248,11 @@ function handleUsers(data) {
 function borrow() {
   if(!currentBook){ alert("책 먼저 조회"); return; }
 
+  if(currentStatus === "대출"){
+    alert("이미 대출중");
+    return;
+  }
+
   const name = document.getElementById("userSelect").value;
   const isbn = document.getElementById("isbn").value;
 
@@ -276,6 +268,7 @@ function borrow() {
 function handleBorrow(data){
   if(data.error){ alert(data.error); return; }
   alert("대출 완료");
+  getBook();
 }
 
 // 📥 반납
@@ -292,9 +285,10 @@ function returnBook() {
 function handleReturn(data){
   if(data.error){ alert(data.error); return; }
   alert("반납 완료");
+  getBook();
 }
 
-// 초기 회원 로딩
+// 초기 로딩
 loadUsers();
 </script>
 
