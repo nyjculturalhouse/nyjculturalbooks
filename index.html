@@ -1,185 +1,413 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>도서 대출 시스템</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+<title>도서 대출 관리 시스템</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-body {
-  font-family: 'Noto Sans KR';
-  background:#f2f4f6;
-  margin:0;
-}
+  :root {
+    --bg-color: #f2f4f6;
+    --primary-color: teal;
+    --primary-hover: #006666;
+    --text-color: #333;
+    --card-bg: #ffffff;
+  }
 
-.header {
-  display:flex;
-  background:white;
-  padding:12px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.05);
-}
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg-color);
+    margin: 0;
+    color: var(--text-color);
+  }
 
-.tab {
-  padding:8px 14px;
-  margin-right:10px;
-  cursor:pointer;
-  border-radius:8px;
-}
+  /* 헤더 대시보드 스타일 */
+  .header {
+    display: flex;
+    background: var(--card-bg);
+    padding: 0 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    align-items: center;
+    height: 60px;
+  }
 
-.tab.active {
-  background:teal;
-  color:white;
-}
+  .logo {
+    font-weight: 700;
+    font-size: 18px;
+    margin-right: 40px;
+    color: var(--primary-color);
+  }
 
-.container {
-  padding:20px;
-}
+  .tab {
+    padding: 20px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+  }
 
-.card {
-  background:white;
-  padding:15px;
-  margin-bottom:10px;
-  border-radius:10px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.05);
-}
+  .tab:hover {
+    color: var(--primary-color);
+  }
 
-button {
-  background:teal;
-  color:white;
-  border:none;
-  padding:8px 12px;
-  border-radius:8px;
-  cursor:pointer;
-}
+  .tab.active {
+    border-bottom: 3px solid var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 700;
+  }
 
-input, select {
-  padding:8px;
-  margin:5px 0;
-  width:200px;
-}
+  .container {
+    padding: 30px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* 검색창 스타일 */
+  .search-box {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  /* 카드 레이아웃 */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+
+  .card img {
+    border-radius: 6px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    object-fit: cover;
+    height: 120px;
+  }
+
+  .book-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-shadow: none;
+    text-overflow: ellipsis;
+  }
+
+  .book-info {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  /* 상태 배지 */
+  .status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: auto;
+  }
+
+  .status-badge.available {
+    background: #e6f4ea;
+    color: #137333;
+  }
+
+  .status-badge.rented {
+    background: #fce8e6;
+    color: #c5221f;
+  }
+
+  /* 폼 스타일 */
+  .form-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+
+  button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  button:hover {
+    background: var(--primary-hover);
+  }
+
+  .loading {
+    text-align: center;
+    color: #888;
+    grid-column: 1 / -1;
+    padding: 4px;
+  }
 </style>
 </head>
 
 <body>
 
 <div class="header">
-  <div class="tab active" onclick="openTab('books')">도서목록</div>
-  <div class="tab" onclick="openTab('rent')">도서대출</div>
-  <div class="tab" onclick="openTab('member')">회원가입</div>
+  <div class="logo">📚 도서관리시스템</div>
+  <div class="tab active" onclick="openTab(event, 'books')">도서목록</div>
+  <div class="tab" onclick="openTab(event, 'rent')">도서대출</div>
+  <div class="tab" onclick="openTab(event, 'member')">회원가입</div>
 </div>
 
 <div class="container">
 
-  <div id="books"></div>
+  <div id="books">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="도서 제목을 입력하여 검색하세요..." onkeyup="filterBooks()">
+    </div>
+    <div id="bookGrid" class="grid-container">
+      <div class="loading">데이터를 로딩 중입니다...</div>
+    </div>
+  </div>
 
   <div id="rent" style="display:none">
-    <h3>도서 대출</h3>
-
-    <select id="memberBox"></select>
-    <select id="bookBox"></select>
-
-    <button onclick="borrow()">대출</button>
+    <div class="form-card">
+      <h3>도서 대출 등록</h3>
+      <div class="form-group">
+        <label for="memberBox">대출 회원</label>
+        <select id="memberBox"><option>회원 데이터를 불러오는 중...</option></select>
+      </div>
+      <div class="form-group">
+        <label for="bookBox">대출 도서</label>
+        <select id="bookBox"><option>도서 데이터를 불러오는 중...</option></select>
+      </div>
+      <button onclick="borrow()">대출하기</button>
+    </div>
   </div>
 
   <div id="member" style="display:none">
-    <h3>회원가입</h3>
-
-    <input id="name" placeholder="이름"><br>
-    <input id="phone" placeholder="연락처"><br>
-
-    <button onclick="addMember()">가입</button>
+    <div class="form-card">
+      <h3>신규 회원 가입</h3>
+      <div class="form-group">
+        <label for="name">이름</label>
+        <input id="name" placeholder="홍길동">
+      </div>
+      <div class="form-group">
+        <label for="phone">연락처</label>
+        <input id="phone" placeholder="010-1234-5678">
+      </div>
+      <button onclick="addMember()">가입하기</button>
+    </div>
   </div>
 
 </div>
 
 <script>
-
-// 🔥 여기에 Apps Script 배포 URL 넣기
+// ⚠️ 주의: 새로 배포 완료한 최신 Apps Script URL을 여기에 입력하세요.
 const API = "https://script.google.com/macros/s/AKfycbzKZsphyic_EsPpABC1VaBhEmVppWeIuCIRatHIDeaYb4P8zG_q9MngtyTGIXkRm8IP/exec";
 
-// ---------------- 탭 ----------------
-function openTab(tab) {
+let allBooks = []; // 검색 필터링을 위한 전역 저장소
+
+// ---------------- 탭 전환 ----------------
+function openTab(e, tab) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  event.target.classList.add("active");
+  e.currentTarget.classList.add("active");
 
-  document.querySelectorAll("#books,#rent,#member")
-    .forEach(e => e.style.display = "none");
-
+  document.querySelectorAll("#books,#rent,#member").forEach(el => el.style.display = "none");
   document.getElementById(tab).style.display = "block";
 
   if (tab === "books") loadBooks();
-  if (tab === "rent") loadRent();
+  if (tab === "rent") loadRentData();
 }
 
-// ---------------- 도서 ----------------
+// ---------------- 도서 목록 로드 ----------------
 function loadBooks() {
-  fetch(API + "?action=books")
+  const grid = document.getElementById("bookGrid");
+  grid.innerHTML = '<div class="loading">도서 목록을 실시간으로 가져오는 중...</div>';
+  
+  fetch(`${API}?action=books`)
     .then(r => r.json())
     .then(data => {
-
-      document.getElementById("books").innerHTML =
-        data.map(b => {
-
-          const cover = `https://www.aladin.co.kr/ttb/api/ItemImage.aspx?ttbkey=ttbqew040101658001&ISBN=${b.isbn}&size=big`;
-
-          return `
-            <div class="card">
-              <img src="${cover}" width="80"><br>
-              <b>${b.title}</b><br>
-              ${b.author} / ${b.publisher}<br>
-              ${b.category}<br>
-              <b>${b.status}</b>
-            </div>
-          `;
-        }).join("");
+      if(data.error) {
+        grid.innerHTML = `<div class="loading" style="color:red;">에러 발생: ${data.error}</div>`;
+        return;
+      }
+      allBooks = data;
+      renderBooks(allBooks);
+    })
+    .catch(err => {
+      grid.innerHTML = '<div class="loading" style="color:red;">데이터를 불러오지 못했습니다. URL을 확인하세요.</div>';
     });
 }
 
-// ---------------- 대출 데이터 ----------------
-function loadRent() {
-  fetch(API + "?action=members")
+// 도서 렌더링 함수
+function renderBooks(books) {
+  const grid = document.getElementById("bookGrid");
+  if(books.length === 0) {
+    grid.innerHTML = '<div class="loading">조회된 도서가 없습니다.</div>';
+    return;
+  }
+
+  grid.innerHTML = books.map(b => {
+    const cover = `https://www.aladin.co.kr/ttb/api/ItemImage.aspx?ttbkey=ttbqew040101658001&ISBN=${b.isbn}&size=big`;
+    const statusClass = b.status === "대출가능" ? "available" : "rented";
+    
+    return `
+      <div class="card">
+        <img src="${cover}" alt="책 표지" onerror="this.src='https://via.placeholder.com/90x120?text=No+Image'">
+        <div class="book-title" title="${b.title}">${b.title}</div>
+        <div class="book-info">
+          ${b.author} | ${b.publisher}<br>
+          <span style="color:#999; font-size:11px;">ISBN: ${b.isbn}</span>
+        </div>
+        <div class="status-badge ${statusClass}">${b.status}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+// 제목 기준 실시간 검색 필터
+function filterBooks() {
+  const query = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = allBooks.filter(b => b.title.toLowerCase().includes(query));
+  renderBooks(filtered);
+}
+
+// ---------------- 대출 폼에 필요한 데이터 로드 ----------------
+function loadRentData() {
+  // 회원 셀렉트 박스 채우기
+  fetch(`${API}?action=members`)
     .then(r => r.json())
     .then(data => {
-      document.getElementById("memberBox").innerHTML =
-        data.map(m => `<option>${m.name}</option>`).join("");
+      const memberBox = document.getElementById("memberBox");
+      if(data.length === 0) {
+        memberBox.innerHTML = "<option value=''>등록된 회원이 없습니다.</option>";
+      } else {
+        memberBox.innerHTML = data.map(m => `<option value="${m.name}">${m.name} (${m.phone})</option>`).join("");
+      }
     });
 
-  fetch(API + "?action=books")
+  // 도서 셀렉트 박스 채우기 (대출 가능한 도서만 표기하려면 필터링 가능)
+  fetch(`${API}?action=books`)
     .then(r => r.json())
     .then(data => {
-      document.getElementById("bookBox").innerHTML =
-        data.map(b => `<option value="${b.isbn}">${b.title}</option>`).join("");
+      const bookBox = document.getElementById("bookBox");
+      // 대출 가능 도서 우선 노출
+      bookBox.innerHTML = data.map(b => 
+        `<option value="${b.isbn}" ${b.status === '대출중' ? 'disabled' : ''}>
+          [${b.status}] ${b.title}
+        </option>`
+      ).join("");
     });
 }
 
-// ---------------- 대출 ----------------
+// ---------------- 대출 요청 (CORS 회피형 POST) ----------------
 function borrow() {
+  const name = document.getElementById("memberBox").value;
+  const isbn = document.getElementById("bookBox").value;
+
+  if(!name || !isbn) {
+    alert("회원과 도서를 올바르게 선택해주세요.");
+    return;
+  }
+
+  // fetch 시 text/plain 구조로 넘겨서 CORS 사전 검사(OPTIONS)를 우회합니다.
   fetch(API, {
     method: "POST",
-    body: JSON.stringify({
-      action: "borrow",
-      name: document.getElementById("memberBox").value,
-      isbn: document.getElementById("bookBox").value
-    })
-  }).then(() => alert("대출 완료"));
+    mode: "no-cors", 
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "borrow", name, isbn })
+  })
+  .then(() => {
+    alert("대출 처리가 완료되었습니다!");
+    loadRentData(); // 리로드
+  })
+  .catch(err => alert("작업 실패: " + err));
 }
 
-// ---------------- 회원가입 ----------------
+// ---------------- 회원가입 요청 (CORS 회피형 POST) ----------------
 function addMember() {
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+
+  if(!name || !phone) {
+    alert("이름과 연락처를 모두 입력해주세요.");
+    return;
+  }
+
   fetch(API, {
     method: "POST",
-    body: JSON.stringify({
-      action: "addMember",
-      name: document.getElementById("name").value,
-      phone: document.getElementById("phone").value
-    })
-  }).then(() => alert("가입 완료"));
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "addMember", name, phone })
+  })
+  .then(() => {
+    alert("회원가입이 완료되었습니다!");
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+  })
+  .catch(err => alert("작업 실패: " + err));
 }
 
-// 초기 실행
+// 첫 진입 시 도서 목록 자동 로드
 loadBooks();
-
 </script>
 
 </body>
