@@ -2,291 +2,193 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>📚 도서관 시스템</title>
+<title>도서관리 시스템</title>
 
 <style>
-body {
-  margin:0;
-  font-family:'Segoe UI';
-  background:#eef3f9;
-}
+body { font-family:'Noto Sans KR'; background:#f2f4f6; margin:0; }
 
-/* 상단 */
 .header {
   background:#658dc6;
   color:white;
-  padding:25px;
-  font-size:26px;
-  font-weight:bold;
-  text-align:center;
+  padding:20px;
+  font-size:22px;
 }
 
-/* 메인 메뉴 */
-.menu {
+.tabs {
   display:flex;
-  gap:20px;
-  padding:30px;
-  justify-content:center;
+  background:white;
+  border-bottom:1px solid #ddd;
 }
 
-.menu button {
-  width:250px;
-  height:120px;
-  font-size:20px;
-  border:none;
-  border-radius:20px;
+.tab {
+  padding:15px 25px;
+  cursor:pointer;
+}
+
+.tab.active {
+  border-bottom:3px solid #658dc6;
+  font-weight:bold;
+}
+
+.container { padding:30px; }
+
+.card {
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
+}
+
+input, select {
+  padding:10px;
+  margin:5px;
+}
+
+button {
   background:#658dc6;
   color:white;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.menu button:hover {
-  transform:scale(1.05);
-}
-
-/* 화면 */
-.screen {
-  max-width:1200px;
-  margin:20px auto;
-  background:white;
-  padding:30px;
-  border-radius:20px;
-  display:none;
-}
-
-/* 입력 */
-input {
-  width:100%;
-  padding:18px;
-  font-size:18px;
-  margin-top:10px;
-  border-radius:12px;
-  border:1px solid #ddd;
-}
-
-/* 버튼 */
-.btn {
-  margin-top:15px;
-  padding:15px;
-  font-size:18px;
   border:none;
-  border-radius:12px;
+  padding:10px 15px;
+  border-radius:5px;
   cursor:pointer;
 }
 
-.main { background:#658dc6; color:white; }
-.green { background:#4caf50; color:white; }
-.red { background:#e53935; color:white; }
+.status-가능 { color:green; }
+.status-대출중 { color:red; }
 
-/* 책 */
-.book {
-  display:flex;
-  gap:20px;
-  margin-top:20px;
-}
-
-.book img {
-  width:200px;
-  border-radius:10px;
-}
-
-.status {
-  margin-top:10px;
-  padding:6px 12px;
-  border-radius:20px;
-  display:inline-block;
-}
-
-.available { background:#e3efff; }
-.borrowed { background:#ffe5e5; }
-
-/* 리스트 */
-.list {
-  margin-top:20px;
-  max-height:400px;
-  overflow:auto;
-  font-size:16px;
-}
-
-/* 뒤로 */
-.back {
-  margin-top:20px;
-  cursor:pointer;
-  color:#658dc6;
-}
 </style>
 </head>
 
 <body>
 
-<div class="header">📚 도서관 키오스크 시스템</div>
+<div class="header">📚 도서 관리 시스템</div>
 
-<!-- 메인 -->
-<div class="menu">
-  <button onclick="openScreen('search')">📚 도서 검색</button>
-  <button onclick="openScreen('rent')">📦 대출 / 반납</button>
-  <button onclick="openScreen('user')">👤 회원가입</button>
+<div class="tabs">
+  <div class="tab active" onclick="showTab('books')">도서목록</div>
+  <div class="tab" onclick="showTab('borrow')">도서대출</div>
+  <div class="tab" onclick="showTab('register')">회원가입</div>
 </div>
 
-<!-- 도서 검색 -->
-<div id="search" class="screen">
-  <h2>도서 검색</h2>
+<div class="container">
 
-  <input id="searchKeyword" placeholder="책 제목 / 카테고리">
-  <button class="btn main" onclick="search()">검색</button>
-
-  <div class="list" id="searchList"></div>
-
-  <div class="back" onclick="goHome()">← 메인으로</div>
+<!-- 도서목록 -->
+<div id="books">
+  <input placeholder="검색" onkeyup="searchBook(this.value)">
+  <div id="bookList"></div>
 </div>
 
 <!-- 대출 -->
-<div id="rent" class="screen">
-  <h2>대출 / 반납</h2>
-
-  <input id="isbn" placeholder="바코드 스캔 (ISBN)">
-  <button class="btn main" onclick="getBook()">도서 조회</button>
-
-  <input id="phone" placeholder="전화번호 입력">
-
-  <button class="btn green" onclick="borrow()">대출</button>
-  <button class="btn red" onclick="returnBook()">반납</button>
-
-  <div id="bookArea"></div>
-
-  <div class="back" onclick="goHome()">← 메인으로</div>
+<div id="borrow" style="display:none;">
+  <select id="userSelect"></select><br>
+  <input id="isbn" placeholder="ISBN"><br>
+  <button onclick="borrow()">대출</button>
+  <button onclick="returnBook()">반납</button>
 </div>
 
 <!-- 회원가입 -->
-<div id="user" class="screen">
-  <h2>회원가입</h2>
+<div id="register" style="display:none;">
+  <input id="name" placeholder="이름"><br>
+  <input id="phone" placeholder="전화번호"><br>
+  <button onclick="register()">가입</button>
+</div>
 
-  <input id="name" placeholder="이름">
-  <input id="phone2" placeholder="전화번호">
-
-  <label>
-    <input type="checkbox" id="agree"> 개인정보 수집 동의
-  </label>
-
-  <button class="btn main" onclick="register()">가입하기</button>
-
-  <div class="back" onclick="goHome()">← 메인으로</div>
 </div>
 
 <script>
-const API = "👉여기에 웹앱 URL 넣어";
+const API = "https://script.google.com/macros/s/AKfycbzKZsphyic_EsPpABC1VaBhEmVppWeIuCIRatHIDeaYb4P8zG_q9MngtyTGIXkRm8IP/exec";
 
-let currentBook=null;
-let status="가능";
+let books = [];
 
-/* 화면 전환 */
-function openScreen(id){
-  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+function showTab(id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  event.target.classList.add("active");
+
+  document.getElementById("books").style.display="none";
+  document.getElementById("borrow").style.display="none";
+  document.getElementById("register").style.display="none";
+
   document.getElementById(id).style.display="block";
 }
 
-function goHome(){
-  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
-}
-
-/* JSONP */
-function jsonp(action,params,callback){
-  const cb="cb"+Math.random();
-  window[cb]=callback;
-
-  let url=API+"?action="+action+"&callback="+cb;
-
-  for(let k in params){
-    url+="&"+k+"="+encodeURIComponent(params[k]);
-  }
-
-  const s=document.createElement("script");
-  s.src=url;
+function jsonp(url, callback){
+  const s = document.createElement("script");
+  s.src = url + "&callback=" + callback;
   document.body.appendChild(s);
 }
 
-/* 📚 도서 조회 */
-function getBook(){
-  const isbn=document.getElementById("isbn").value;
-
-  jsonp("getBook",{isbn},res=>{
-    if(res.error){ alert("도서 없음"); return; }
-    currentBook=res;
-    showBook();
-  });
-
-  jsonp("checkStatus",{isbn},res=>{
-    status=res.status;
-  });
+// 📚 도서목록
+function loadBooks(){
+  jsonp(API+"?action=getBooks", "setBooks");
 }
 
-function showBook(){
-  let cls = status==="대출" ? "borrowed" : "available";
-  let txt = status==="대출" ? "대출중" : "대출 가능";
+function setBooks(data){
+  books = data.books;
+  renderBooks(books);
+}
 
-  document.getElementById("bookArea").innerHTML=`
-    <div class="book">
-      <div>
-        <b>${currentBook.title}</b><br>
-        ${currentBook.category}<br>
-        위치: ${currentBook.location}<br>
-        <div class="status ${cls}">${txt}</div>
+function renderBooks(list){
+  let html="";
+  list.forEach(b=>{
+    html += `
+      <div class="card">
+        <b>${b.title}</b> (${b.category})<br>
+        ${b.author} / ${b.publisher}<br>
+        ISBN: ${b.isbn}<br>
+        <span class="status-${b.status}">${b.status}</span>
       </div>
-    </div>
-  `;
+    `;
+  });
+  document.getElementById("bookList").innerHTML = html;
 }
 
-/* 📦 대출 */
+function searchBook(q){
+  renderBooks(books.filter(b=>b.title.includes(q)));
+}
+
+// 👤 회원
+function loadUsers(){
+  jsonp(API+"?action=getUsers", "setUsers");
+}
+
+function setUsers(data){
+  let sel = document.getElementById("userSelect");
+  sel.innerHTML="";
+  data.users.forEach(u=>{
+    sel.innerHTML += `<option value="${u.name}|${u.phone}">${u.name}</option>`;
+  });
+}
+
+// 📦 대출
 function borrow(){
-  if(status==="대출"){
-    alert("이미 대출중"); return;
-  }
+  const user = document.getElementById("userSelect").value.split("|");
+  const isbn = document.getElementById("isbn").value;
 
-  jsonp("borrow",{
-    phone:document.getElementById("phone").value,
-    isbn:currentBook.isbn,
-    title:currentBook.title
-  },res=>{
-    alert(res.result || res.error);
-  });
+  jsonp(API+`?action=borrow&name=${user[0]}&phone=${user[1]}&isbn=${isbn}`, "done");
 }
 
-/* 📥 반납 */
+// 📥 반납
 function returnBook(){
-  jsonp("return",{
-    isbn:document.getElementById("isbn").value
-  },res=>{
-    alert(res.result || res.error);
-  });
+  const isbn = document.getElementById("isbn").value;
+  jsonp(API+`?action=return&isbn=${isbn}`, "done");
 }
 
-/* 👤 회원가입 */
+// 👤 회원가입
 function register(){
-  if(!document.getElementById("agree").checked){
-    alert("동의 필요"); return;
-  }
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
 
-  jsonp("register",{
-    name:document.getElementById("name").value,
-    phone:document.getElementById("phone2").value
-  },res=>{
-    alert(res.result || res.error);
-  });
+  jsonp(API+`?action=register&name=${name}&phone=${phone}`, "done");
 }
 
-/* 🔍 검색 */
-function search(){
-  jsonp("searchBook",{
-    keyword:document.getElementById("searchKeyword").value
-  },res=>{
-    let html="";
-    res.books.forEach(b=>{
-      html+=b.title+" ("+b.category+")<br>";
-    });
-    document.getElementById("searchList").innerHTML=html;
-  });
+function done(){
+  alert("완료");
+  loadBooks();
+  loadUsers();
 }
+
+// 초기 실행
+loadBooks();
+loadUsers();
 </script>
 
 </body>
