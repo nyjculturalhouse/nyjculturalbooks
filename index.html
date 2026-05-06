@@ -4,59 +4,75 @@
 <meta charset="UTF-8">
 <title>도서 대출 관리 시스템</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <style>
-* { box-sizing: border-box; }
 body {
   margin:0;
   font-family:'Noto Sans KR', sans-serif;
   background:#f2f4f6;
 }
 
-/* 헤더 */
+/* 상단 */
 .header {
+  background:#14b8a6;
+  color:white;
   padding:20px 30px;
   font-size:22px;
-  font-weight:600;
+  font-weight:bold;
 }
 
-/* KPI 카드 */
-.dashboard {
-  display:flex;
-  gap:20px;
-  padding:0 30px;
+/* 레이아웃 */
+.container {
+  max-width:1300px;
+  margin:30px auto;
 }
 
-.kpi {
-  flex:1;
+/* 카드 */
+.card {
   background:white;
   border-radius:12px;
   padding:20px;
   box-shadow:0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom:20px;
 }
-
-.kpi h3 { margin:0; font-size:14px; color:#888; }
-.kpi .num { font-size:28px; font-weight:600; margin-top:10px; }
 
 /* 검색 */
 .search-box {
-  margin:20px 30px;
-  background:white;
-  padding:20px;
-  border-radius:12px;
+  display:flex;
+  gap:10px;
 }
 
+.search-box input {
+  flex:1;
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
+
+button {
+  padding:12px 16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.btn-main {
+  background:#14b8a6;
+  color:white;
+}
+
+/* 탭 */
 .tabs {
   display:flex;
   gap:10px;
-  margin-bottom:10px;
+  margin-bottom:15px;
 }
 
 .tab {
-  padding:8px 16px;
-  border-radius:20px;
-  background:#eee;
+  padding:8px 14px;
+  border-radius:8px;
+  background:#e5e7eb;
   cursor:pointer;
 }
 
@@ -65,72 +81,43 @@ body {
   color:white;
 }
 
-.search-bar {
-  display:flex;
-  gap:10px;
-}
-
-.search-bar input {
-  flex:1;
-  padding:10px;
-  border:1px solid #ddd;
-  border-radius:8px;
-}
-
-button {
-  background:#14b8a6;
-  color:white;
-  border:none;
-  padding:10px 16px;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-/* 도서 리스트 */
+/* 도서 카드 */
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fill, minmax(220px,1fr));
-  gap:20px;
-  padding:0 30px 40px;
+  gap:15px;
 }
 
-.card {
+.book {
   background:white;
+  border-radius:10px;
   padding:15px;
-  border-radius:12px;
   box-shadow:0 4px 10px rgba(0,0,0,0.05);
-  transition:0.2s;
+  transition:.2s;
   cursor:pointer;
 }
 
-.card:hover {
+.book:hover {
   transform:scale(1.03);
 }
 
-.book-img {
-  height:140px;
-  background:#ddd;
-  border-radius:8px;
-  margin-bottom:10px;
+.book img {
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:6px;
 }
 
 .status {
-  margin-top:5px;
+  margin-top:8px;
   font-size:13px;
+  padding:4px 8px;
+  border-radius:20px;
+  display:inline-block;
 }
 
-.available { color:#14b8a6; }
-.borrowed { color:#ef4444; }
-
-/* 페이지네이션 */
-.pagination {
-  text-align:center;
-  margin-bottom:30px;
-}
-
-.pagination button {
-  margin:0 5px;
-}
+.available { background:#d1fae5; color:#065f46; }
+.borrowed { background:#fee2e2; color:#991b1b; }
 
 /* 모달 */
 .modal {
@@ -139,15 +126,15 @@ button {
   width:100%; height:100%;
   background:rgba(0,0,0,0.5);
   display:none;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
 }
 
 .modal-content {
   background:white;
   padding:30px;
   border-radius:12px;
-  width:300px;
+  width:400px;
 }
 
 /* 토스트 */
@@ -157,7 +144,7 @@ button {
   right:20px;
   background:#333;
   color:white;
-  padding:10px 15px;
+  padding:12px 20px;
   border-radius:8px;
   display:none;
 }
@@ -166,132 +153,142 @@ button {
 
 <body>
 
-<div class="header">📚 Library Dashboard</div>
+<div class="header">📚 도서 대출 관리 시스템</div>
 
-<!-- KPI -->
-<div class="dashboard">
-  <div class="kpi"><h3>총 도서</h3><div class="num" id="totalBooks"></div></div>
-  <div class="kpi"><h3>대출중</h3><div class="num" id="borrowedBooks"></div></div>
-  <div class="kpi"><h3>회원수</h3><div class="num" id="users"></div></div>
-</div>
+<div class="container">
 
-<!-- 검색 -->
-<div class="search-box">
+<div class="card">
+
   <div class="tabs">
     <div class="tab active">Books</div>
-    <div class="tab">Student</div>
-    <div class="tab">Staff</div>
   </div>
 
-  <div class="search-bar">
-    <input id="searchInput" placeholder="도서 검색">
-    <button onclick="search()">Search</button>
+  <div class="search-box">
+    <input id="search" placeholder="책 제목 검색">
+    <button class="btn-main" onclick="searchBooks()">검색</button>
   </div>
+
 </div>
 
-<!-- 리스트 -->
-<div class="grid" id="bookGrid"></div>
+<div class="grid" id="bookList"></div>
 
-<div class="pagination" id="pagination"></div>
+</div>
 
 <!-- 모달 -->
 <div class="modal" id="modal">
-  <div class="modal-content" id="modalContent"></div>
+  <div class="modal-content">
+    <h3 id="mTitle"></h3>
+    <p id="mAuthor"></p>
+    <p id="mPublisher"></p>
+    <p id="mStatus"></p>
+
+    <input id="userName" placeholder="이름">
+    <input id="userPhone" placeholder="전화번호">
+
+    <button class="btn-main" onclick="borrow()">대출하기</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// 더미 데이터
-let books = Array.from({length:30}, (_,i)=>({
-  title:"책 "+(i+1),
-  author:"저자 "+(i+1),
-  status: Math.random()>0.5?"가능":"대출중"
-}));
 
-let currentPage = 1;
-const perPage = 8;
+const API = "https://script.google.com/macros/s/AKfycbzKZsphyic_EsPpABC1VaBhEmVppWeIuCIRatHIDeaYb4P8zG_q9MngtyTGIXkRm8IP/exec";
 
-function render(){
-  const start = (currentPage-1)*perPage;
-  const list = books.slice(start, start+perPage);
+let books = [];
+let current = null;
 
-  document.getElementById("bookGrid").innerHTML = list.map(b=>`
-    <div class="card" onclick="openModal('${b.title}')">
-      <div class="book-img"></div>
-      <b>${b.title}</b><br>
-      ${b.author}
-      <div class="status ${b.status==='가능'?'available':'borrowed'}">${b.status}</div>
-    </div>
-  `).join("");
-
-  renderPagination();
-  updateKPI();
-}
-
-function renderPagination(){
-  let total = Math.ceil(books.length/perPage);
-  let html="";
-  for(let i=1;i<=total;i++){
-    html += `<button onclick="page(${i})">${i}</button>`;
-  }
-  document.getElementById("pagination").innerHTML = html;
-}
-
-function page(p){
-  currentPage = p;
-  render();
-}
-
-// KPI
-function updateKPI(){
-  document.getElementById("totalBooks").innerText = books.length;
-  document.getElementById("borrowedBooks").innerText = books.filter(b=>b.status==="대출중").length;
-  document.getElementById("users").innerText = 12;
-}
-
-// 검색
-function search(){
-  const q = document.getElementById("searchInput").value;
-  books = books.filter(b=>b.title.includes(q));
-  currentPage=1;
-  render();
-}
-
-// 모달
-function openModal(title){
-  document.getElementById("modalContent").innerHTML = `
-    <h3>${title}</h3>
-    <button onclick="borrow('${title}')">대출</button>
-  `;
-  document.getElementById("modal").style.display="flex";
-}
-
-document.getElementById("modal").onclick = e=>{
-  if(e.target.id==="modal") e.target.style.display="none";
-}
-
-// 대출
-function borrow(title){
-  const book = books.find(b=>b.title===title);
-  if(book.status==="대출중"){
-    showToast("이미 대출중");
-    return;
-  }
-  book.status="대출중";
-  showToast("대출 완료");
-  render();
-}
-
-// 토스트
-function showToast(msg){
+/* 토스트 */
+function toast(msg){
   const t = document.getElementById("toast");
   t.innerText = msg;
-  t.style.display="block";
+  t.style.display = "block";
   setTimeout(()=>t.style.display="none",2000);
 }
 
-render();
+/* JSONP */
+function jsonp(url){
+  return new Promise(resolve=>{
+    const cb = "cb_"+Date.now();
+    window[cb] = data=>{
+      resolve(data);
+      delete window[cb];
+    };
+    const s = document.createElement("script");
+    s.src = url + "&callback=" + cb;
+    document.body.appendChild(s);
+  });
+}
+
+/* 도서 목록 불러오기 */
+async function loadBooks(){
+  const res = await jsonp(API + "?action=getBookList");
+  books = res.books;
+  render(books);
+}
+
+/* 렌더링 */
+function render(list){
+  const box = document.getElementById("bookList");
+  box.innerHTML = "";
+
+  list.forEach(b=>{
+    const el = document.createElement("div");
+    el.className="book";
+
+    el.innerHTML = `
+      <img src="${b.cover || ''}">
+      <b>${b.title}</b><br>
+      <small>${b.author}</small><br>
+      <div class="status ${b.status=='대출'?'borrowed':'available'}">
+        ${b.status=='대출'?'대출중':'가능'}
+      </div>
+    `;
+
+    el.onclick = ()=>openModal(b);
+    box.appendChild(el);
+  });
+}
+
+/* 검색 */
+function searchBooks(){
+  const q = document.getElementById("search").value;
+  const result = books.filter(b=>b.title.includes(q));
+  render(result);
+}
+
+/* 모달 */
+function openModal(book){
+  current = book;
+  document.getElementById("modal").style.display="flex";
+  document.getElementById("mTitle").innerText = book.title;
+  document.getElementById("mAuthor").innerText = book.author;
+  document.getElementById("mPublisher").innerText = book.publisher;
+  document.getElementById("mStatus").innerText = book.status;
+}
+
+/* 대출 */
+async function borrow(){
+  const name = document.getElementById("userName").value;
+  const phone = document.getElementById("userPhone").value;
+
+  const res = await jsonp(
+    API + `?action=borrow&name=${name}&phone=${phone}&isbn=${current.isbn}&title=${current.title}`
+  );
+
+  if(res.error){
+    toast(res.error);
+    return;
+  }
+
+  toast("대출 완료");
+  document.getElementById("modal").style.display="none";
+  loadBooks();
+}
+
+/* 초기 */
+loadBooks();
+
 </script>
 
 </body>
