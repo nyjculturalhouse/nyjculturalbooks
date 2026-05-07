@@ -17,6 +17,11 @@
 
 <link rel="stylesheet" href="./style.css">
 
+<style>
+  section { display: none; }
+  section.active { display: block; }
+</style>
+
 </head>
 
 <body>
@@ -28,40 +33,20 @@
 <div class="container py-5">
 
   <!-- 로그인 -->
-
-  <section id="loginSection">
+  <section id="loginSection" class="active">
 
     <div class="auth-card mx-auto">
 
-      <h1 class="main-title">
-        문화의집 소소책방
-      </h1>
+      <h1 class="main-title">문화의집 소소책방</h1>
 
-      <input
-        type="text"
-        id="loginId"
-        class="form-control mb-3"
-        placeholder="아이디"
-      >
+      <input type="text" id="loginId" class="form-control mb-3" placeholder="아이디">
+      <input type="password" id="loginPw" class="form-control mb-3" placeholder="비밀번호">
 
-      <input
-        type="password"
-        id="loginPw"
-        class="form-control mb-3"
-        placeholder="비밀번호"
-      >
-
-      <button
-        class="btn btn-main w-100 mb-3"
-        onclick="login()"
-      >
+      <button class="btn btn-main w-100 mb-3" onclick="login()">
         로그인
       </button>
 
-      <button
-        class="btn btn-outline-secondary w-100"
-        onclick="showSection('signupSection')"
-      >
+      <button class="btn btn-outline-secondary w-100" onclick="showSection('signupSection')">
         회원가입
       </button>
 
@@ -70,64 +55,26 @@
   </section>
 
   <!-- 회원가입 -->
-
-  <section id="signupSection" class="d-none">
+  <section id="signupSection">
 
     <div class="auth-card mx-auto">
 
-      <h2 class="section-title mb-4">
-        회원가입
-      </h2>
+      <h2 class="section-title mb-4">회원가입</h2>
 
-      <input
-        type="text"
-        id="signupId"
-        class="form-control mb-3"
-        placeholder="아이디"
-      >
-
-      <input
-        type="password"
-        id="signupPw"
-        class="form-control mb-2"
-        placeholder="비밀번호"
-      >
-
-      <input
-        type="password"
-        id="signupPw2"
-        class="form-control mb-2"
-        placeholder="비밀번호 확인"
-        onkeyup="checkPasswordMatch()"
-      >
+      <input type="text" id="signupId" class="form-control mb-3" placeholder="아이디">
+      <input type="password" id="signupPw" class="form-control mb-2" placeholder="비밀번호">
+      <input type="password" id="signupPw2" class="form-control mb-2" placeholder="비밀번호 확인" onkeyup="checkPasswordMatch()">
 
       <small id="pwCheckText"></small>
 
-      <input
-        type="text"
-        id="signupName"
-        class="form-control mt-3 mb-3"
-        placeholder="이름"
-      >
+      <input type="text" id="signupName" class="form-control mt-3 mb-3" placeholder="이름">
+      <input type="text" id="signupPhone" class="form-control mb-4" placeholder="전화번호">
 
-      <input
-        type="text"
-        id="signupPhone"
-        class="form-control mb-4"
-        placeholder="전화번호"
-      >
-
-      <button
-        class="btn btn-main w-100 mb-3"
-        onclick="signup()"
-      >
+      <button class="btn btn-main w-100 mb-3" onclick="signup()">
         회원가입
       </button>
 
-      <button
-        class="btn btn-outline-secondary w-100"
-        onclick="showSection('loginSection')"
-      >
+      <button class="btn btn-outline-secondary w-100" onclick="showSection('loginSection')">
         로그인으로
       </button>
 
@@ -136,16 +83,12 @@
   </section>
 
   <!-- 사용자 -->
-
-  <section id="userSection" class="d-none">
+  <section id="userSection">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
       <div>
-        <h2 class="section-title">
-          소소책방
-        </h2>
-
+        <h2 class="section-title">소소책방</h2>
         <div id="welcomeText"></div>
       </div>
 
@@ -157,96 +100,50 @@
 
     <div class="menu-wrap">
 
-      <button
-  class="btn btn-main"
-  onclick="showUserTab('booksTab')"
-      >
+      <button class="btn btn-main" onclick="showUserTab('booksTab')">
         도서 검색
       </button>
 
-      <button
-        class="btn btn-main"
-        onclick="openRentalsTab()"
-      >
+      <button class="btn btn-main" onclick="openRentalsTab()">
         내 대여
       </button>
 
-      <button
-        class="btn btn-main"
-        onclick="showUserTab('profileTab')"
-      >
+      <button class="btn btn-main" onclick="showUserTab('profileTab')">
         내 정보
       </button>
 
-      <button
-        class="btn btn-outline-danger"
-        onclick="logout()"
-      >
+      <button class="btn btn-outline-danger" onclick="logout()">
         로그아웃
       </button>
 
     </div>
 
-    <!-- 검색 -->
-
     <div class="sticky-search">
-
-      <input
-        type="text"
-        class="form-control"
-        id="searchInput"
-        placeholder="도서 검색"
-        onkeyup="debouncedSearch()"
-      >
-
+      <input type="text" class="form-control" id="searchInput" placeholder="도서 검색" onkeyup="debouncedSearch()">
     </div>
-
-    <!-- 도서 -->
 
     <div id="booksTab">
       <div class="row" id="bookList"></div>
     </div>
 
-    <!-- 대여 -->
-
     <div id="rentalsTab" class="d-none">
       <div class="row" id="rentalList"></div>
     </div>
-
-    <!-- 프로필 -->
 
     <div id="profileTab" class="d-none">
 
       <div class="profile-card">
 
-        <div class="profile-icon">
-          👤
-        </div>
+        <div class="profile-icon">👤</div>
 
-        <input
-          type="text"
-          id="profileName"
-          class="form-control mb-3"
-        >
+        <input type="text" id="profileName" class="form-control mb-3">
+        <input type="password" id="profilePw" class="form-control mb-3" placeholder="새 비밀번호">
 
-        <input
-          type="password"
-          id="profilePw"
-          class="form-control mb-3"
-          placeholder="새 비밀번호"
-        >
-
-        <button
-          class="btn btn-main w-100 mb-3"
-          onclick="updateProfile()"
-        >
+        <button class="btn btn-main w-100 mb-3" onclick="updateProfile()">
           수정하기
         </button>
 
-        <button
-          class="btn btn-outline-danger w-100"
-          onclick="deleteUser()"
-        >
+        <button class="btn btn-outline-danger w-100" onclick="deleteUser()">
           회원 탈퇴
         </button>
 
@@ -259,20 +156,32 @@
 </div>
 
 <!-- Toast -->
-
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-
   <div id="mainToast" class="toast">
-
     <div class="toast-body" id="toastBody"></div>
-
   </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="./app.js"></script>
+<!-- 🔥 핵심: defer 추가 (중요) -->
+<script src="./app.js" defer></script>
+
+<script>
+/* 🔥 안전장치: 전역 등록 (onclick 에러 방지) */
+window.login = login;
+window.signup = signup;
+window.logout = logout;
+window.rentBook = rentBook;
+window.returnBook = returnBook;
+window.updateProfile = updateProfile;
+window.deleteUser = deleteUser;
+window.showSection = showSection;
+window.showUserTab = showUserTab;
+window.openRentalsTab = openRentalsTab;
+window.debouncedSearch = debouncedSearch;
+window.checkPasswordMatch = checkPasswordMatch;
+</script>
 
 </body>
 </html>
