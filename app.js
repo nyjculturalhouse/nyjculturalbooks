@@ -1,4 +1,4 @@
-const GAS_URL = "본인의_GAS_URL_주소";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbw5vspw7XRViRduRAEPJaY7uHpRGCaLwB8xRylGmkcBfZGGGgrXtpIqNHJ4zI4xiJfp/exec";
 
 window.app = {
     async fetch(action, data = {}) {
