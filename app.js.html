@@ -1,0 +1,92 @@
+<script>
+// 💡 핵심 해결 포인트: window.app 최상단에 정의하여 전역 Scope 문제 완벽 해결
+window.app = {
+    state: {
+        user: null,
+        currentPage: 'login'
+    },
+
+    // 로그인 처리
+    handleLogin() {
+        console.log("handleLogin called");
+        const id = document.getElementById('userId').value;
+        const pw = document.getElementById('userPw').value;
+
+        if (pw.length !== 4) return alert('비밀번호는 숫자 4자리입니다.');
+
+        // 버튼 비활성화 (UX 개선)
+        const btn = document.querySelector('.btn-primary');
+        btn.disabled = true;
+        btn.innerText = "로그인 중...";
+
+        // GAS 서버로 요청
+        google.script.run
+            .withSuccessHandler(res => {
+                btn.disabled = false;
+                btn.innerText = "접속하기";
+
+                if (res && res.success) {
+                    console.log("Login success:", res);
+                    this.state.user = res;
+                    document.getElementById('navbar').classList.remove('hidden');
+                    document.getElementById('user-tag').innerText = res.name;
+                    this.render(res.role === 'admin' ? 'admin' : 'user');
+                } else {
+                    alert(res ? res.message : '서버 연결 실패');
+                }
+            })
+            .loginAction(id, pw); // Code.gs의 함수 호출
+    },
+
+    // 도서 목록 로드 및 렌더링 (예시)
+    loadBooks() {
+        console.log("loadBooks called");
+        google.script.run
+            .withSuccessHandler(books => {
+                const grid = document.getElementById('books-grid');
+                if (!books || books.length === 0) {
+                    grid.innerHTML = '<p>대여 가능한 도서가 없습니다.</p>';
+                    return;
+                }
+                grid.innerHTML = books.map(book => `
+                    <div class="book-card">
+                        <h4>${book.제목}</h4>
+                        <p>${book.저자} | ${book.출판사}</p>
+                        <p>ISBN: ${book.ISBN}</p>
+                    </div>
+                `).join('');
+            })
+            .getBooksAction(); // Code.gs의 함수 호출
+    },
+
+    // 화면 렌더링 함수
+    render(page) {
+        console.log("rendering page:", page);
+        const view = document.getElementById('router-view');
+        this.state.currentPage = page;
+
+        if (page === 'user') {
+            view.innerHTML = `
+                <div class="title-large">안녕하세요, ${this.state.user.name}님!</div>
+                <div class="subtitle-large">문화도서관의 다양한 도서를 확인해보세요.</div>
+                <div id="books-grid" class="grid-container">
+                    <p>도서 목록을 불러오는 중입니다...</p>
+                </div>
+            `;
+            this.loadBooks(); // 페이지 렌더링 후 도서 목록 로드
+        } else if (page === 'admin') {
+            view.innerHTML = `<h3>관리자 대시보드 준비 중...</h3>`;
+        }
+    },
+
+    // 로그아웃 처리
+    logout() {
+        console.log("logout called");
+        if(confirm("로그아웃 하시겠습니까?")) {
+            location.reload(); // 가장 확실한 초기화 방법
+        }
+    }
+};
+
+console.log("window.app object initialized:", window.app);
+</script>
