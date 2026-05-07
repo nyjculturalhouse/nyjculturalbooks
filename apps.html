@@ -1,0 +1,81 @@
+<script>
+
+// =====================
+// 로그인
+// =====================
+function login() {
+  const id = document.getElementById("id").value;
+  const pw = document.getElementById("pw").value;
+
+  google.script.run.withSuccessHandler(res => {
+    if (res.success) {
+      window.user = res.user;
+
+      document.getElementById("authView").style.display = "none";
+
+      if (id === "admin") {
+        document.getElementById("adminView").style.display = "block";
+      } else {
+        document.getElementById("userView").style.display = "block";
+      }
+    } else {
+      alert("로그인 실패");
+    }
+  }).login(id, pw);
+}
+
+// =====================
+// 회원가입
+// =====================
+function register() {
+  const user = {
+    id: document.getElementById("r_id").value,
+    password: document.getElementById("r_pw").value,
+    name: document.getElementById("r_name").value,
+    phone: document.getElementById("r_phone").value
+  };
+
+  google.script.run.withSuccessHandler(res => {
+    alert(res.success ? "가입 완료" : res.message);
+  }).register(user);
+}
+
+// =====================
+// 도서 로드
+// =====================
+function loadBooks() {
+  google.script.run.withSuccessHandler(list => {
+
+    let html = "<h3>도서 목록</h3>";
+
+    list.forEach(b => {
+      html += `
+        <div>
+          <b>${b.title}</b> (${b.status})
+          <button onclick="rent('${b.isbn}','${b.title}')">대여</button>
+        </div>
+      `;
+    });
+
+    document.getElementById("bookList").innerHTML = html;
+  }).getBooks();
+}
+
+// =====================
+// 대여
+// =====================
+function rent(isbn, title) {
+  google.script.run.withSuccessHandler(() => {
+    alert("대여 완료");
+    loadBooks();
+  }).rentBook(isbn, window.user.name, title);
+}
+
+// =====================
+// 로그아웃
+// =====================
+function logout() {
+  location.reload();
+}
+
+</script>
