@@ -7,32 +7,29 @@
 
 <body>
 
-<div class="layout">
+<div class="app">
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="logo">📚 Library OS</div>
+    <div class="logo">문화의집 소소책방</div>
 
-    <div class="menu">
-      <button onclick="view('books')">📖 도서 관리</button>
-      <button onclick="view('rentals')">📦 대여 현황</button>
-      <button onclick="view('users')">👤 회원 관리</button>
-      <button onclick="logout()">🚪 로그아웃</button>
+    <div class="nav">
+      <button data-view="books">도서</button>
+      <button data-view="rentals">대여</button>
+      <button data-view="profile">내정보</button>
     </div>
   </div>
 
   <!-- MAIN -->
   <div class="main">
 
-    <div class="topbar" id="title">대시보드</div>
-
-    <div id="content"></div>
+    <div id="app"></div>
 
   </div>
 
 </div>
 
-<script src="app.js"></script>
+<?!= include('app'); ?>
 
 </body>
 </html>
