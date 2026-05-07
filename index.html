@@ -2,26 +2,24 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>문화의집 소소책방 도서 대출 시스템</title>
-    <link rel="stylesheet" href="style.css">
+    <title>문화도서관 - 도서 대출 시스템</title>
+    <?!= include('style'); ?>
 </head>
 <body>
     <div id="app">
         <header id="navbar" class="hidden">
             <span class="logo">LIBRARY 3.0</span>
             <div class="user-controls">
-                <span id="user-tag"></span>
-                <button onclick="app.logout()">로그아웃</button>
+                <span id="user-tag"></span>님 환영합니다
+                <button onclick="app.logout()" class="btn-sm">로그아웃</button>
             </div>
         </header>
 
         <main id="router-view">
-            <!-- 컴포넌트가 주입되는 영역 -->
+            <?!= include('auth'); ?>
         </main>
     </div>
 
-    <!-- 모듈화된 스크립트 -->
-    <script src="api.js"></script>
-    <script src="app.js"></script>
+    <?!= include('app'); ?>
 </body>
 </html>
