@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>문화도서관 3.0</title>
+    <title>소소책방 도서관리</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app-container">
-        <header id="main-nav" class="hidden">
-            <div class="nav-content">
-                <span class="logo">LIBRARY 3.0</span>
-                <div class="user-info">
-                    <span id="user-display"></span>님 
-                    <button onclick="window.app.logout()" class="btn-logout">로그아웃</button>
-                </div>
-            </div>
+    <div id="app">
+        <header class="main-header">
+            <h1>남양주시 문화의집</h1>
+            <h2 class="sub-title">소소책방</h2>
         </header>
 
-        <main id="view">
-            <div class="loading">설정 중입니다...</div>
-        </main>
+        <nav id="main-menu">
+            <button onclick="window.app.render('search')" class="menu-btn orange">도서찾기</button>
+            <button onclick="window.app.render('join')" class="menu-btn blue">회원가입</button>
+            <button onclick="window.app.render('login')" class="menu-btn green">대여/반납</button>
+        </nav>
+
+        <main id="content-view"></main>
+
+        <button id="home-btn" class="hidden" onclick="location.reload()">처음으로 돌아가기</button>
     </div>
 
     <script src="app.js"></script>
