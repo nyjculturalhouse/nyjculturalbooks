@@ -4,26 +4,179 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>소소책방 도서관리</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --apple-blue: #0071e3;
+            --apple-orange: #ff9f0a;
+            --apple-green: #34c759;
+            --text: #1d1d1f;
+        }
+
+        body { 
+            margin: 0; font-family: "Arial", sans-serif; background: var(--bg); color: var(--text);
+            text-align: center; line-height: 1.6;
+        }
+
+        /* 헤더 디자인 */
+        .main-header { padding: 50px 20px 30px; }
+        .main-header h1 { font-size: 26px; color: #86868b; margin: 0; font-weight: normal; }
+        .sub-title { font-size: 52px; margin: 10px 0; font-weight: bold; letter-spacing: -1px; }
+
+        /* 메인 메뉴 버튼 */
+        #main-menu { display: flex; flex-direction: column; gap: 25px; align-items: center; padding: 20px; }
+        
+        .menu-btn {
+            width: 90%; max-width: 550px; padding: 45px; border-radius: 30px;
+            font-size: 34px; font-weight: bold; border: none; color: white; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); transition: transform 0.2s;
+        }
+        .menu-btn:active { transform: scale(0.98); }
+        .orange { background: var(--apple-orange); }
+        .blue { background: var(--apple-blue); }
+        .green { background: var(--apple-green); }
+
+        /* 컨텐츠 영역 */
+        .card { background: white; margin: 20px auto; padding: 50px; border-radius: 40px; 
+                box-shadow: 0 15px 35px rgba(0,0,0,0.05); max-width: 600px; text-align: left; }
+        
+        h2 { font-size: 38px; margin-top: 0; text-align: center; }
+        
+        input { width: 100%; padding: 25px; margin: 15px 0; border: 2px solid #d2d2d7; 
+                border-radius: 20px; font-size: 26px; box-sizing: border-box; outline: none; }
+        
+        .submit-btn { width: 100%; padding: 25px; border-radius: 20px; font-size: 28px; 
+                      font-weight: bold; border: none; color: white; cursor: pointer; margin-top: 20px; }
+
+        /* 도서 목록 그리드 */
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+                     gap: 25px; padding: 20px; }
+        .book-item { background: #fff; padding: 20px; border-radius: 25px; border: 1px solid #eee; text-align: center; }
+        .book-cover { width: 100%; aspect-ratio: 2/3; background: #eee; border-radius: 15px; object-fit: cover; margin-bottom: 15px; }
+        .book-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; }
+        .book-author { font-size: 18px; color: #666; }
+
+        /* 공통 버튼 */
+        .home-btn { margin-top: 40px; padding: 20px 40px; border-radius: 50px; background: #333; 
+                    color: white; border: none; font-size: 22px; cursor: pointer; }
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
+
     <div id="app">
         <header class="main-header">
             <h1>남양주시 문화의집</h1>
-            <h2 class="sub-title">소소책방</h2>
+            <div class="sub-title">소소책방</div>
         </header>
 
-        <nav id="main-menu">
-            <button onclick="window.app.render('search')" class="menu-btn orange">도서찾기</button>
-            <button onclick="window.app.render('join')" class="menu-btn blue">회원가입</button>
-            <button onclick="window.app.render('login')" class="menu-btn green">대여/반납</button>
-        </nav>
+        <div id="main-menu-view">
+            <div id="main-menu">
+                <button id="go-search" class="menu-btn orange">도서찾기</button>
+                <button id="go-join" class="menu-btn blue">회원가입</button>
+                <button id="go-rent" class="menu-btn green">대여/반납</button>
+            </div>
+        </div>
 
-        <main id="content-view"></main>
-
-        <button id="home-btn" class="hidden" onclick="location.reload()">처음으로 돌아가기</button>
+        <div id="content-view" class="hidden"></div>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        // ⚠️ 본인의 실제 배포된 GAS 웹앱 URL을 입력하세요.
+        const API_URL = "https://script.google.com/macros/s/AKfycbw5vspw7XRViRduRAEPJaY7uHpRGCaLwB8xRylGmkcBfZGGGgrXtpIqNHJ4zI4xiJfp/exec";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuView = document.getElementById('main-menu-view');
+            const contentView = document.getElementById('content-view');
+
+            // 1. 화면 전환 함수
+            function showView(html) {
+                menuView.classList.add('hidden');
+                contentView.innerHTML = html + `<button class="home-btn" id="btn-home">처음으로 돌아가기</button>`;
+                contentView.classList.remove('hidden');
+
+                // 홈으로 버튼에 이벤트 리스너 연결
+                document.getElementById('btn-home').addEventListener('click', () => location.reload());
+            }
+
+            // 2. 도서 찾기 클릭
+            document.getElementById('go-search').addEventListener('click', async () => {
+                showView(`<h2>도서 찾기</h2><div id="book-list" class="book-grid">정보를 불러오는 중...</div>`);
+                try {
+                    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getBooks' }) });
+                    const books = await res.json();
+                    const listHtml = books.map(b => `
+                        <div class="book-item">
+                            <img src="${b.표지URL || 'https://via.placeholder.com/150x220'}" class="book-cover">
+                            <div class="book-title">${b.제목}</div>
+                            <div class="book-author">${b.저자} | ${b.출판사}</div>
+                            <div style="font-weight:bold; color:${b.대여상태 === '대여가능' ? 'blue' : 'red'}">${b.대여상태}</div>
+                        </div>
+                    `).join('');
+                    document.getElementById('book-list').innerHTML = listHtml;
+                } catch (e) {
+                    document.getElementById('book-list').innerHTML = "데이터를 불러오지 못했습니다.";
+                }
+            });
+
+            // 3. 회원가입 클릭
+            document.getElementById('go-join').addEventListener('click', () => {
+                showView(`
+                    <div class="card">
+                        <h2>회원가입</h2>
+                        <input type="text" id="j_name" placeholder="성함">
+                        <input type="text" id="j_phone" placeholder="전화번호 (010-0000-0000)">
+                        <input type="password" id="j_pw" maxlength="4" placeholder="비밀번호 숫자 4자리">
+                        <button id="btn-submit-join" class="submit-btn blue">가입 완료</button>
+                    </div>
+                `);
+
+                document.getElementById('btn-submit-join').addEventListener('click', async () => {
+                    const name = document.getElementById('j_name').value;
+                    const phone = document.getElementById('j_phone').value;
+                    const pw = document.getElementById('j_pw').value;
+
+                    if (!name || pw.length !== 4) return alert("성함과 비밀번호 4자리를 확인해주세요.");
+
+                    const res = await fetch(API_URL, { 
+                        method: 'POST', 
+                        body: JSON.stringify({ action: 'join', data: { name, phone, pw } }) 
+                    });
+                    const result = await res.json();
+                    if(result.success) alert(`가입 완료! 회원번호는 [ ${result.memberId} ] 입니다. 잘 적어두세요!`);
+                    location.reload();
+                });
+            });
+
+            // 4. 대여/반납 클릭
+            document.getElementById('go-rent').addEventListener('click', () => {
+                showView(`
+                    <div class="card">
+                        <h2>대여/반납 로그인</h2>
+                        <input type="text" id="l_id" placeholder="회원번호">
+                        <input type="password" id="l_pw" maxlength="4" placeholder="비밀번호 4자리">
+                        <button id="btn-submit-login" class="submit-btn green">로그인</button>
+                    </div>
+                `);
+
+                document.getElementById('btn-submit-login').addEventListener('click', async () => {
+                    const id = document.getElementById('l_id').value;
+                    const pw = document.getElementById('l_pw').value;
+
+                    const res = await fetch(API_URL, { 
+                        method: 'POST', 
+                        body: JSON.stringify({ action: 'login', id, pw }) 
+                    });
+                    const result = await res.json();
+                    if(result.success) {
+                        alert(`${result.name}님, 환영합니다!`);
+                        // 이후 대여/반납 화면으로 전환하는 로직 추가 가능
+                    } else {
+                        alert(result.message);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
