@@ -38,20 +38,19 @@ async function api(action, data = {}) {
       formData.append(key, data[key]);
     }
 
-    const response = await fetch(API_BASE, {
+const response = await fetch(API_BASE, {
 
-      method: "POST",
+  method: "POST",
 
-      headers: {
-        "Content-Type":
-          "application/x-www-form-urlencoded"
-      },
+  headers: {
+    "Content-Type":
+      "application/x-www-form-urlencoded"
+  },
 
-      body: formData.toString(),
+  body: formData.toString(),
 
-      signal: controller.signal,
-      mode: "cors"
-    });
+  signal: controller.signal
+});
 
     clearTimeout(timeout);
 
