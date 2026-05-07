@@ -1,167 +1,28 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>문화의집 소소책방</title>
-
-<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/29/29302.png">
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<link rel="stylesheet" href="./style.css">
-
-<style>
-  section { display: none; }
-  section.active { display: block; }
-</style>
-
+  <base target="_top">
+  <?!= include('style'); ?>
 </head>
-
 <body>
 
-<div id="loadingOverlay" class="loading-overlay d-none">
-  <div class="spinner-border text-light"></div>
-</div>
+<div id="app">
 
-<div class="container py-5">
-
-  <!-- 로그인 -->
-  <section id="loginSection" class="active">
-
-    <div class="auth-card mx-auto">
-
-      <h1 class="main-title">문화의집 소소책방</h1>
-
-      <input type="text" id="loginId" class="form-control mb-3" placeholder="아이디">
-      <input type="password" id="loginPw" class="form-control mb-3" placeholder="비밀번호">
-
-      <button id="loginBtn" class="btn btn-main w-100 mb-3">
-        로그인
-      </button>
-
-      <button id="goSignupBtn" class="btn btn-outline-secondary w-100">
-        회원가입
-      </button>
-
-    </div>
-
-  </section>
-
-  <!-- 회원가입 -->
-  <section id="signupSection">
-
-    <div class="auth-card mx-auto">
-
-      <h2 class="section-title mb-4">회원가입</h2>
-
-      <input type="text" id="signupId" class="form-control mb-3" placeholder="아이디">
-      <input type="password" id="signupPw" class="form-control mb-2" placeholder="비밀번호">
-      <input type="password" id="signupPw2" class="form-control mb-2" placeholder="비밀번호 확인">
-
-      <small id="pwCheckText"></small>
-
-      <input type="text" id="signupName" class="form-control mt-3 mb-3" placeholder="이름">
-      <input type="text" id="signupPhone" class="form-control mb-4" placeholder="전화번호">
-
-      <button id="signupBtn" class="btn btn-main w-100 mb-3">
-        회원가입
-      </button>
-
-      <button id="backLoginBtn" class="btn btn-outline-secondary w-100">
-        로그인으로
-      </button>
-
-    </div>
-
-  </section>
-
-  <!-- 사용자 -->
-  <section id="userSection">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-      <div>
-        <h2 class="section-title">소소책방</h2>
-        <div id="welcomeText"></div>
-      </div>
-
-      <span class="badge bg-success fs-6" id="rentalCountBadge">
-        대여 0권
-      </span>
-
-    </div>
-
-    <div class="menu-wrap">
-
-      <button id="booksTabBtn" class="btn btn-main">
-        도서 검색
-      </button>
-
-      <button id="rentalsTabBtn" class="btn btn-main">
-        내 대여
-      </button>
-
-      <button id="profileTabBtn" class="btn btn-main">
-        내 정보
-      </button>
-
-      <button id="logoutBtn" class="btn btn-outline-danger">
-        로그아웃
-      </button>
-
-    </div>
-
-    <div class="sticky-search">
-      <input type="text" class="form-control" id="searchInput" placeholder="도서 검색">
-    </div>
-
-    <div id="booksTab">
-      <div class="row" id="bookList"></div>
-    </div>
-
-    <div id="rentalsTab" class="d-none">
-      <div class="row" id="rentalList"></div>
-    </div>
-
-    <div id="profileTab" class="d-none">
-
-      <div class="profile-card">
-
-        <div class="profile-icon">👤</div>
-
-        <input type="text" id="profileName" class="form-control mb-3">
-        <input type="password" id="profilePw" class="form-control mb-3" placeholder="새 비밀번호">
-
-        <button id="updateProfileBtn" class="btn btn-main w-100 mb-3">
-          수정하기
-        </button>
-
-        <button id="deleteUserBtn" class="btn btn-outline-danger w-100">
-          회원 탈퇴
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-</div>
-
-<!-- Toast -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="mainToast" class="toast">
-    <div class="toast-body" id="toastBody"></div>
+  <div id="authView">
+    <?!= include('auth'); ?>
   </div>
+
+  <div id="userView" style="display:none;">
+    <?!= include('user'); ?>
+  </div>
+
+  <div id="adminView" style="display:none;">
+    <?!= include('admin'); ?>
+  </div>
+
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- JS -->
-<script src="./app.js" defer></script>
+<?!= include('app'); ?>
 
 </body>
 </html>
