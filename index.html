@@ -9,9 +9,9 @@
 <style>
   :root {
     --bg-color: #f8f9fa;
-    --primary-color: #00b4d8; /* 시안의 민트/테일 톤 */
+    --primary-color: #00b4d8; 
     --primary-hover: #0096b1;
-    --orange-color: #e67e22; /* 시안의 오렌지 포인트 */
+    --orange-color: #e67e22; 
     --text-dark: #1e293b;
     --text-muted: #64748b;
     --card-bg: #ffffff;
@@ -25,7 +25,6 @@
     color: var(--text-dark);
   }
 
-  /* 사이드바나 네비게이션 대용 상단 메인 헤더 */
   .main-title-bar {
     padding: 24px 40px 10px 40px;
     background: var(--card-bg);
@@ -38,7 +37,6 @@
     font-weight: 700;
   }
 
-  /* 네비게이션 탭 (메인 메뉴 전환용) */
   .nav-tabs {
     display: flex;
     background: var(--card-bg);
@@ -61,14 +59,12 @@
     font-weight: 700;
   }
 
-  /* 메인 컨테이너 */
   .container {
     padding: 30px 40px;
     max-width: 1400px;
     margin: 0 auto;
   }
 
-  /* 1. 상단 대시보드 통계 카드 위젯 */
   .dashboard-widgets {
     display: flex;
     gap: 20px;
@@ -108,7 +104,6 @@
     color: #d4ac0d;
   }
 
-  /* 2. 검색 및 필터 섹션 */
   .search-section {
     margin-bottom: 25px;
   }
@@ -166,10 +161,6 @@
     color: #334155;
   }
 
-  .search-input-wrapper input::placeholder {
-    color: #94a3b8;
-  }
-
   .search-btn {
     background: var(--primary-color);
     color: white;
@@ -186,7 +177,6 @@
     background: var(--primary-hover);
   }
 
-  /* 섹션 타이틀 */
   .section-heading {
     font-size: 20px;
     font-weight: 700;
@@ -194,7 +184,6 @@
     margin: 30px 0 20px 0;
   }
 
-  /* 3. 도서 카드 그리드 레이아웃 */
   .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -276,7 +265,6 @@
     color: #ce372b;
   }
 
-  /* 4. 입력 폼 스타일 (대출/회원가입용) */
   .form-container {
     background: var(--card-bg);
     border-radius: 8px;
@@ -288,6 +276,7 @@
 
   .form-group {
     margin-bottom: 20px;
+    position: relative;
   }
 
   .form-group label {
@@ -308,9 +297,42 @@
     background: #fff;
   }
 
-  .form-group input:focus, .form-group select:focus {
-    outline: none;
-    border-color: var(--primary-color);
+  /* 실시간 자동완성 검색 결과 리스트 박스 (이미지 3번 스타일 연출) */
+  .suggest-box {
+    position: absolute;
+    top: 68px;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: none;
+  }
+
+  .suggest-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .suggest-item:hover {
+    background: #f1f5f9;
+  }
+
+  .selected-badge {
+    display: inline-block;
+    margin-top: 8px;
+    background: #edf2f7;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #2d3748;
   }
 
   .submit-btn {
@@ -330,6 +352,44 @@
     background: var(--primary-hover);
   }
 
+  /* 테이블 스타일 (3번 데이터 그리드용) */
+  .table-container {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th {
+    background: #f1f5f9;
+    padding: 12px;
+    font-weight: 700;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  td {
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .return-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .return-btn:hover { background: #c0392b; }
+
   .loading-msg {
     grid-column: 1 / -1;
     text-align: center;
@@ -348,6 +408,7 @@
 <div class="nav-tabs">
   <div class="nav-tab active" onclick="switchMenu(event, 'books')">도서목록</div>
   <div class="nav-tab" onclick="switchMenu(event, 'rent')">도서대출</div>
+  <div class="nav-tab" onclick="switchMenu(event, 'return')">도서반납</div>
   <div class="nav-tab" onclick="switchMenu(event, 'member')">회원가입</div>
 </div>
 
@@ -380,8 +441,6 @@
     <div class="search-section">
       <div class="search-label">Search Books</div>
       <div class="filter-tabs">
-        <div class="filter-tab" onclick="setSearchTarget('student')">Student</div>
-        <div class="filter-tab" onclick="setSearchTarget('staff')">Staff</div>
         <div class="filter-tab active" onclick="setSearchTarget('books')">Books</div>
       </div>
       <div class="search-bar-container">
@@ -401,15 +460,42 @@
   <div id="page-rent" style="display:none">
     <div class="form-container">
       <div class="section-heading" style="margin-top:0;">도서 대출 등록</div>
+      
       <div class="form-group">
-        <label>대출 회원 선택</label>
-        <select id="rentMemberSelect"><option>회원 목록 로딩 중...</option></select>
+        <label>대출 회원 검색</label>
+        <input type="text" id="rentMemberInput" placeholder="회원 이름을 입력하세요..." onkeyup="searchRentMember()">
+        <div id="memberSuggest" class="suggest-box"></div>
+        <div id="selectedMemberBadge" class="selected-badge">선택된 회원: 없음</div>
       </div>
+      
       <div class="form-group">
-        <label>대출 도서 선택</label>
-        <select id="rentBookSelect"><option>도서 목록 로딩 중...</option></select>
+        <label>대출 도서 검색</label>
+        <input type="text" id="rentBookInput" placeholder="도서 제목을 입력하세요..." onkeyup="searchRentBook()">
+        <div id="bookSuggest" class="suggest-box"></div>
+        <div id="selectedBookBadge" class="selected-badge">선택된 도서: 없음</div>
       </div>
+      
       <button class="submit-btn" onclick="submitBorrow()">대출 처리</button>
+    </div>
+  </div>
+
+  <div id="page-return" style="display:none">
+    <div class="section-heading" style="margin-top:0;">현재 대출 중인 도서 내역</div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>대출자</th>
+            <th>도서명</th>
+            <th>ISBN</th>
+            <th>대출일자</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="returnTableBody">
+          <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">데이터를 불러오는 중입니다...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -435,29 +521,27 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbzKZsphyic_EsPpABC1VaBhEmVppWeIuCIRatHIDeaYb4P8zG_q9MngtyTGIXkRm8IP/exec";
 
 let cachedBooks = []; 
+let cachedMembers = [];
+let selectedMemberName = "";
+let selectedBookIsbn = "";
 
-// 메뉴 전환 
 function switchMenu(e, targetPage) {
   document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
   e.currentTarget.classList.add("active");
 
-  document.querySelectorAll("#page-books, #page-rent, #page-member").forEach(p => p.style.display = "none");
+  document.querySelectorAll("#page-books, #page-rent, #page-return, #page-member").forEach(p => p.style.display = "none");
   document.getElementById(`page-${targetPage}`).style.display = "block";
 
   if (targetPage === "books") fetchBooksData();
-  if (targetPage === "rent") prepareRentForm();
+  if (targetPage === "rent") loadRentFormData();
+  if (targetPage === "return") fetchReturnData();
 }
 
-// 상단 필터 장식용 토글
 function setSearchTarget(target) {
-  document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
-  event.currentTarget.classList.add("active");
-  const input = document.getElementById("bookSearchInput");
-  if(target === 'books') input.placeholder = "Type Book Title...";
-  else input.placeholder = `Type ${target} Name...`;
+  // 장식 구조 유지
 }
 
-// 실시간 데이터 원격 로드 및 위젯 계산
+// 1. 도서 데이터 로드 및 대시보드 갱신
 function fetchBooksData() {
   const container = document.getElementById("bookGridContainer");
   container.innerHTML = '<div class="loading-msg">데이터를 동기화하고 있습니다...</div>';
@@ -471,7 +555,6 @@ function fetchBooksData() {
       }
       cachedBooks = data;
       
-      // 위젯 카운트 동적 갱신
       const total = data.length;
       const rented = data.filter(b => b.status === "대출중").length;
       const available = total - rented;
@@ -487,7 +570,6 @@ function fetchBooksData() {
     });
 }
 
-// 그리드 카드 렌더링
 function renderBookCards(books) {
   const container = document.getElementById("bookGridContainer");
   if(books.length === 0) {
@@ -515,55 +597,130 @@ function renderBookCards(books) {
   }).join("");
 }
 
-// 검색 필터링 
 function doSearch() {
   const query = document.getElementById("bookSearchInput").value.toLowerCase();
   const filtered = cachedBooks.filter(b => b.title.toLowerCase().includes(query));
   renderBookCards(filtered);
 }
 
-// 대출 폼 리스트 준비
-function prepareRentForm() {
-  // 회원 가져오기
-  fetch(`${API_URL}?action=members`)
-    .then(res => res.json())
-    .then(data => {
-      const select = document.getElementById("rentMemberSelect");
-      select.innerHTML = data.map(m => `<option value="${m.name}">${m.name} (${m.phone})</option>`).join("");
-    });
-
-  // 도서 가져오기
-  fetch(`${API_URL}?action=books`)
-    .then(res => res.json())
-    .then(data => {
-      const select = document.getElementById("rentBookSelect");
-      select.innerHTML = data.map(b => 
-        `<option value="${b.isbn}" ${b.status === '대출중' ? 'disabled' : ''}>
-          [${b.status}] ${b.title}
-        </option>`
-      ).join("");
-    });
+// 2. 대출 처리 폼 사전 데이터 준비 (회원/도서 동시 로드)
+function loadRentFormData() {
+  fetch(`${API_URL}?action=members`).then(res => res.json()).then(data => cachedMembers = data);
+  fetch(`${API_URL}?action=books`).then(res => res.json()).then(data => cachedBooks = data);
+  
+  // 입력폼 및 배지 초기화
+  document.getElementById("rentMemberInput").value = "";
+  document.getElementById("rentBookInput").value = "";
+  document.getElementById("selectedMemberBadge").innerText = "선택된 회원: 없음";
+  document.getElementById("selectedBookBadge").innerText = "선택된 도서: 없음";
+  selectedMemberName = "";
+  selectedBookIsbn = "";
 }
 
-// 대출 처리 제출 (CORS Safe)
-function submitBorrow() {
-  const name = document.getElementById("rentMemberSelect").value;
-  const isbn = document.getElementById("rentBookSelect").value;
+// [3번 이미지 기능 구현] 대출 회원 실시간 타이핑 매칭 검색
+function searchRentMember() {
+  const query = document.getElementById("rentMemberInput").value.trim().toLowerCase();
+  const box = document.getElementById("memberSuggest");
+  if(!query) { box.style.display = "none"; return; }
+  
+  const matched = cachedMembers.filter(m => m.name.toLowerCase().includes(query));
+  if(matched.length === 0) { box.style.display = "none"; return; }
 
-  if(!name || !isbn) return alert("데이터 선택이 잘못되었습니다.");
+  box.innerHTML = matched.map(m => `
+    <div class="suggest-item" onclick="selectMember('${m.name}')">${m.name} (${m.phone})</div>
+  `).join("");
+  box.style.display = "block";
+}
+
+function selectMember(name) {
+  selectedMemberName = name;
+  document.getElementById("selectedMemberBadge").innerText = `선택된 회원: ${name}`;
+  document.getElementById("memberSuggest").style.display = "none";
+  document.getElementById("rentMemberInput").value = name;
+}
+
+// [3번 이미지 기능 구현] 대출 도서 실시간 타이핑 매칭 검색
+function searchRentBook() {
+  const query = document.getElementById("rentBookInput").value.trim().toLowerCase();
+  const box = document.getElementById("bookSuggest");
+  if(!query) { box.style.display = "none"; return; }
+
+  const matched = cachedBooks.filter(b => b.title.toLowerCase().includes(query));
+  if(matched.length === 0) { box.style.display = "none"; return; }
+
+  box.innerHTML = matched.map(b => `
+    <div class="suggest-item" style="${b.status === '대출중' ? 'color:#ccc;cursor:not-allowed;' : ''}" 
+         onclick="${b.status === '대출중' ? '' : `selectBook('${b.isbn}', '${b.title.replace(/'/g, "\\'")}')`}">
+      [${b.status}] ${b.title}
+    </div>
+  `).join("");
+  box.style.display = "block";
+}
+
+function selectBook(isbn, title) {
+  selectedBookIsbn = isbn;
+  document.getElementById("selectedBookBadge").innerText = `선택된 도서: ${title}`;
+  document.getElementById("bookSuggest").style.display = "none";
+  document.getElementById("rentBookInput").value = title;
+}
+
+// 대출 신청
+function submitBorrow() {
+  if(!selectedMemberName || !selectedBookIsbn) return alert("회원과 도서를 검색 후 명확히 선택해주세요.");
 
   fetch(API_URL, {
     method: "POST",
     mode: "no-cors",
     headers: { "Content-Type": "text/plain" },
-    body: JSON.stringify({ action: "borrow", name, isbn })
+    body: JSON.stringify({ action: "borrow", name: selectedMemberName, isbn: selectedBookIsbn })
   }).then(() => {
     alert("대출 처리가 정상 완료되었습니다.");
-    prepareRentForm();
+    loadRentFormData();
+    fetchBooksData(); // 대시보드 카운트 최신화
   });
 }
 
-// 회원 등록 제출 (CORS Safe)
+// 3. 도서 반납을 위한 대출 데이터 로드 및 리스트 표출
+function fetchReturnData() {
+  const tbody = document.getElementById("returnTableBody");
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">대출중인 데이터를 동기화하고 있습니다...</td></tr>';
+  
+  fetch(`${API_URL}?action=rents`)
+    .then(res => res.json())
+    .then(data => {
+      if(data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">현재 대출 중인 도서가 없습니다.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(r => `
+        <tr>
+          <td><strong>${r.name}</strong></td>
+          <td>${r.title}</td>
+          <td>${r.isbn}</td>
+          <td>${r.date}</td>
+          <td><button class="return-btn" onclick="submitReturn('${r.name}', '${r.isbn}')">반납하기</button></td>
+        </tr>
+      `).join("");
+    });
+}
+
+// 반납 데이터 송신 처리
+function submitReturn(name, isbn) {
+  if(!confirm(`${name}님의 도서를 반납 처리하시겠습니까?`)) return;
+
+  fetch(API_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "return", name: name, isbn: isbn })
+  }).then(() => {
+    alert("반납 처리가 완료되었습니다.");
+    fetchReturnData();
+    fetchBooksData(); // 대시보드 정보 동기화
+  });
+}
+
+// 4. 회원 등록
 function submitMember() {
   const name = document.getElementById("regName").value.trim();
   const phone = document.getElementById("regPhone").value.trim();
@@ -582,7 +739,13 @@ function submitMember() {
   });
 }
 
-// 초기 로딩 실행
+// 외부 클릭 시 제안 박스 닫기 스크립트
+document.addEventListener("click", function(e) {
+  if(e.target.id !== "rentMemberInput") document.getElementById("memberSuggest").style.display = "none";
+  if(e.target.id !== "rentBookInput") document.getElementById("bookSuggest").style.display = "none";
+});
+
+// 시작
 fetchBooksData();
 </script>
 </body>
