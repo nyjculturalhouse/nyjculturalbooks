@@ -99,25 +99,94 @@
                 document.getElementById('btn-home').addEventListener('click', () => location.reload());
             }
 
-            // 2. 도서 찾기 클릭
-            document.getElementById('go-search').addEventListener('click', async () => {
-                showView(`<h2>도서 찾기</h2><div id="book-list" class="book-grid">정보를 불러오는 중...</div>`);
-                try {
-                    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getBooks' }) });
-                    const books = await res.json();
-                    const listHtml = books.map(b => `
-                        <div class="book-item">
-                            <img src="${b.표지URL || 'https://via.placeholder.com/150x220'}" class="book-cover">
-                            <div class="book-title">${b.제목}</div>
-                            <div class="book-author">${b.저자} | ${b.출판사}</div>
-                            <div style="font-weight:bold; color:${b.대여상태 === '대여가능' ? 'blue' : 'red'}">${b.대여상태}</div>
-                        </div>
-                    `).join('');
-                    document.getElementById('book-list').innerHTML = listHtml;
-                } catch (e) {
-                    document.getElementById('book-list').innerHTML = "데이터를 불러오지 못했습니다.";
-                }
+            // 2. 도서 검색 시스템 (부분 일치 및 검색 편의성 강화)
+document.getElementById('go-search').addEventListener('click', async () => {
+    // 검색 화면 레이아웃 주입 (어르신들을 위해 설명을 조금 더 친절하게 넣었습니다)
+    showView(`
+        <h2>도서 검색</h2>
+        <div class="card" style="padding: 30px;">
+            <p style="text-align:center; color:#666; margin-bottom:15px; font-size:18px;">
+                찾으시는 <b>책 제목</b>이나 <b>작가 이름</b>을 입력하세요. <br>
+                <span style="font-size:15px;">(일부 글자만 입력해도 검색됩니다)</span>
+            </p>
+            <input type="text" id="search-input" placeholder="예: 정지 또는 아버지">
+            <button id="btn-search-execute" class="submit-btn orange">검색하기</button>
+        </div>
+        <div id="book-list" class="book-grid">
+            <div style="grid-column: 1/-1; color: #86868b; padding: 50px;">
+                검색어를 입력하고 버튼을 눌러주세요.
+            </div>
+        </div>
+    `);
+
+    const searchInput = document.getElementById('search-input');
+    const btnSearch = document.getElementById('btn-search-execute');
+    const bookList = document.getElementById('book-list');
+
+    // 검색 수행 함수
+    const performSearch = async () => {
+        const query = searchInput.value.trim().toLowerCase();
+        
+        if (!query) {
+            alert("찾으시는 책의 이름을 입력해 주세요!");
+            searchInput.focus();
+            return;
+        }
+
+        // 로딩 안내 (어르신들이 기다리는 동안 심심하지 않게 문구 변경)
+        bookList.innerHTML = `<div style="grid-column: 1/-1; padding: 50px; font-size:20px;">🔍 소소책방 서고에서 찾는 중입니다...</div>`;
+
+        try {
+            const res = await fetch(API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({ action: 'getBooks' }) 
             });
+            const allBooks = await res.json();
+
+            // [핵심 로직] b.제목.includes(query) 가 '정지'만 쳐도 '정지아'를 찾아줍니다.
+            const filtered = allBooks.filter(b => {
+                const title = b.제목 ? String(b.제목).toLowerCase() : "";
+                const author = b.저자 ? String(b.저자).toLowerCase() : "";
+                return title.includes(query) || author.includes(query);
+            });
+
+            if (filtered.length === 0) {
+                bookList.innerHTML = `
+                    <div style="grid-column: 1/-1; padding: 50px;">
+                        <p style="font-size:20px; color:#ff3b30;">앗! '${query}'(이)가 포함된 책이 없습니다.</p>
+                        <p style="color:#666;">글자가 틀리지는 않았는지 다시 확인해 보세요.</p>
+                    </div>`;
+                return;
+            }
+
+            // 결과 화면 출력
+            const listHtml = filtered.map(b => `
+                <div class="book-item">
+                    <img src="${b.표지URL || 'https://via.placeholder.com/150x220?text=소소책방'}" class="book-cover">
+                    <div class="book-title" style="font-size:20px; margin-top:10px;">${b.제목}</div>
+                    <div class="book-author" style="font-size:16px; color:#666; margin-bottom:5px;">${b.저자} | ${b.출판사}</div>
+                    <div style="font-weight:bold; color:${b.대여상태 === '대여가능' ? '#34c759' : '#ff3b30'}">
+                        ${b.대여상태}
+                    </div>
+                </div>
+            `).join('');
+            
+            bookList.innerHTML = listHtml;
+
+        } catch (e) {
+            console.error(e);
+            bookList.innerHTML = `<div style="grid-column: 1/-1; padding:50px;">인터넷 연결이 불안정합니다. 잠시 후 다시 시도해 주세요.</div>`;
+        }
+    };
+
+    // 버튼 클릭 이벤트
+    btnSearch.addEventListener('click', performSearch);
+
+    // 엔터키 입력 이벤트
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performSearch();
+    });
+});
 
             // 3. 회원가입 클릭
             document.getElementById('go-join').addEventListener('click', () => {
