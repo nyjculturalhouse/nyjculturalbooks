@@ -17,13 +17,12 @@ body {
 }
 
 .sidebar button {
-  display: block;
   width: 100%;
   padding: 10px;
-  margin: 5px 0;
+  margin: 6px 0;
   border: none;
-  background: #f2f2f2;
   border-radius: 10px;
+  background: #f2f2f2;
   cursor: pointer;
 }
 
@@ -38,4 +37,12 @@ body {
   border-radius: 14px;
   margin-bottom: 10px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+button {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: white;
 }
