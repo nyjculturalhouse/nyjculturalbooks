@@ -6,23 +6,19 @@
 </head>
 <body>
 
-<div id="app">
-
-  <div id="authView">
-    <?!= include('auth'); ?>
-  </div>
-
-  <div id="userView" style="display:none;">
-    <?!= include('user'); ?>
-  </div>
-
-  <div id="adminView" style="display:none;">
-    <?!= include('admin'); ?>
-  </div>
-
+<div id="authView">
+  <?!= include('auth'); ?>
 </div>
 
-<?!= include('app'); ?>
+<div id="userView" style="display:none;">
+  <?!= include('user'); ?>
+</div>
+
+<div id="adminView" style="display:none;">
+  <?!= include('admin'); ?>
+</div>
+
+<script src="app.js"></script>
 
 </body>
 </html>
