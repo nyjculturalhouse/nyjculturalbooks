@@ -1,4 +1,10 @@
 /********************************************************
+ * 문화의집 소소책방 - app.js 최적화 버전
+ ********************************************************/
+
+console.log("app.js loaded");
+
+/********************************************************
  * 설정
  ********************************************************/
 
@@ -6,6 +12,7 @@ const API_BASE =
 "https://script.google.com/macros/s/AKfycbxa-cTQvrUdl3AJG7O4Y8fd7rsTnMA7GDeulT0heglX6yO7UJ5PxvFNdCVQ6hJlFnNU/exec";
 
 let currentUser = null;
+let searchTimer = null;
 
 /********************************************************
  * API
@@ -32,22 +39,39 @@ async function api(action, data = {}) {
     }
 
     const response = await fetch(API_BASE, {
+
       method: "POST",
-      body: formData,
-      signal: controller.signal
+
+      headers: {
+        "Content-Type":
+          "application/x-www-form-urlencoded"
+      },
+
+      body: formData.toString(),
+
+      signal: controller.signal,
+      mode: "cors"
     });
 
     clearTimeout(timeout);
 
     if (!response.ok) {
-      throw new Error("네트워크 오류");
+      throw new Error("서버 연결 실패");
     }
 
-    return await response.json();
+    const text = await response.text();
+
+    console.log("API RESPONSE:", text);
+
+    return JSON.parse(text);
 
   } catch (err) {
 
-    showAlert(err.message);
+    console.error(err);
+
+    showAlert(
+      "네트워크 오류 또는 서버 응답 실패"
+    );
 
     return {
       success: false
@@ -65,8 +89,17 @@ async function api(action, data = {}) {
 
 async function login() {
 
-  const id = document.getElementById("loginId").value;
-  const password = document.getElementById("loginPw").value;
+  const id =
+    document.getElementById("loginId").value.trim();
+
+  const password =
+    document.getElementById("loginPw").value.trim();
+
+  if (!id || !password) {
+
+    showAlert("아이디와 비밀번호를 입력하세요.");
+    return;
+  }
 
   const result = await api("login", {
     id,
@@ -74,24 +107,22 @@ async function login() {
   });
 
   if (!result.success) {
-    showAlert(result.message);
+
+    showAlert(result.message || "로그인 실패");
     return;
   }
 
   currentUser = result.user;
 
-  showToast("로그인 성공");
-
   showSection("userSection");
 
   document.getElementById("welcomeText").innerText =
-    currentUser.name + "님";
+    `${currentUser.name}님`;
 
   document.getElementById("profileName").value =
     currentUser.name;
 
-  loadBooks();
-  loadMyRentals();
+  await loadBooks();
 }
 
 /********************************************************
@@ -100,27 +131,42 @@ async function login() {
 
 async function signup() {
 
-  const pw = document.getElementById("signupPw").value;
-  const pw2 = document.getElementById("signupPw2").value;
+  const pw =
+    document.getElementById("signupPw").value;
+
+  const pw2 =
+    document.getElementById("signupPw2").value;
 
   if (pw !== pw2) {
+
     showAlert("비밀번호가 일치하지 않습니다.");
     return;
   }
 
   const result = await api("signup", {
-    id: signupId.value,
-    password: signupPw.value,
-    name: signupName.value,
-    phone: signupPhone.value
+
+    id:
+      document.getElementById("signupId").value,
+
+    password:
+      document.getElementById("signupPw").value,
+
+    name:
+      document.getElementById("signupName").value,
+
+    phone:
+      document.getElementById("signupPhone").value
   });
 
-  if (result.success) {
+  if (!result.success) {
 
-    showToast("회원가입 완료");
-
-    showSection("loginSection");
+    showAlert(result.message);
+    return;
   }
+
+  showToast("회원가입 완료");
+
+  showSection("loginSection");
 }
 
 /********************************************************
@@ -129,10 +175,20 @@ async function signup() {
 
 function checkPasswordMatch() {
 
-  const pw = signupPw.value;
-  const pw2 = signupPw2.value;
+  const pw =
+    document.getElementById("signupPw").value;
 
-  const text = document.getElementById("pwCheckText");
+  const pw2 =
+    document.getElementById("signupPw2").value;
+
+  const text =
+    document.getElementById("pwCheckText");
+
+  if (!pw2) {
+
+    text.innerHTML = "";
+    return;
+  }
 
   if (pw === pw2) {
 
@@ -141,9 +197,26 @@ function checkPasswordMatch() {
 
   } else {
 
-    text.innerHTML = "비밀번호가 일치하지 않습니다.";
+    text.innerHTML =
+      "비밀번호가 일치하지 않습니다.";
+
     text.style.color = "red";
   }
+}
+
+/********************************************************
+ * 검색 debounce
+ ********************************************************/
+
+function debouncedSearch() {
+
+  clearTimeout(searchTimer);
+
+  searchTimer = setTimeout(() => {
+
+    loadBooks();
+
+  }, 400);
 }
 
 /********************************************************
@@ -152,7 +225,9 @@ function checkPasswordMatch() {
 
 async function loadBooks() {
 
-  const keyword = searchInput.value;
+  const keyword =
+    document.getElementById("searchInput")
+    ?.value || "";
 
   const result = await api("getBooks", {
     keyword
@@ -160,36 +235,74 @@ async function loadBooks() {
 
   if (!result.success) return;
 
-  const wrap = document.getElementById("bookList");
+  const wrap =
+    document.getElementById("bookList");
 
   wrap.innerHTML = "";
+
+  if (!result.books || result.books.length === 0) {
+
+    wrap.innerHTML = `
+      <div class="col-12">
+
+        <div class="alert alert-secondary">
+
+          검색 결과가 없습니다.
+
+        </div>
+
+      </div>
+    `;
+
+    return;
+  }
 
   result.books.forEach(book => {
 
     wrap.innerHTML += `
+
       <div class="col-lg-3 col-md-4 col-12 mb-4">
+
         <div class="card book-card h-100">
 
-          <img src="${book.cover}" class="book-cover">
+          <img
+            src="${book.cover || 'https://placehold.co/300x450?text=No+Image'}"
+            class="book-cover"
+            loading="lazy"
+          >
 
-          <div class="card-body">
+          <div class="card-body d-flex flex-column">
 
-            <h5>${book.title}</h5>
+            <h5 class="mb-2">
+              ${book.title || '-'}
+            </h5>
 
-            <p>${book.author}</p>
+            <p class="text-muted mb-2">
+              ${book.author || '-'}
+            </p>
 
-            <span class="badge ${
-              book.status === "대여 가능"
-              ? "bg-success"
-              : "bg-danger"
-            }">
-              ${book.status}
-            </span>
+            <div class="mb-3">
+
+              <span class="badge ${
+                book.status === "대여 가능"
+                ? "bg-success"
+                : "bg-danger"
+              }">
+
+                ${book.status}
+
+              </span>
+
+            </div>
 
             <button
-              class="btn btn-main w-100 mt-3"
+              class="btn btn-main mt-auto"
               onclick="rentBook('${book.isbn}')"
-              ${book.status !== "대여 가능" ? "disabled" : ""}
+              ${
+                book.status !== "대여 가능"
+                ? "disabled"
+                : ""
+              }
             >
               대여하기
             </button>
@@ -197,6 +310,7 @@ async function loadBooks() {
           </div>
 
         </div>
+
       </div>
     `;
   });
@@ -213,13 +327,26 @@ async function rentBook(isbn) {
     userId: currentUser.id
   });
 
-  if (result.success) {
+  if (!result.success) {
 
-    showToast("대여 완료");
-
-    loadBooks();
-    loadMyRentals();
+    showAlert(result.message);
+    return;
   }
+
+  showToast("대여 완료");
+
+  await loadBooks();
+}
+
+/********************************************************
+ * 내 대여 탭
+ ********************************************************/
+
+async function openRentalsTab() {
+
+  showUserTab("rentalsTab");
+
+  await loadMyRentals();
 }
 
 /********************************************************
@@ -228,38 +355,70 @@ async function rentBook(isbn) {
 
 async function loadMyRentals() {
 
-  showUserTab("rentalsTab");
-
   const result = await api("getMyRentals", {
     userId: currentUser.id
   });
 
   if (!result.success) return;
 
-  const wrap = document.getElementById("rentalList");
+  const wrap =
+    document.getElementById("rentalList");
 
   wrap.innerHTML = "";
 
-  document.getElementById("rentalCountBadge").innerText =
-    `대여 ${result.rentals.length}권`;
+  const rentals = result.rentals || [];
 
-  result.rentals.forEach(item => {
+  document.getElementById(
+    "rentalCountBadge"
+  ).innerText =
+    `대여 ${rentals.length}권`;
+
+  if (rentals.length === 0) {
+
+    wrap.innerHTML = `
+      <div class="col-12">
+
+        <div class="alert alert-secondary">
+
+          현재 대여중인 도서가 없습니다.
+
+        </div>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  rentals.forEach(item => {
 
     wrap.innerHTML += `
+
       <div class="col-md-4 mb-4">
 
-        <div class="card book-card">
+        <div class="card book-card h-100">
 
-          <img src="${item.cover}" class="book-cover">
+          <img
+            src="${item.cover}"
+            class="book-cover"
+            loading="lazy"
+          >
 
-          <div class="card-body">
+          <div class="card-body d-flex flex-column">
 
-            <h5>${item.title}</h5>
+            <h5>
+              ${item.title}
+            </h5>
 
-            <p>반납기한: ${formatDate(item.dueDate)}</p>
+            <p class="text-muted">
+
+              반납기한:
+              ${formatDate(item.dueDate)}
+
+            </p>
 
             <button
-              class="btn btn-outline-danger w-100"
+              class="btn btn-outline-danger mt-auto"
               onclick="returnBook('${item.rentalId}')"
             >
               반납하기
@@ -284,13 +443,16 @@ async function returnBook(rentalId) {
     rentalId
   });
 
-  if (result.success) {
+  if (!result.success) {
 
-    showToast("반납 완료");
-
-    loadMyRentals();
-    loadBooks();
+    showAlert(result.message);
+    return;
   }
+
+  showToast("반납 완료");
+
+  await loadMyRentals();
+  await loadBooks();
 }
 
 /********************************************************
@@ -300,15 +462,25 @@ async function returnBook(rentalId) {
 async function updateProfile() {
 
   const result = await api("updateProfile", {
+
     id: currentUser.id,
-    name: profileName.value,
-    password: profilePw.value
+
+    name:
+      document.getElementById("profileName")
+      .value,
+
+    password:
+      document.getElementById("profilePw")
+      .value
   });
 
-  if (result.success) {
+  if (!result.success) {
 
-    showToast("수정 완료");
+    showAlert(result.message);
+    return;
   }
+
+  showToast("수정 완료");
 }
 
 /********************************************************
@@ -317,18 +489,23 @@ async function updateProfile() {
 
 async function deleteUser() {
 
-  if (!confirm("정말 탈퇴하시겠습니까?")) return;
+  if (!confirm("정말 탈퇴하시겠습니까?")) {
+    return;
+  }
 
   const result = await api("deleteUser", {
     id: currentUser.id
   });
 
-  if (result.success) {
+  if (!result.success) {
 
-    showToast("회원 탈퇴 완료");
-
-    logout();
+    showAlert(result.message);
+    return;
   }
+
+  showToast("회원 탈퇴 완료");
+
+  logout();
 }
 
 /********************************************************
@@ -343,52 +520,84 @@ function logout() {
 }
 
 /********************************************************
- * UI
+ * 섹션 전환
  ********************************************************/
 
 function showSection(id) {
 
-  document.querySelectorAll("section").forEach(section => {
-    section.classList.add("d-none");
-  });
+  document.querySelectorAll("section")
+    .forEach(section => {
 
-  document.getElementById(id).classList.remove("d-none");
+      section.classList.add("d-none");
+    });
+
+  document.getElementById(id)
+    .classList.remove("d-none");
 }
+
+/********************************************************
+ * 사용자 탭
+ ********************************************************/
 
 function showUserTab(id) {
 
-  ["booksTab", "rentalsTab", "profileTab"]
-  .forEach(tab => {
-    document.getElementById(tab).classList.add("d-none");
+  [
+    "booksTab",
+    "rentalsTab",
+    "profileTab"
+  ].forEach(tab => {
+
+    document.getElementById(tab)
+      .classList.add("d-none");
   });
 
-  document.getElementById(id).classList.remove("d-none");
+  document.getElementById(id)
+    .classList.remove("d-none");
 }
+
+/********************************************************
+ * 로딩
+ ********************************************************/
 
 function showLoading(show) {
 
-  const el = document.getElementById("loadingOverlay");
+  const el =
+    document.getElementById("loadingOverlay");
 
   if (show) {
+
     el.classList.remove("d-none");
+
   } else {
+
     el.classList.add("d-none");
   }
 }
 
+/********************************************************
+ * Toast
+ ********************************************************/
+
 function showToast(message) {
 
-  document.getElementById("toastBody").innerText = message;
+  document.getElementById("toastBody")
+    .innerText = message;
 
-  const toast =
-    new bootstrap.Toast(document.getElementById("mainToast"));
+  const toast = new bootstrap.Toast(
+    document.getElementById("mainToast")
+  );
 
   toast.show();
 }
 
+/********************************************************
+ * Alert
+ ********************************************************/
+
 function showAlert(message) {
 
-  const div = document.createElement("div");
+  const div =
+    document.createElement("div");
 
   div.className =
     "alert alert-danger position-fixed top-0 start-50 translate-middle-x mt-3";
@@ -400,11 +609,20 @@ function showAlert(message) {
   document.body.appendChild(div);
 
   setTimeout(() => {
+
     div.remove();
+
   }, 3000);
 }
 
+/********************************************************
+ * 날짜 포맷
+ ********************************************************/
+
 function formatDate(date) {
 
-  return new Date(date).toLocaleDateString("ko-KR");
+  if (!date) return "-";
+
+  return new Date(date)
+    .toLocaleDateString("ko-KR");
 }
