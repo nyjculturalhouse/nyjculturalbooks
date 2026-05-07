@@ -4,18 +4,32 @@
   <base target="_top">
   <?!= include('style'); ?>
 </head>
+
 <body>
 
-<div id="authView">
-  <?!= include('auth'); ?>
-</div>
+<div class="layout">
 
-<div id="userView" style="display:none;">
-  <?!= include('user'); ?>
-</div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">📚 Library OS</div>
 
-<div id="adminView" style="display:none;">
-  <?!= include('admin'); ?>
+    <div class="menu">
+      <button onclick="view('books')">📖 도서 관리</button>
+      <button onclick="view('rentals')">📦 대여 현황</button>
+      <button onclick="view('users')">👤 회원 관리</button>
+      <button onclick="logout()">🚪 로그아웃</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="topbar" id="title">대시보드</div>
+
+    <div id="content"></div>
+
+  </div>
+
 </div>
 
 <script src="app.js"></script>
