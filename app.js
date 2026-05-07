@@ -1,4 +1,3 @@
-// ⚠️ 여기에 본인의 GAS 배포 URL을 반드시 넣으세요!
 const API_URL = "https://script.google.com/macros/s/AKfycbw5vspw7XRViRduRAEPJaY7uHpRGCaLwB8xRylGmkcBfZGGGgrXtpIqNHJ4zI4xiJfp/exec";
 
 window.app = {
