@@ -14,82 +14,80 @@
         }
 
         body { 
-            margin: 0; font-family: 'Segoe UI', 'Malgun Gothic', sans-serif; 
+            margin: 0; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
             background: var(--white); color: var(--text);
             line-height: 1.5; overflow-x: hidden;
         }
 
-        /* Top Navigation Bar */
+        /* 상단 바 (네이비) */
         .main-header { 
             background: var(--navy); color: var(--white);
-            padding: 15px 30px; display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 3px solid var(--green);
+            padding: 20px 30px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 4px solid var(--green);
         }
-        .main-header h1 { font-size: 18px; margin: 0; font-weight: 400; opacity: 0.8; }
-        .sub-title { font-size: 22px; margin: 0; font-weight: 700; }
+        .main-header h1 { font-size: 20px; margin: 0; font-weight: normal; opacity: 0.9; }
+        .sub-title { font-size: 28px; margin: 0; font-weight: bold; }
 
-        /* Main Dashboard Area */
-        #main-menu-view { padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+        /* 메인 메뉴 영역 */
+        #main-menu-view { padding: 50px 20px; max-width: 1200px; margin: 0 auto; }
         #main-menu { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; 
         }
         
         .menu-btn {
-            padding: 50px 20px; border-radius: 4px;
-            font-size: 24px; font-weight: 600; border: 2px solid var(--navy); 
+            padding: 60px 20px; border-radius: 8px;
+            font-size: 32px; font-weight: bold; border: 3px solid var(--navy); 
             color: var(--navy); background: var(--white); cursor: pointer;
-            transition: all 0.2s; text-transform: uppercase;
+            transition: all 0.2s;
         }
         .menu-btn:hover { background: var(--navy); color: var(--white); }
         
-        /* Emerald Search Button Style */
+        /* 검색 버튼 (초록색) */
         .btn-search-main { background: var(--green) !important; color: white !important; border: none !important; }
-        .btn-search-main:hover { opacity: 0.9; }
 
-        /* Content Card (ERP Panel Style) */
+        /* 안내 카드 */
         .card { 
-            background: var(--white); margin: 20px auto; padding: 30px; 
-            border: 1px solid var(--gray); border-top: 4px solid var(--navy);
+            background: var(--white); margin: 20px auto; padding: 40px; 
+            border: 1px solid var(--gray); border-top: 6px solid var(--navy);
             max-width: 800px; text-align: left;
         }
         
-        h2 { font-size: 28px; color: var(--navy); margin-bottom: 25px; border-bottom: 1px solid var(--gray); padding-bottom: 10px; }
+        h2 { font-size: 32px; color: var(--navy); margin-bottom: 30px; border-bottom: 2px solid var(--gray); padding-bottom: 15px; text-align: center; }
         
         input { 
-            width: 100%; padding: 15px; margin: 10px 0; border: 1px solid var(--gray); 
-            border-radius: 0; font-size: 18px; box-sizing: border-box; outline: none;
+            width: 100%; padding: 20px; margin: 15px 0; border: 2px solid var(--gray); 
+            border-radius: 4px; font-size: 24px; box-sizing: border-box; outline: none;
         }
         input:focus { border-color: var(--green); }
         
         .submit-btn { 
-            width: 100%; padding: 18px; font-size: 20px; 
+            width: 100%; padding: 22px; font-size: 26px; 
             font-weight: bold; border: none; color: white; cursor: pointer; 
-            background: var(--navy); border-radius: 2px;
+            background: var(--navy); border-radius: 4px;
         }
         .submit-btn.green { background: var(--green); }
 
-        /* Book List Table (Grid to ERP List) */
-        .book-grid { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--gray); margin-top: 20px; }
+        /* 도서 목록 (표 형식) */
+        .book-grid { display: flex; flex-direction: column; border: 1px solid var(--gray); margin-top: 25px; }
         .book-item { 
-            display: grid; grid-template-columns: 80px 1fr 150px; align-items: center;
-            padding: 15px 20px; border-bottom: 1px solid var(--gray); background: #fff;
-            text-align: left;
+            display: grid; grid-template-columns: 100px 1fr 180px; align-items: center;
+            padding: 20px; border-bottom: 1px solid var(--gray); background: #fff;
         }
         .book-item:nth-child(even) { background: #f9f9f9; }
-        .book-cover { width: 50px; height: 70px; object-fit: cover; border: 1px solid var(--gray); }
-        .book-info-wrap { padding-left: 20px; }
-        .book-title { font-size: 18px; font-weight: bold; color: var(--navy); }
-        .book-author { font-size: 14px; color: #666; }
+        .book-cover { width: 70px; height: 100px; object-fit: cover; border: 1px solid var(--gray); }
+        .book-info-wrap { padding-left: 25px; text-align: left; }
+        .book-title { font-size: 24px; font-weight: bold; color: var(--navy); margin-bottom: 5px; }
+        .book-author { font-size: 18px; color: #666; }
 
-        /* Bottom Home Button */
+        /* 처음으로 버튼 */
         .home-btn { 
-            margin: 30px 0; padding: 12px 30px; background: var(--navy); 
-            color: white; border: none; font-size: 16px; cursor: pointer; border-radius: 2px;
+            margin: 40px 0; padding: 15px 50px; background: #555; 
+            color: white; border: none; font-size: 20px; cursor: pointer; border-radius: 4px;
         }
         .hidden { display: none !important; }
 
-        /* ERP Label Style */
-        .label-erp { font-size: 13px; font-weight: 700; color: var(--navy); text-transform: uppercase; }
+        /* 항목 이름 */
+        .label-text { font-size: 18px; font-weight: bold; color: var(--navy); margin-top: 10px; display: block; }
     </style>
 </head>
 <body>
@@ -100,14 +98,14 @@
                 <h1>남양주시 문화의집</h1>
                 <div class="sub-title">소소책방 도서관리 시스템</div>
             </div>
-            <div style="font-size: 12px; opacity: 0.7;">v1.0 Standard ERP Mode</div>
+            <div style="font-size: 14px; font-weight: bold;">[ 정식 운영 모드 ]</div>
         </header>
 
         <div id="main-menu-view">
             <div id="main-menu">
-                <button id="go-search" class="menu-btn btn-search-main">도서 검색</button>
+                <button id="go-search" class="menu-btn btn-search-main">책 찾기</button>
                 <button id="go-join" class="menu-btn">회원 등록</button>
-                <button id="go-rent" class="menu-btn">대여/반납 관리</button>
+                <button id="go-rent" class="menu-btn">대여와 반납</button>
             </div>
         </div>
 
@@ -124,24 +122,24 @@
             function showView(html) {
                 menuView.classList.add('hidden');
                 contentView.innerHTML = `<div style="max-width:1000px; margin:0 auto; padding:20px;">` + html + 
-                                       `<center><button class="home-btn" id="btn-home">메인 화면으로</button></center></div>`;
+                                       `<center><button class="home-btn" id="btn-home">첫 화면으로 돌아가기</button></center></div>`;
                 contentView.classList.remove('hidden');
                 document.getElementById('btn-home').addEventListener('click', () => location.reload());
             }
 
-            // [도서 검색] ERP 스타일 수정
+            // 1. 도서 검색
             document.getElementById('go-search').addEventListener('click', () => {
                 showView(`
-                    <h2>도서 데이터베이스 검색</h2>
+                    <h2>도서 자료 검색</h2>
                     <div class="card">
-                        <div class="label-erp">Search Book ID / Barcode / Title</div>
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" id="search-input" placeholder="검색어를 입력하세요...">
-                            <button id="btn-search-execute" class="submit-btn green" style="width:150px; margin-top:10px;">Search</button>
+                        <span class="label-text">찾으시는 책 제목이나 저자 이름을 입력하세요</span>
+                        <div style="display:flex; gap:10px; align-items: center;">
+                            <input type="text" id="search-input" placeholder="예: 정지아 또는 아버지">
+                            <button id="btn-search-execute" class="submit-btn green" style="width:180px; height:70px; margin-top:0;">검색</button>
                         </div>
                     </div>
                     <div id="book-list" class="book-grid">
-                        <div style="padding: 40px; text-align:center; color:#999;">시스템 조회 대기 중...</div>
+                        <div style="padding: 50px; text-align:center; color:#999; font-size:20px;">검색어를 입력하고 [검색] 버튼을 눌러주세요.</div>
                     </div>
                 `);
 
@@ -151,9 +149,9 @@
 
                 const performSearch = async () => {
                     const query = searchInput.value.trim().toLowerCase();
-                    if (!query) return alert("검색어를 입력하세요.");
+                    if (!query) return alert("검색어를 입력해 주세요.");
 
-                    bookList.innerHTML = `<div style="padding:40px; text-align:center;">데이터 로드 중...</div>`;
+                    bookList.innerHTML = `<div style="padding:50px; text-align:center; font-size:20px;">서고에서 자료를 찾는 중입니다...</div>`;
 
                     try {
                         const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getBooks' }) });
@@ -163,57 +161,56 @@
                         );
 
                         if (filtered.length === 0) {
-                            bookList.innerHTML = `<div style="padding:40px; text-align:center;">일치하는 데이터가 없습니다.</div>`;
+                            bookList.innerHTML = `<div style="padding:50px; text-align:center; font-size:20px;">일치하는 정보가 없습니다.</div>`;
                             return;
                         }
 
                         bookList.innerHTML = filtered.map(b => `
                             <div class="book-item">
-                                <img src="${b.표지URL || 'https://via.placeholder.com/50x70'}" class="book-cover">
+                                <img src="${b.표지URL || 'https://via.placeholder.com/70x100?text=책표지'}" class="book-cover">
                                 <div class="book-info-wrap">
                                     <div class="book-title">${b.제목}</div>
                                     <div class="book-author">${b.저자} | ${b.출판사}</div>
                                 </div>
-                                <div style="text-align:right; font-weight:bold; color:${b.대여상태 === '대여가능' ? '#2ECC71' : '#E74C3C'}">
-                                    [${b.대여상태}]
+                                <div style="text-align:right; font-size:20px; font-weight:bold; color:${b.대여상태 === '대여가능' ? '#2ECC71' : '#E74C3C'}">
+                                    ${b.대여상태}
                                 </div>
                             </div>
                         `).join('');
                     } catch (e) {
-                        bookList.innerHTML = `<div style="padding:40px; text-align:center;">오류 발생</div>`;
+                        bookList.innerHTML = `<div style="padding:50px; text-align:center;">자료를 불러오는 중에 연결이 끊겼습니다.</div>`;
                     }
                 };
 
                 btnSearch.addEventListener('click', performSearch);
             });
 
-            // 회원가입
+            // 2. 회원 등록
             document.getElementById('go-join').addEventListener('click', () => {
                 showView(`
                     <h2>신규 회원 등록</h2>
                     <div class="card">
-                        <div class="label-erp">Full Name</div>
-                        <input type="text" id="j_name">
-                        <div class="label-erp">Phone Number</div>
+                        <span class="label-text">성함</span>
+                        <input type="text" id="j_name" placeholder="예: 홍길동">
+                        <span class="label-text">전화번호</span>
                         <input type="text" id="j_phone" placeholder="010-0000-0000">
-                        <div class="label-erp">System PIN (4 Digits)</div>
-                        <input type="password" id="j_pw" maxlength="4">
-                        <button id="btn-submit-join" class="submit-btn green" style="margin-top:20px;">REGISTER MEMBER</button>
+                        <span class="label-text">비밀번호 (숫자 4자리)</span>
+                        <input type="password" id="j_pw" maxlength="4" placeholder="0000">
+                        <button id="btn-submit-join" class="submit-btn green" style="margin-top:20px;">회원 가입 완료</button>
                     </div>
                 `);
-                // ... (이후 로직은 기존과 동일)
             });
 
-            // 대여/반납
+            // 3. 대여/반납
             document.getElementById('go-rent').addEventListener('click', () => {
                 showView(`
-                    <h2>사용자 인증</h2>
+                    <h2>본인 확인 (로그인)</h2>
                     <div class="card">
-                        <div class="label-erp">Member ID</div>
-                        <input type="text" id="l_id">
-                        <div class="label-erp">Access PIN</div>
-                        <input type="password" id="l_pw" maxlength="4">
-                        <button id="btn-submit-login" class="submit-btn green" style="margin-top:20px;">SYSTEM LOGIN</button>
+                        <span class="label-text">회원 번호</span>
+                        <input type="text" id="l_id" placeholder="회원번호를 입력하세요">
+                        <span class="label-text">비밀번호</span>
+                        <input type="password" id="l_pw" maxlength="4" placeholder="숫자 4자리">
+                        <button id="btn-submit-login" class="submit-btn green" style="margin-top:20px;">로그인 하기</button>
                     </div>
                 `);
             });
