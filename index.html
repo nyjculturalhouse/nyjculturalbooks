@@ -11,6 +11,7 @@
             --white: #FFFFFF;
             --gray: #E5E7EB;
             --text: #2C3E50;
+            --red: #E74C3C;
         }
 
         body { 
@@ -19,7 +20,7 @@
             line-height: 1.5; overflow-x: hidden;
         }
 
-        /* 상단 바 (네이비) */
+        /* 상단 바 */
         .main-header { 
             background: var(--navy); color: var(--white);
             padding: 20px 30px; display: flex; align-items: center; justify-content: space-between;
@@ -28,7 +29,7 @@
         .main-header h1 { font-size: 20px; margin: 0; font-weight: normal; opacity: 0.9; }
         .sub-title { font-size: 28px; margin: 0; font-weight: bold; }
 
-        /* 메인 메뉴 영역 */
+        /* 메인 메뉴 */
         #main-menu-view { padding: 50px 20px; max-width: 1200px; margin: 0 auto; }
         #main-menu { 
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; 
@@ -41,8 +42,6 @@
             transition: all 0.2s;
         }
         .menu-btn:hover { background: var(--navy); color: var(--white); }
-        
-        /* 검색 버튼 (초록색) */
         .btn-search-main { background: var(--green) !important; color: white !important; border: none !important; }
 
         /* 안내 카드 */
@@ -67,7 +66,7 @@
         }
         .submit-btn.green { background: var(--green); }
 
-        /* 도서 목록 (표 형식) */
+        /* 목록 스타일 */
         .book-grid { display: flex; flex-direction: column; border: 1px solid var(--gray); margin-top: 25px; }
         .book-item { 
             display: grid; grid-template-columns: 100px 1fr 180px; align-items: center;
@@ -79,15 +78,16 @@
         .book-title { font-size: 24px; font-weight: bold; color: var(--navy); margin-bottom: 5px; }
         .book-author { font-size: 18px; color: #666; }
 
-        /* 처음으로 버튼 */
         .home-btn { 
             margin: 40px 0; padding: 15px 50px; background: #555; 
             color: white; border: none; font-size: 20px; cursor: pointer; border-radius: 4px;
         }
         .hidden { display: none !important; }
-
-        /* 항목 이름 */
         .label-text { font-size: 18px; font-weight: bold; color: var(--navy); margin-top: 10px; display: block; }
+        
+        /* 마이페이지 통계 박스 */
+        .stats-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .stats-box { border: 2px solid var(--navy); padding: 10px 20px; font-size: 18px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -114,6 +114,7 @@
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbw5vspw7XRViRduRAEPJaY7uHpRGCaLwB8xRylGmkcBfZGGGgrXtpIqNHJ4zI4xiJfp/exec";
+        let loggedInUser = null; // 로그인한 사용자 정보 저장용
 
         document.addEventListener('DOMContentLoaded', () => {
             const menuView = document.getElementById('main-menu-view');
@@ -150,7 +151,6 @@
                 const performSearch = async () => {
                     const query = searchInput.value.trim().toLowerCase();
                     if (!query) return alert("검색어를 입력해 주세요.");
-
                     bookList.innerHTML = `<div style="padding:50px; text-align:center; font-size:20px;">서고에서 자료를 찾는 중입니다...</div>`;
 
                     try {
@@ -178,10 +178,9 @@
                             </div>
                         `).join('');
                     } catch (e) {
-                        bookList.innerHTML = `<div style="padding:50px; text-align:center;">자료를 불러오는 중에 연결이 끊겼습니다.</div>`;
+                        bookList.innerHTML = `<div style="padding:50px; text-align:center;">연결이 원활하지 않습니다.</div>`;
                     }
                 };
-
                 btnSearch.addEventListener('click', performSearch);
             });
 
@@ -201,7 +200,7 @@
                 `);
             });
 
-            // 3. 대여/반납
+            // 3. 대여/반납 (로그인 후 마이페이지로 이동)
             document.getElementById('go-rent').addEventListener('click', () => {
                 showView(`
                     <h2>본인 확인 (로그인)</h2>
@@ -213,7 +212,121 @@
                         <button id="btn-submit-login" class="submit-btn green" style="margin-top:20px;">로그인 하기</button>
                     </div>
                 `);
+
+                document.getElementById('btn-submit-login').addEventListener('click', async () => {
+                    const id = document.getElementById('l_id').value;
+                    const pw = document.getElementById('l_pw').value;
+                    if(!id || !pw) return alert("번호와 비밀번호를 모두 입력하세요.");
+
+                    try {
+                        const res = await fetch(API_URL, { 
+                            method: 'POST', 
+                            body: JSON.stringify({ action: 'login', id: id, pw: pw }) 
+                        });
+                        const result = await res.json();
+                        
+                        if(result.success) {
+                            loggedInUser = { id: id, name: result.name };
+                            alert(result.name + "님, 확인되었습니다.");
+                            showMyPage(); // 로그인 성공 시 마이페이지 호출
+                        } else {
+                            alert(result.message);
+                        }
+                    } catch (e) {
+                        alert("로그인 중 오류가 발생했습니다.");
+                    }
+                });
             });
+
+            // 4. 마이페이지 화면 함수
+            async function showMyPage() {
+                showView(`
+                    <h2>나의 독서 기록부</h2>
+                    <div class="card" style="border-top: 6px solid var(--navy); margin-bottom:15px;">
+                        <span class="label-text">회원 정보</span>
+                        <div style="font-size:28px; margin-top:5px;"><b>${loggedInUser.name}</b> 님</div>
+                        <div style="font-size:16px; color:#666;">회원번호 : ${loggedInUser.id}</div>
+                    </div>
+
+                    <span class="label-text" style="max-width:800px; margin: 30px auto 5px;">[ 현재 대여 중인 도서 ]</span>
+                    <div id="section-current" class="book-grid">
+                        <div style="padding:40px; text-align:center; color:#999;">기록을 조회하고 있습니다.</div>
+                    </div>
+
+                    <span class="label-text" style="max-width:800px; margin: 40px auto 5px;">[ 나의 독서 취향 (분야별) ]</span>
+                    <div id="section-stats" class="card" style="padding:25px; border-top:1px solid var(--gray);">
+                        <div class="stats-container" id="stats-list">조회 중...</div>
+                    </div>
+
+                    <span class="label-text" style="max-width:800px; margin: 40px auto 5px;">[ 그동안 읽으신 도서 목록 ]</span>
+                    <div id="section-history" class="book-grid" style="background:#f9f9f9;">
+                        <div style="padding:40px; text-align:center; color:#999;">기록이 없습니다.</div>
+                    </div>
+                `);
+
+                try {
+                    const res = await fetch(API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'getMyRentals', id: loggedInUser.id })
+                    });
+                    const result = await res.json();
+                    const data = result.data;
+
+                    // 현재 대여 목록 및 연체 체크
+                    const currentDiv = document.getElementById('section-current');
+                    if (!data.current || data.current.length === 0) {
+                        currentDiv.innerHTML = `<div style="padding:40px; text-align:center; border:1px solid var(--gray); background:#fff;">현재 빌리신 책이 없습니다.</div>`;
+                    } else {
+                        currentDiv.innerHTML = data.current.map(r => {
+                            const dueDate = new Date(r.반납예정일);
+                            const today = new Date(data.serverDate);
+                            const isOverdue = dueDate < today;
+                            return `
+                                <div class="book-item" style="${isOverdue ? 'border:3px solid var(--red); background:#FFF5F5;' : 'border:1px solid var(--navy);'}">
+                                    <div style="font-weight:bold; color:#555;">대여상태</div>
+                                    <div class="book-info-wrap">
+                                        <div class="book-title" style="font-size:22px;">${r.도서명}</div>
+                                        <div class="book-author" style="color:${isOverdue ? 'var(--red)' : '#444'}; font-weight:bold; margin-top:5px;">
+                                            ${isOverdue ? '반납 기한이 지났습니다' : '반납 예정일 :'} ${dueDate.toLocaleDateString()}
+                                        </div>
+                                    </div>
+                                    <div style="text-align:right; font-weight:bold; color:${isOverdue ? 'var(--red)' : 'var(--green)'}">
+                                        ${isOverdue ? '미반납' : '대여 중'}
+                                    </div>
+                                </div>`;
+                        }).join('');
+                    }
+
+                    // 분야별 통계
+                    const statsList = document.getElementById('stats-list');
+                    const categories = Object.entries(data.stats);
+                    if (categories.length === 0) {
+                        statsList.innerHTML = "기록이 없습니다.";
+                    } else {
+                        statsList.innerHTML = categories.map(([name, count]) => `
+                            <div class="stats-box">${name} : ${count}권</div>
+                        `).join('');
+                    }
+
+                    // 과거 이력
+                    const historyDiv = document.getElementById('section-history');
+                    if (!data.history || data.history.length === 0) {
+                        historyDiv.innerHTML = `<div style="padding:30px; text-align:center; color:#999;">반납 완료된 기록이 없습니다.</div>`;
+                    } else {
+                        historyDiv.innerHTML = data.history.map(r => `
+                            <div class="book-item" style="opacity:0.8;">
+                                <div style="color:#888;">[반납완료]</div>
+                                <div class="book-info-wrap">
+                                    <div class="book-title" style="color:#555; font-size:20px;">${r.도서명}</div>
+                                    <div class="book-author">${r.카테고리 || '일반'}</div>
+                                </div>
+                                <div style="text-align:right; color:#999;">기록보관</div>
+                            </div>`).join('');
+                    }
+                } catch (e) {
+                    alert("정보 조회에 실패했습니다.");
+                }
+            }
         });
     </script>
 </body>
