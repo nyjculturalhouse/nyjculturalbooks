@@ -1,35 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base target="_top">
-  <?!= include('style'); ?>
+  <meta charset="UTF-8">
+  <title>문화의집 소소책방</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="app">
 
-  <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="logo">문화의집 소소책방</div>
+    <h2>📚 Library</h2>
 
-    <div class="nav">
-      <button data-view="books">도서</button>
-      <button data-view="rentals">대여</button>
-      <button data-view="profile">내정보</button>
-    </div>
+    <button onclick="loadBooks()">도서</button>
+    <button onclick="login()">로그인 테스트</button>
   </div>
 
-  <!-- MAIN -->
   <div class="main">
-
     <div id="app"></div>
-
   </div>
 
 </div>
 
-<?!= include('app'); ?>
+<script src="app.js"></script>
 
 </body>
 </html>
