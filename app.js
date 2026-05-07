@@ -1,4 +1,4 @@
-const API_URL = "여기에_앱스스크립트_배포_URL_입력";
+const API_URL = "https://script.google.com/macros/s/AKfycbw5vspw7XRViRduRAEPJaY7uHpRGCaLwB8xRylGmkcBfZGGGgrXtpIqNHJ4zI4xiJfp/exec";
 
 document.addEventListener('DOMContentLoaded', () => {
     // 버튼 연결 (이벤트 리스너)
