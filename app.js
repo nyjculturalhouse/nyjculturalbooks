@@ -1,74 +1,48 @@
-let state = {
-  books: [],
-  user: null
-};
+const API_URL = "https://script.google.com/macros/s/AKfycbw5vspw7XRViRduRAEPJaY7uHpRGCaLwB8xRylGmkcBfZGGGgrXtpIqNHJ4zI4xiJfp/exec";
 
-// =======================
-// 화면 전환
-// =======================
-function view(page) {
-  const content = document.getElementById("content");
+/* =========================
+   BOOKS
+========================= */
+async function loadBooks() {
 
-  if (page === "books") {
-    loadBooks();
-  }
+  const res = await fetch(API_URL + "?action=books");
+  const data = await res.json();
 
-  if (page === "users") {
-    content.innerHTML = `<div class="card">회원 관리 (추가 개발 영역)</div>`;
-  }
+  let html = "";
 
-  if (page === "rentals") {
-    content.innerHTML = `<div class="card">대여 현황 (추가 개발 영역)</div>`;
-  }
+  data.forEach(b => {
+    html += `
+      <div class="card">
+        <b>${b.title}</b><br>
+        <small>${b.author}</small>
+        <div>${b.status}</div>
+      </div>
+    `;
+  });
+
+  document.getElementById("app").innerHTML = html;
 }
 
-// =======================
-// 도서 로드 (카드 UI)
-// =======================
-function loadBooks() {
-  google.script.run.withSuccessHandler(list => {
+/* =========================
+   LOGIN
+========================= */
+async function login() {
 
-    let html = "";
+  const id = prompt("ID");
+  const pw = prompt("PW");
 
-    list.forEach(b => {
-      html += `
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;">
-            <div>
-              <b>${b.title}</b><br>
-              <small>${b.author}</small>
-            </div>
+  const res = await fetch(`${API_URL}?action=login&id=${id}&pw=${pw}`);
+  const data = await res.json();
 
-            <span class="badge">${b.status}</span>
-          </div>
-
-          <div style="margin-top:10px;">
-            <button class="btn" onclick="rent('${b.isbn}','${b.title}')">
-              대여
-            </button>
-          </div>
-        </div>
-      `;
-    });
-
-    document.getElementById("content").innerHTML = html;
-    document.getElementById("title").innerText = "📖 도서 관리";
-
-  }).getBooks();
+  alert(data.success ? "로그인 성공" : "실패");
 }
 
-// =======================
-// 대여
-// =======================
-function rent(isbn, title) {
-  google.script.run.withSuccessHandler(() => {
-    loadBooks();
-  }).rentBook(isbn, "사용자", title);
-}
+/* =========================
+   RENT
+========================= */
+async function rent(isbn, user) {
 
-// =======================
-// 로그아웃
-// =======================
-function logout() {
-  location.reload();
+  await fetch(`${API_URL}?action=rent&isbn=${isbn}&user=${user}`);
+
+  alert("대여 완료");
 }
