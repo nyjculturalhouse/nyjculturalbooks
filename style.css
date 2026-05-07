@@ -1,53 +1,66 @@
-/* 🍏 Apple-inspired Design */
+/* 🍏 Apple-inspired UI */
 :root {
     --bg-color: #f5f5f7;
     --card-bg: #ffffff;
     --primary-blue: #0071e3;
     --text-main: #1d1d1f;
-    --font-large: 22px;
-    --font-title: 48px;
+    --font-large: 24px;   /* 어르신들을 위해 더 키웠습니다 */
+    --font-title: 52px;
 }
 
 body {
     margin: 0; font-family: "Arial", "Helvetica", sans-serif;
     background-color: var(--bg-color); color: var(--text-main);
-    line-height: 1.5;
+    display: flex; flex-direction: column; min-height: 100vh;
 }
 
 .hidden { display: none !important; }
 
-/* Navigation */
+/* 네비게이션 */
 #main-nav {
-    background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
-    border-bottom: 1px solid #d2d2d7; padding: 15px 5%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid #d2d2d7;
+    padding: 20px 5%;
 }
 .nav-content { display: flex; justify-content: space-between; align-items: center; }
-.logo { font-size: 28px; font-weight: bold; color: var(--primary-blue); }
+.logo { font-size: 32px; font-weight: bold; color: var(--primary-blue); }
+.user-info { font-size: var(--font-large); }
 
-/* Main View */
-#view { display: flex; justify-content: center; align-items: center; min-height: 80vh; padding: 20px; }
-
-/* Card & Forms */
-.card {
-    background: var(--card-bg); padding: 50px; border-radius: 30px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 500px;
-    text-align: center;
+/* 중앙 배치 */
+#view { 
+    flex: 1; display: flex; justify-content: center; 
+    align-items: center; padding: 40px; 
 }
 
-h1 { font-size: var(--font-title); margin-bottom: 10px; letter-spacing: -1px; }
-p { font-size: var(--font-large); color: #86868b; margin-bottom: 30px; }
+/* 카드 디자인 */
+.card {
+    background: var(--card-bg); padding: 60px; border-radius: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    width: 100%; max-width: 600px; text-align: center;
+}
 
+h1 { font-size: var(--font-title); margin-bottom: 20px; }
+.subtitle { font-size: var(--font-large); color: #86868b; margin-bottom: 40px; }
+
+/* 입력창 & 버튼 */
 input {
-    width: 100%; padding: 20px; margin: 10px 0; border: 1px solid #d2d2d7;
-    border-radius: 15px; font-size: var(--font-large); box-sizing: border-box;
+    width: 100%; padding: 25px; margin: 15px 0;
+    border: 2px solid #d2d2d7; border-radius: 20px;
+    font-size: var(--font-large); box-sizing: border-box;
 }
 
 button {
-    width: 100%; padding: 20px; margin-top: 20px; background: var(--primary-blue);
-    color: white; border: none; border-radius: 15px; font-size: var(--font-large);
-    font-weight: bold; cursor: pointer; transition: 0.3s;
+    width: 100%; padding: 25px; margin-top: 30px;
+    background: var(--primary-blue); color: white;
+    border: none; border-radius: 20px;
+    font-size: var(--font-large); font-weight: bold;
+    cursor: pointer; transition: 0.3s;
 }
 
-button:hover { opacity: 0.8; }
+button:hover { opacity: 0.8; transform: scale(1.02); }
 
-.btn-logout { width: auto; padding: 10px 20px; font-size: 16px; margin: 0; background: #333; }
+.btn-logout { 
+    width: auto; padding: 10px 25px; font-size: 18px; 
+    margin-left: 15px; background: #333; 
+}
