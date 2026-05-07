@@ -2,24 +2,27 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>문화도서관 - 도서 대출 시스템</title>
-    <?!= include('style'); ?>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문화도서관 3.0</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app">
-        <header id="navbar" class="hidden">
-            <span class="logo">LIBRARY 3.0</span>
-            <div class="user-controls">
-                <span id="user-tag"></span>님 환영합니다
-                <button onclick="app.logout()" class="btn-sm">로그아웃</button>
+    <div id="app-container">
+        <header id="main-nav" class="hidden">
+            <div class="nav-content">
+                <span class="logo">LIBRARY 3.0</span>
+                <div class="user-info">
+                    <span id="user-display"></span>님 
+                    <button onclick="window.app.logout()" class="btn-logout">로그아웃</button>
+                </div>
             </div>
         </header>
 
-        <main id="router-view">
-            <?!= include('auth'); ?>
+        <main id="view">
+            <div class="loading">잠시만 기다려주세요...</div>
         </main>
     </div>
 
-    <?!= include('app'); ?>
+    <script src="app.js"></script>
 </body>
 </html>
