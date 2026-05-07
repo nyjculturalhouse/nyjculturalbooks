@@ -9,7 +9,7 @@ console.log("app.js loaded");
  ********************************************************/
 
 const API_BASE =
-"https://script.google.com/macros/s/AKfycbztPxTTM2LCEdIYJT10IamQ4NeCgVQYDL9Ibj7HTxjrqpGOiGDnwMnfCyjtz0m3Xm7W/exec";
+"https://script.google.com/macros/s/AKfycbxolIDe6kQgi5sUiGKscj0Tmo7Q3kmR-zTlxyg4s1EyYWQUZxq8OtpkonCI8By_0vsL/exec";
 
 let currentUser = null;
 let searchTimer = null;
