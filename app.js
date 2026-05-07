@@ -1,5 +1,5 @@
 // ⚠️ 여기에 본인의 GAS 배포 URL을 넣으세요!
-const API_URL = "https://script.google.com/macros/s/YOUR_GAS_URL/exec";
+const API_URL = "https://script.google.com/macros/library/d/1dK11tQkjFm1VWDMco9LHiX229dl3jbVflYKw0qsd0LPSPeWFQj--w8WY/37";
 
 window.app = {
     user: null,
