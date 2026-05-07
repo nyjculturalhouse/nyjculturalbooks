@@ -1,108 +1,37 @@
-body{
-    background:#FDFBF7;
-    font-family:'Pretendard',sans-serif;
-    color:#333;
+<style>
+body {
+  font-family: Arial;
+  background: #f2f4f6;
 }
 
-.main-title{
-    font-family:'Nanum Myeongjo',serif;
-    color:#5D4037;
-    text-align:center;
-    margin-bottom:30px;
+.card {
+  width: 350px;
+  margin: 80px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.section-title{
-    color:#5D4037;
-    font-weight:700;
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
 }
 
-.auth-card{
-    max-width:420px;
-    background:#fff;
-    padding:40px;
-    border-radius:24px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+button {
+  width: 100%;
+  padding: 10px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  margin-top: 5px;
+  cursor: pointer;
 }
 
-.btn-main{
-    background:#5D4037;
-    color:white;
-    border:none;
+.header {
+  padding: 20px;
+  font-size: 20px;
+  font-weight: bold;
 }
-
-.btn-main:hover{
-    background:#4b342d;
-    color:white;
-}
-
-.book-card{
-    border:none;
-    border-radius:20px;
-    overflow:hidden;
-    box-shadow:0 5px 20px rgba(0,0,0,0.08);
-    transition:0.2s;
-}
-
-.book-card:hover{
-    transform:translateY(-4px);
-}
-
-.book-cover{
-    width:100%;
-    height:300px;
-    object-fit:cover;
-}
-
-.menu-wrap{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:25px;
-}
-
-.sticky-search{
-    position:sticky;
-    top:0;
-    z-index:100;
-    background:#FDFBF7;
-    padding:10px 0;
-    margin-bottom:20px;
-}
-
-.profile-card{
-    max-width:500px;
-    margin:auto;
-    background:#fff;
-    padding:30px;
-    border-radius:20px;
-}
-
-.profile-icon{
-    font-size:70px;
-    text-align:center;
-    margin-bottom:20px;
-}
-
-.loading-overlay{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.5);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-}
-
-@media(max-width:768px){
-
-    .book-cover{
-        height:240px;
-    }
-
-    .auth-card{
-        padding:25px;
-    }
-}
+</style>
