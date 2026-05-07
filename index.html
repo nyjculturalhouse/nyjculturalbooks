@@ -2,41 +2,62 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>스마트 라이브러리 UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소소책방 스마트 시스템</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header class="main-header">
-        <h1>소소책방 도서관리 시스템</h1>
+    <header class="header">
+        <h1>남양주시 문화의집 : 소소책방</h1>
     </header>
 
     <div class="container">
-        <div id="view-main">
+        <div id="view-main" class="menu-grid">
+            <button id="nav-search" class="menu-btn btn-sky">도서 검색</button>
+            <button id="nav-join" class="menu-btn">회원 등록</button>
+            <button id="nav-login" class="menu-btn">대여/반납</button>
+        </div>
+
+        <div id="view-search" class="hidden">
             <div class="card">
-                <h2>환영합니다</h2>
-                <button id="nav-search" class="btn">도서 검색</button>
-                <button id="nav-mypage" class="btn btn-point">마이페이지</button>
+                <h2>도서 자료 검색</h2>
+                <input type="text" id="search-input" placeholder="책 제목이나 저자를 입력하세요">
+                <button id="btn-search-exec" class="submit-btn">검색하기</button>
+                <div id="search-results" style="margin-top:20px;"></div>
+            </div>
+        </div>
+
+        <div id="view-join" class="hidden">
+            <div class="card">
+                <h2>신규 회원 등록</h2>
+                <input type="text" id="j-name" placeholder="성함">
+                <input type="text" id="j-phone" placeholder="전화번호">
+                <input type="password" id="j-pw" placeholder="비밀번호 4자리">
+                <button id="btn-join-exec" class="submit-btn">등록 완료</button>
+            </div>
+        </div>
+
+        <div id="view-login" class="hidden">
+            <div class="card">
+                <h2>본인 확인 (로그인)</h2>
+                <input type="text" id="l-id" placeholder="회원번호">
+                <input type="password" id="l-pw" placeholder="비밀번호">
+                <button id="btn-login-exec" class="submit-btn">로그인</button>
             </div>
         </div>
 
         <div id="view-mypage" class="hidden">
-            <div class="card status-highlight">
-                <h2 id="user-welcome">님, 반갑습니다.</h2>
-                <p>나의 대여 현황 및 독서 통계 리포트입니다. [cite: 12]</p>
-            </div>
-            
-            <div class="card">
-                <h3>장르별 독서 분포 [cite: 33]</h3>
+            <div class="card" style="border-top: 6px solid var(--navy);">
+                <h2 id="user-name">님, 환영합니다!</h2>
                 <div id="stats-area"></div>
             </div>
-
-            <div class="card">
-                <h3>현재 대여 중인 도서 [cite: 31]</h3>
-                <div id="current-rentals"></div>
+            <div class="card" style="margin-top:20px;">
+                <h3>현재 대여 중인 도서</h3>
+                <div id="current-list"></div>
             </div>
-
-            <button id="btn-back-home" class="btn">처음으로</button>
         </div>
+
+        <center><button id="btn-home" class="hidden" style="margin-top:30px; padding:10px 30px; cursor:pointer;">처음으로</button></center>
     </div>
 
     <script src="app.js"></script>
