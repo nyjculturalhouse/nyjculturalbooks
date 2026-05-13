@@ -110,19 +110,29 @@ function renderBooks(books) {
     });
 }
 
-/** 대여 하기: 시트에 기록을 남기는 핵심 API 호출 **/
+/** 대여 하기: 서버의 'rentBook' 액션 호출 **/
 async function rentBook(isbn) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userId = user.userId || user.아이디 || user.id;
-    if (confirm(`도서를 대여하시겠습니까?`)) {
-        // API.post('rentBook', ...)이 구글 시트의 대여 기록 시트에 데이터를 추가합니다.
-        const res = await API.post('rentBook', { userId, isbn });
+
+    // 대여할 도서의 정보를 찾아 제목(title)을 추출합니다.
+    const book = allBooks.find(b => String(b.ISBN || b.isbn) === String(isbn));
+    const title = book ? (book.도서명 || book.제목) : '알 수 없는 도서';
+
+    if (confirm(`[${title}] 도서를 대여하시겠습니까?`)) {
+        // 서버 시트 컬럼 순서에 맞게 userId, isbn, title을 전송합니다.
+        const res = await API.post('rentBook', { 
+            userId: userId, 
+            isbn: isbn,
+            title: title 
+        });
+
         if (res.success) {
             UI.showToast('대여 완료! 시트에 기록되었습니다.');
             loadBooks();
             loadMyRentals();
         } else {
-            UI.showToast(res.message, 'error');
+            UI.showToast(res.message || '대여에 실패했습니다.', 'error');
         }
     }
 }
@@ -139,12 +149,16 @@ async function loadMyRentals() {
     if (res.success && res.data) {
         res.data.forEach(r => {
             const tr = document.createElement('tr');
+            // r.대여ID 또는 r.rentalId 등 서버에서 내려주는 키값을 확인하여 적용
+            const rId = r.대여ID || r.rentalId || r[0]; 
+            const rIsbn = r.ISBN || r.isbn;
+
             tr.innerHTML = `
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${r.도서명 || r.제목}</td>
                 <td>${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
                 <td>${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
                 <td style="text-align: center;">
-                    <button class="btn-sm btn-secondary" onclick="returnBook('${r.대여ID || r.rentalId}', '${r.ISBN || r.isbn}')">반납</button>
+                    <button class="btn-sm btn-secondary" onclick="returnBook('${rId}', '${rIsbn}')">반납</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -152,15 +166,16 @@ async function loadMyRentals() {
     }
 }
 
-/** 반납 하기: 시트의 상태를 업데이트하는 핵심 API 호출 **/
+/** 반납 하기: 서버의 'returnBook' 액션 호출 **/
 async function returnBook(rentalId, isbn) {
     if (confirm('반납하시겠습니까?')) {
-        // API.post('returnBook', ...)이 시트의 해당 대여 기록을 반납 처리합니다.
         const res = await API.post('returnBook', { rentalId, isbn });
         if (res.success) {
             UI.showToast('반납 완료!');
             loadBooks();
             loadMyRentals();
+        } else {
+            UI.showToast(res.message || '반납에 실패했습니다.', 'error');
         }
     }
 }
