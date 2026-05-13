@@ -31,11 +31,24 @@
             <section id="view-rent-book" class="view-section active">
                 <div class="card">
                     <div class="card-header">
-                        <h3>전체 도서 목록</h3>
-                        <div class="search-box">
-                            <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
-                        </div>
-                    </div>
+    <h3>전체 도서 목록</h3>
+    <div class="search-filter-container" style="display: flex; gap: 10px; align-items: center;">
+        <!-- 검색창 -->
+        <div class="search-box" style="flex: 2;">
+            <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
+        </div>
+        
+        <!-- 카테고리 필터 -->
+        <select id="filterCategory" class="filter-select" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ddd; outline: none;">
+            <option value="">전체 카테고리</option>
+        </select>
+
+        <!-- 출판사 필터 -->
+        <select id="filterPublisher" class="filter-select" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ddd; outline: none;">
+            <option value="">전체 출판사</option>
+        </select>
+    </div>
+</div>
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
