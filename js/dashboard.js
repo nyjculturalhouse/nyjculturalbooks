@@ -58,6 +58,17 @@ function setupTabs() {
                     section.classList.add('active');
                 }
             });
+            
+            // 페이지 타이틀 변경 (가독성용)
+            const titleMap = {
+                'view-home': '홈',
+                'view-rent-book': '도서 대여',
+                'view-my-rentals': '대여 정보 조회/반납',
+                'view-my-info': '내 정보'
+            };
+            if(document.getElementById('pageTitle')) {
+                document.getElementById('pageTitle').innerText = titleMap[targetId] || '홈';
+            }
         });
     });
 }
@@ -69,11 +80,9 @@ function updateFilterOptions(books) {
     
     if (!categorySelect || !publisherSelect) return;
 
-    // 초기화
     categorySelect.innerHTML = '<option value="">전체 카테고리</option>';
     publisherSelect.innerHTML = '<option value="">전체 출판사</option>';
 
-    // 중복 제거 후 정렬하여 목록 추출
     const categories = [...new Set(books.map(b => b.카테고리 || b.분류).filter(Boolean))].sort();
     const publishers = [...new Set(books.map(b => b.출판사 || b.publisher).filter(Boolean))].sort();
 
@@ -115,23 +124,30 @@ function applyFilters() {
 }
 
 async function loadBooks() {
-    const res = await API.post('getBooks');
-    const rentalRes = await API.post('getRentalHistory'); // 대여 이력 가져오기
+    try {
+        const res = await API.post('getBooks');
+        // 중요: 인기 도서는 '내 대여'가 아닌 '전체 대여 이력'을 가져와야 합니다.
+        const rentalRes = await API.post('getRentalHistory'); 
 
-    if (res.success) {
-        allBooks = res.data;
-        updateFilterOptions(allBooks);
-        renderBooks(allBooks);
-        
-        // --- 대시보드 데이터 처리 추가 ---
-        renderNewBooks(allBooks);
-        if (rentalRes.success) {
-            renderPopularBooks(allBooks, rentalRes.data);
+        if (res.success) {
+            allBooks = res.data;
+            updateFilterOptions(allBooks);
+            renderBooks(allBooks);
+            renderNewBooks(allBooks);
+            
+            // 인기 도서 렌더링 (전체 이력 데이터가 있을 때만)
+            if (rentalRes.success && rentalRes.data) {
+                renderPopularBooks(allBooks, rentalRes.data);
+            } else {
+                document.getElementById('popularBooksList').innerHTML = '<p class="empty-text">대여 기록이 없습니다.</p>';
+            }
         }
+    } catch (error) {
+        console.error("데이터 로드 중 오류:", error);
     }
 }
 
-// 신간 도서 (시트에 마지막으로 추가된 도서 3권)
+// 신간 도서 렌더링
 function renderNewBooks(books) {
     const list = document.getElementById('newBooksList');
     if(!list) return;
@@ -148,22 +164,51 @@ function renderNewBooks(books) {
     `).join('');
 }
 
-// 인기 도서 렌더링 수정
+// 인기 도서 렌더링 (카운트 로직 복구 및 보완)
 function renderPopularBooks(books, history) {
     const list = document.getElementById('popularBooksList');
     if(!list) return;
-    // ... (카운트 로직 동일)
-    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
-    list.innerHTML = sorted.map((item, i) => `
-        <div class="ranking-item">
-            <div style="display: flex; align-items: center;">
-                <span class="rank-badge">${i+1}</span>
-                <span style="font-weight: 500;">${item[0]}</span>
+    if (!history || history.length === 0) {
+        list.innerHTML = '<p class="empty-text">데이터가 없습니다.</p>';
+        return;
+    }
+
+    // 1. 도서명별 대여 횟수 계산
+    const counts = {};
+    history.forEach(record => {
+        const title = record.도서명 || record.제목 || record[1]; // 시트 구조에 따라 조정
+        if (title) {
+            counts[title] = (counts[title] || 0) + 1;
+        }
+    });
+
+    // 2. 정렬 후 상위 5개 추출
+    const sorted = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+    if (sorted.length === 0) {
+        list.innerHTML = '<p class="empty-text">인기 도서 집계 중...</p>';
+        return;
+    }
+
+    // 3. HTML 출력
+    list.innerHTML = sorted.map((item, i) => {
+        // 전체 도서 목록에서 해당 도서의 저자 정보를 찾아 표시 (선택 사항)
+        const bookInfo = books.find(b => (b.도서명 || b.제목) === item[0]);
+        const author = bookInfo ? bookInfo.저자 : "";
+
+        return `
+            <div class="ranking-item">
+                <div style="display: flex; align-items: center;">
+                    <span class="rank-badge">${i+1}</span>
+                    <span style="font-weight: 500;">${item[0]}</span>
+                </div>
+                <span style="color: var(--danger); font-weight: 600; font-size: 12px;">${item[1]}회 대여</span>
             </div>
-            <span style="color: var(--danger); font-weight: 600; font-size: 12px;">${item[1]}회 대여</span>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function renderBooks(books) {
@@ -177,12 +222,11 @@ function renderBooks(books) {
         const category = b.카테고리 || b.분류 || '-';
         const author = b.저자 || b.작가 || '-';
         const publisher = b.출판사 || b.publisher || '-';
-        const statusText = b.상태 || b.대여상태 || '정보없음';
+        const statusText = String(b.상태 || b.대여상태 || '가능');
         
-        const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
+        const isAvailable = statusText.includes('가능') || statusText.toUpperCase() === 'AVAILABLE';
 
         const tr = document.createElement('tr');
-        // td에 인라인 스타일(width)을 주지 마세요. CSS의 nth-child가 우선순위를 갖게 합니다.
         tr.innerHTML = `
             <td title="${title}">${title}</td>
             <td>${category}</td>
@@ -227,7 +271,7 @@ async function rentBook(isbn) {
 
         if (res.success) {
             UI.showToast('대여 완료!');
-            loadBooks();
+            loadBooks(); // 대시보드와 목록 갱신
             loadMyRentals();
         } else {
             UI.showToast(res.message || '대여 실패', 'error');
@@ -238,6 +282,8 @@ async function rentBook(isbn) {
 /** 내 대여 목록 로드 **/
 async function loadMyRentals() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
+    if(!user) return;
+    
     const userId = user.userId || user.아이디 || user.id;
     const res = await API.post('getMyRentals', { userId });
     
@@ -246,15 +292,12 @@ async function loadMyRentals() {
     tbody.innerHTML = '';
 
     if (res.success && res.data) {
-        // 최신 대여 건이 위로 오도록 역순 정렬
         const sortedData = [...res.data].reverse();
 
         sortedData.forEach(r => {
             const tr = document.createElement('tr');
             const rId = r.대여ID || r.rentalId || r[0]; 
             const rIsbn = r.ISBN || r.isbn;
-            
-            // 반납 여부 판별 로직 강화: 'Y'인 경우에만 반납완료로 간주
             const isReturned = String(r.반납여부 || "").trim().toUpperCase() === 'Y';
 
             tr.innerHTML = `
@@ -269,14 +312,14 @@ async function loadMyRentals() {
                 </td>
             `;
             
-            // 반납된 항목은 행 배경색을 흐리게 하여 구분
             if (isReturned) {
                 tr.style.backgroundColor = '#f8f9fa';
                 tr.style.color = '#adb5bd';
             }
-            
             tbody.appendChild(tr);
         });
+    } else {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#999;">대여 중인 도서가 없습니다.</td></tr>';
     }
 }
 
