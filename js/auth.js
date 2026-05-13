@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res.success) {
                 localStorage.setItem('currentUser', JSON.stringify(res.data));
                 UI.showToast(res.message);
-                window.location.href = res.data.role === 'ADMIN' ? 'admin.html' : 'dashboard.html';
+                window.location.href = res.data.권한 === 'ADMIN' ? 'admin.html' : 'dashboard.html';
             } else {
                 UI.showToast(res.message, 'error');
             }
