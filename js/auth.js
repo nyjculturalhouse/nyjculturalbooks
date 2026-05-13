@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCheckDup = document.getElementById('btnCheckDup');
     let isIdChecked = false;
 
-    // 1. 로그인 처리
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -19,9 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (res.success) {
                     const userData = res.data;
-                    // 이름 표시를 위한 데이터 보강 (이름이 없으면 아이디라도 사용)
                     userData.name = userData['이름'] || userData['아이디'] || '사용자';
-                    
                     localStorage.setItem('currentUser', JSON.stringify(userData));
                     UI.showToast(`${userData.name}님 환영합니다!`);
                     
@@ -37,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. 아이디 중복 체크
     if (btnCheckDup) {
         btnCheckDup.addEventListener('click', async () => {
             const userId = document.getElementById('regUserId').value;
@@ -60,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. 회원가입 처리
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
