@@ -3,58 +3,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.getElementById('signupForm');
     let isIdChecked = false;
 
-    // 로그인
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const userId = document.getElementById('userId').value;
-            const password = document.getElementById('password').value;
+            const 아이디 = document.getElementById('userId').value;
+            const 비밀번호 = document.getElementById('password').value;
             
-            const res = await API.post('login', { userId, password });
+            // 시트 헤더 명칭과 동일한 키값으로 전송
+            const res = await API.post('login', { 아이디, 비밀번호 });
             if (res.success) {
                 localStorage.setItem('currentUser', JSON.stringify(res.data));
                 UI.showToast(res.message);
-                window.location.href = res.data.권한 === 'ADMIN' ? 'admin.html' : 'dashboard.html';
+                setTimeout(() => {
+                    window.location.href = res.data.권한 === 'ADMIN' ? 'admin.html' : 'dashboard.html';
+                }, 1000);
             } else {
                 UI.showToast(res.message, 'error');
             }
         });
     }
 
-    // 아이디 중복 확인
     const btnCheckDup = document.getElementById('btnCheckDup');
     if (btnCheckDup) {
         btnCheckDup.addEventListener('click', async () => {
-            const userId = document.getElementById('regUserId').value;
-            if (!userId) return UI.showToast('아이디를 입력하세요.', 'error');
+            const 아이디 = document.getElementById('regUserId').value;
+            if (!아이디) return UI.showToast('아이디를 입력하세요.', 'error');
             
-            const res = await API.post('checkDuplicateUser', { userId });
+            const res = await API.post('checkDuplicateUser', { 아이디 });
             if (res.success && !res.data.exists) {
                 UI.showToast('사용 가능한 아이디입니다.');
                 isIdChecked = true;
                 document.getElementById('btnSubmitSignup').disabled = false;
             } else {
-                UI.showToast(res.message, 'error');
+                UI.showToast('이미 사용 중인 아이디입니다.', 'error');
                 isIdChecked = false;
                 document.getElementById('btnSubmitSignup').disabled = true;
             }
         });
     }
 
-    // 회원가입
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!isIdChecked) return UI.showToast('아이디 중복확인을 해주세요.', 'error');
             
-            const userId = document.getElementById('regUserId').value;
-            const password = document.getElementById('regPassword').value;
-            const passwordConfirm = document.getElementById('regPasswordConfirm').value;
-            const name = document.getElementById('regName').value;
+            const 아이디 = document.getElementById('regUserId').value;
+            const 비밀번호 = document.getElementById('regPassword').value;
+            const 이름 = document.getElementById('regName').value;
+            const pwConfirm = document.getElementById('regPasswordConfirm').value;
 
-            if (password !== passwordConfirm) return UI.showToast('비밀번호가 일치하지 않습니다.', 'error');
+            if (비밀번호 !== pwConfirm) return UI.showToast('비밀번호가 일치하지 않습니다.', 'error');
 
-            const res = await API.post('signup', { userId, password, name });
+            const res = await API.post('signup', { 아이디, 비밀번호, 이름 });
             if (res.success) {
                 UI.showToast('회원가입 완료! 로그인해주세요.');
                 setTimeout(() => window.location.href = 'index.html', 1500);
