@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 대시보드</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">Library System</div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-target="view-rent-book">도서 대여</a>
+            <a href="#" class="nav-item" data-target="view-my-rentals">대여 정보 조회/반납</a>
+            <a href="#" class="nav-item" data-target="view-my-info">내 정보</a>
+        </nav>
+    </aside>
+    
+    <main class="main-content">
+        <header class="top-header">
+            <h2 id="pageTitle">도서 대여</h2>
+            <div class="user-info">
+                <span id="headerUserName">사용자</span>님
+                <button id="btnLogout" class="btn-outline">로그아웃</button>
+            </div>
+        </header>
+        
+        <div class="content-wrapper">
+            <!-- 도서 대여 뷰 -->
+            <section id="view-rent-book" class="view-section active">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>전체 도서 목록</h3>
+                        <div class="search-box">
+                            <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ISBN</th><th>도서명</th><th>페이지수</th><th>저자</th><th>출판사</th><th>상태</th><th>액션</th>
+                                </tr>
+                            </thead>
+                            <tbody id="booksTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 내 대여 목록 뷰 -->
+            <section id="view-my-rentals" class="view-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>내 대여 목록</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ISBN</th><th>도서명</th><th>대출일</th><th>반납 예정일</th><th>액션</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myRentalsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 내 정보 뷰 -->
+            <section id="view-my-info" class="view-section">
+                <div class="card narrow-card">
+                    <h3>내 정보 수정</h3>
+                    <form id="updateInfoForm">
+                        <div class="form-group">
+                            <label>아이디</label>
+                            <input type="text" id="infoUserId" readonly disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>이름</label>
+                            <input type="text" id="infoName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>새 비밀번호 (변경시 입력)</label>
+                            <input type="password" id="infoPassword">
+                        </div>
+                        <button type="submit" class="btn-primary w-100">정보 수정</button>
+                    </form>
+                    <hr class="spacer">
+                    <button id="btnWithdraw" class="btn-danger w-100">회원 탈퇴</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
