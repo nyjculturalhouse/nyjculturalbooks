@@ -4,16 +4,34 @@ document.addEventListener('DOMContentLoaded', () => {
     let isIdChecked = false;
 
     if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
+    // 회원가입 폼 제출 이벤트
+    if (signupForm) {
+        signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const idValue = document.getElementById('userId').value;
-            const pwValue = document.getElementById('password').value;
+            if (!isIdChecked) return UI.showToast('아이디 중복확인을 해주세요.', 'error');
             
-            // 전송 데이터 키를 시트 헤더와 동일하게 '아이디', '비밀번호'로 설정
-            const res = await API.post('login', { 
-                '아이디': idValue, 
-                '비밀번호': pwValue 
+            const userId = document.getElementById('regUserId').value;
+            const password = document.getElementById('regPassword').value;
+            const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+            const name = document.getElementById('regName').value;
+
+            if (password !== passwordConfirm) return UI.showToast('비밀번호가 일치하지 않습니다.', 'error');
+
+            // 전송 데이터 키를 시트 헤더와 동일하게 '아이디', '비밀번호', '이름'으로 설정
+            const res = await API.post('signup', { 
+                '아이디': userId, 
+                '비밀번호': password, 
+                '이름': name 
             });
+            
+            if (res.success) {
+                UI.showToast('회원가입 완료! 로그인해주세요.');
+                setTimeout(() => window.location.href = 'index.html', 1500);
+            } else {
+                UI.showToast(res.message, 'error');
+            }
+        });
+    }
             
             if (res.success) {
                 const userData = res.data;
