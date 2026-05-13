@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
     });
 
+    // 도서 등록
     document.getElementById('addBookForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = {
@@ -28,6 +29,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (res.success) {
             UI.showToast('도서가 등록되었습니다.');
             document.getElementById('addBookForm').reset();
+            loadAdminBooks();
+        } else {
+            UI.showToast(res.message, 'error');
+        }
+    });
+
+    // 도서 수정
+    document.getElementById('editBookForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            isbn: document.getElementById('editIsbn').value,
+            title: document.getElementById('editTitle').value,
+            category: document.getElementById('editCategory').value,
+            author: document.getElementById('editAuthor').value,
+            publisher: document.getElementById('editPublisher').value
+        };
+        const res = await API.post('updateBook', payload); // 'updateBook' 액션 호출
+        if (res.success) {
+            UI.showToast('도서가 수정되었습니다.');
+            document.getElementById('editBookModal').classList.add('hidden');
             loadAdminBooks();
         } else {
             UI.showToast(res.message, 'error');
@@ -52,18 +73,53 @@ async function loadAdminBooks() {
         const tbody = document.getElementById('adminBooksTableBody');
         tbody.innerHTML = '';
         res.data.forEach(b => {
-            // 변수명 오류 해결: 공백 제거
             const isAvailable = b.상태 === '대여 가능';
-            
             tbody.innerHTML += `<tr>
                 <td>${b.ISBN || '-'}</td>
                 <td>${b.제목 || '-'}</td>
                 <td>${b.저자 || '-'}</td>
-                <td><span class="badge ${isAvailable ? 'status-available' : 'status-rented'}">${b.상태 || '대여 불가'}</span></td>
+                <td><span class="badge ${isAvailable ? 'available' : 'rented'}">${b.상태 || '대여 불가'}</span></td>
                 <td>
                     <button class="btn-sm btn-outline" onclick='openEditModal(${JSON.stringify(b)})'>수정</button>
                     <button class="btn-sm btn-danger" onclick="deleteBook('${b.ISBN}')">삭제</button>
                 </td>
+            </tr>`;
+        });
+    }
+}
+
+function openEditModal(book) {
+    document.getElementById('editIsbn').value = book.ISBN || '';
+    document.getElementById('editTitle').value = book.제목 || '';
+    document.getElementById('editCategory').value = book.카테고리 || '';
+    document.getElementById('editAuthor').value = book.저자 || '';
+    document.getElementById('editPublisher').value = book.출판사 || '';
+    document.getElementById('editBookModal').classList.remove('hidden');
+}
+
+async function deleteBook(isbn) {
+    if (confirm('정말 삭제하시겠습니까?')) {
+        const res = await API.post('deleteBook', { isbn }); // 'deleteBook' 액션 호출
+        if (res.success) {
+            UI.showToast('삭제되었습니다.');
+            loadAdminBooks();
+        } else {
+            UI.showToast(res.message, 'error');
+        }
+    }
+}
+
+async function loadUsers() {
+    const res = await API.post('getUsers');
+    if (res.success) {
+        const tbody = document.getElementById('usersTableBody');
+        tbody.innerHTML = '';
+        res.data.forEach(u => {
+            tbody.innerHTML += `<tr>
+                <td>${u.아이디 || '-'}</td>
+                <td>${u.이름 || '-'}</td>
+                <td>${u.권한 || '-'}</td>
+                <td>${u.생성일 ? new Date(u.생성일).toLocaleDateString() : '-'}</td>
             </tr>`;
         });
     }
@@ -76,8 +132,6 @@ async function loadRentalHistory() {
         tbody.innerHTML = '';
         res.data.forEach(r => {
             const isReturned = String(r.반납여부) === 'true';
-            const statusLabel = isReturned ? '반납완료' : '대여중';
-            
             tbody.innerHTML += `<tr>
                 <td>${r.대여ID || '-'}</td>
                 <td>${r.아이디 || '-'}</td>
@@ -85,10 +139,25 @@ async function loadRentalHistory() {
                 <td>${r.제목 || '-'}</td>
                 <td>${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
                 <td>${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
-                <td><span class="badge ${isReturned ? 'status-available' : 'status-rented'}">${statusLabel}</span></td>
+                <td><span class="badge ${isReturned ? 'available' : 'rented'}">${isReturned ? '반납완료' : '대여중'}</span></td>
             </tr>`;
         });
     }
 }
 
-// ... 기타 loadUsers, loadCurrentRentals 함수 등 기존 로직 유지 ...
+async function loadCurrentRentals() {
+    const res = await API.post('getCurrentRentals');
+    if (res.success) {
+        const tbody = document.getElementById('currentRentalsTableBody');
+        tbody.innerHTML = '';
+        res.data.forEach(r => {
+            tbody.innerHTML += `<tr>
+                <td>${r.대여ID || '-'}</td>
+                <td>${r.아이디 || '-'}</td>
+                <td>${r.제목 || '-'}</td>
+                <td>${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
+                <td>${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
+            </tr>`;
+        });
+    }
+}
