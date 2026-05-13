@@ -92,7 +92,7 @@ function renderBooks(books) {
     tbody.innerHTML = '';
     
     books.forEach(b => {
-        // 시트 헤더 명칭에 따른 유연한 매핑 (핵심 수정 사항)
+        // 데이터는 가져오되 화면에는 그리지 않음
         const isbn = b.ISBN || b.isbn || '-';
         const title = b.도서명 || b.제목 || b.title || '-';
         const category = b.카테고리 || b.분류 || b.category || '-';
@@ -100,18 +100,21 @@ function renderBooks(books) {
         const publisher = b.출판사 || b.publisher || '-';
         const statusText = b.상태 || b.대여상태 || '정보없음';
         
-        // 상태값에 따른 대여 가능 여부 체크
         const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
 
         const tr = document.createElement('tr');
+        // ISBN td를 삭제하고 나머지 항목에 가로 유지를 위한 스타일/클래스 적용
         tr.innerHTML = `
-            <td>${isbn}</td>
-            <td>${title}</td>
-            <td>${category}</td>
-            <td>${author}</td>
-            <td>${publisher}</td>
-            <td><span class="badge ${isAvailable ? 'available' : 'rented'}">${isAvailable ? '대여가능' : '대여중'}</span></td>
-            <td>
+            <td style="white-space: nowrap;">${title}</td>
+            <td style="white-space: nowrap;">${category}</td>
+            <td style="white-space: nowrap;">${author}</td>
+            <td style="white-space: nowrap;">${publisher}</td>
+            <td style="text-align: center;">
+                <span class="badge ${isAvailable ? 'available' : 'rented'}">
+                    ${isAvailable ? '대여가능' : '대여중'}
+                </span>
+            </td>
+            <td style="text-align: center;">
                 <button class="btn-sm ${isAvailable ? 'btn-primary' : 'btn-outline'}" 
                 ${!isAvailable ? 'disabled' : ''} onclick="rentBook('${isbn}')">대여</button>
             </td>
@@ -120,6 +123,35 @@ function renderBooks(books) {
     });
 }
 
+// 내 대여 현황 렌더링 (ISBN 열 제외)
+async function loadMyRentals() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = user.아이디 || user.userId || user.id;
+    
+    const res = await API.post('getMyRentals', { userId: userId });
+    if (res.success) {
+        const tbody = document.getElementById('myRentalsTableBody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        res.data.forEach(r => {
+            const isbn = r.ISBN || r.isbn || '-';
+            const title = r.도서명 || r.제목 || r.title || '-';
+            const rentalId = r.대여ID || r.rentalId;
+            
+            const tr = document.createElement('tr');
+            // ISBN td 삭제
+            tr.innerHTML = `
+                <td style="white-space: nowrap;">${title}</td>
+                <td style="white-space: nowrap;">${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
+                <td style="white-space: nowrap;">${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
+                <td style="text-align: center;">
+                    <button class="btn-sm btn-secondary" onclick="returnBook('${rentalId}', '${isbn}')">반납</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+}
 async function rentBook(isbn) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userId = user.아이디 || user.userId || user.id;
