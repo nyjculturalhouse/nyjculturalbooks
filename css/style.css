@@ -134,8 +134,18 @@ input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91, 124, 
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .table-container { overflow-x: auto; }
 .data-table { width: 100%; border-collapse: collapse; text-align: left; }
-.data-table th, .data-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); }
-.data-table th { background: #f8fafc; font-weight: 600; color: var(--text-light); }
+.data-table th, .data-table td { 
+    padding: 14px 16px; 
+    border-bottom: 1px solid var(--border); 
+    white-space: nowrap;       /* 이 줄을 추가: 텍스트가 가로로만 나오게 함 */
+    vertical-align: middle;    /* 이 줄을 추가: 셀 내용 수직 중앙 정렬 */
+}
+.data-table th { 
+    background: #f8fafc; 
+    font-weight: 600; 
+    color: var(--text-light);
+    white-space: nowrap;       /* 이 줄을 추가: 헤더('카테고리' 등)도 가로 고정 */
+}
 .data-table tbody tr:hover { background: #f8fafc; }
 .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; }
 .spacer { margin: 24px 0; border: 0; border-top: 1px solid var(--border); }
