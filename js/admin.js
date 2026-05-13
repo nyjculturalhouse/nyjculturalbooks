@@ -75,7 +75,6 @@ async function loadUsers() {
         const tbody = document.getElementById('usersTableBody');
         tbody.innerHTML = '';
         res.data.forEach(u => {
-            // 시트 헤더 명칭과 정확히 일치시켜야 함 (아이디, 이름, 권한, 생성일)
             tbody.innerHTML += `<tr>
                 <td>${u.아이디 || '-'}</td>
                 <td>${u.이름 || '-'}</td>
@@ -92,13 +91,18 @@ async function loadAdminBooks() {
         const tbody = document.getElementById('adminBooksTableBody');
         tbody.innerHTML = '';
         res.data.forEach(b => {
-            // 상태 값이 '대여 가능'인지 확인 (변수명 공백 제거 수정)
+            // 변수명에 공백을 제거하여 구문 오류 해결 (is대여 가능 -> isAvailable)
             const isAvailable = b.상태 === '대여 가능';
+            
+            // 상태 텍스트 및 클래스 적용 (대여 가능 / 대여 불가)
+            const statusText = isAvailable ? '대여 가능' : '대여 불가';
+            const badgeClass = isAvailable ? 'status-available' : 'status-rented';
+
             tbody.innerHTML += `<tr>
                 <td>${b.ISBN || '-'}</td>
                 <td>${b.제목 || '-'}</td>
                 <td>${b.저자 || '-'}</td>
-                <td><span class="badge ${isAvailable ? 'available' : 'rented'}">${b.상태 || '대여 불가'}</span></td>
+                <td><span class="badge ${badgeClass}">${statusText}</span></td>
                 <td>
                     <button class="btn-sm btn-outline" onclick='openEditModal(${JSON.stringify(b)})'>수정</button>
                     <button class="btn-sm btn-danger" onclick="deleteBook('${b.ISBN}')">삭제</button>
@@ -108,30 +112,7 @@ async function loadAdminBooks() {
     }
 }
 
-async function loadRentalHistory() {
-    const res = await API.post('getRentalHistory');
-    if (res.success) {
-        const tbody = document.getElementById('historyTableBody');
-        tbody.innerHTML = '';
-        res.data.forEach(r => {
-            // 반납여부가 true(반납완료)인지 확인
-            const isReturned = String(r.반납여부) === 'true';
-            const statusLabel = isReturned ? '반납완료' : '대여중';
-            tbody.innerHTML += `<tr>
-                <td>${r.대여ID || '-'}</td>
-                <td>${r.아이디 || '-'}</td>
-                <td>${r.ISBN || '-'}</td>
-                <td>${r.제목 || '-'}</td>
-                <td>${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
-                <td>${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
-                <td><span class="badge ${isReturned ? 'available' : 'rented'}">${statusLabel}</span></td>
-            </tr>`;
-        });
-    }
-}
-
 function openEditModal(book) {
-    // 시트에서 가져온 한글 필드명을 매칭
     document.getElementById('editIsbn').value = book.ISBN || '';
     document.getElementById('editTitle').value = book.제목 || '';
     document.getElementById('editCategory').value = book.카테고리 || '';
@@ -158,8 +139,14 @@ async function loadRentalHistory() {
         const tbody = document.getElementById('historyTableBody');
         tbody.innerHTML = '';
         res.data.forEach(r => {
-            // 반납여부가 true(반납완료)인지 확인
-            const status = String(r.반납여부) === 'true' ? '반납완료' : '대여중';
+            // 반납여부가 true이면 반납완료, 아니면 대여중
+            const isReturned = String(r.반납여부) === 'true';
+            const status = isReturned ? '반납완료' : '대여중';
+            
+            // 반납 여부에 따른 대여 가능/불가 상태 매칭
+            const availableStatus = isReturned ? '대여 가능' : '대여 불가';
+            const badgeClass = isReturned ? 'status-available' : 'status-rented';
+
             tbody.innerHTML += `<tr>
                 <td>${r.대여ID || '-'}</td>
                 <td>${r.아이디 || '-'}</td>
@@ -167,7 +154,7 @@ async function loadRentalHistory() {
                 <td>${r.제목 || '-'}</td>
                 <td>${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
                 <td>${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
-                <td><span class="badge ${status==='반납완료' ? 'available' : 'rented'}">${status}</span></td>
+                <td><span class="badge ${badgeClass}">${availableStatus}</span></td>
             </tr>`;
         });
     }
