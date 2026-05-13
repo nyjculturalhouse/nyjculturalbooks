@@ -38,10 +38,16 @@
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
-                                <tr>
-                                    <th>ISBN</th><th>도서명</th><th>카테고리</th><th>저자</th><th>출판사</th><th>상태</th><th>대여상태</th>
-                                </tr>
-                            </thead>
+    <tr>
+        <!-- <th>ISBN</th>  <-- 이 줄을 삭제하세요 -->
+        <th>도서명</th>
+        <th>카테고리</th>
+        <th>저자</th>
+        <th>출판사</th>
+        <th>상태</th>
+        <th>대여</th>
+    </tr>
+</thead>
                             <tbody id="booksTableBody"></tbody>
                         </table>
                     </div>
@@ -56,11 +62,16 @@
                     </div>
                     <div class="table-container">
                         <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ISBN</th><th>도서명</th><th>대출일</th><th>반납 예정일</th><th>액션</th>
-                                </tr>
-                            </thead>
+                            <!-- 내 대여 현황 테이블 헤더 수정 -->
+<thead>
+    <tr>
+        <!-- <th>ISBN</th>  <-- 이 줄을 삭제하세요 -->
+        <th>도서명</th>
+        <th>대여일</th>
+        <th>반납예정일</th>
+        <th>관리</th>
+    </tr>
+</thead>
                             <tbody id="myRentalsTableBody"></tbody>
                         </table>
                     </div>
