@@ -13,7 +13,7 @@
     <aside class="sidebar">
         <div class="sidebar-logo">소소책방</div>
         <nav class="sidebar-nav">
-            <!-- JS의 setupTabs 함수가 data-tab 속성을 사용하여 제어함 -->
+            <!-- data-tab 속성을 통해 dashboard.js에서 섹션을 제어합니다 -->
             <a href="#" class="nav-item active" data-tab="view-home">
                 <i class="fas fa-home"></i> 홈
             </a>
@@ -40,25 +40,25 @@
         </header>
         
         <div class="content-wrapper">
-            <!-- 1. 홈 섹션 -->
+            <!-- 1. 홈 섹션: 신간 도서와 인기 순위만 표시 -->
             <section id="view-home" class="view-section active">
                 <div class="summary-grid">
                     <div class="card">
                         <div class="card-header"><h3>신간 도서</h3></div>
                         <div id="newBooksList" class="ranking-list">
-                            <p class="loading-text">불러오는 중...</p>
+                            <p class="loading-text">데이터를 불러오는 중...</p>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-header"><h3>인기 대여 순위</h3></div>
                         <div id="popularBooksList" class="ranking-list">
-                            <p class="loading-text">불러오는 중...</p>
+                            <p class="loading-text">데이터를 불러오는 중...</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 2. 도서 대여 섹션 -->
+            <!-- 2. 도서 대여 섹션: 전체 도서 목록 (검색 및 필터 포함) -->
             <section id="view-rent-book" class="view-section">
                 <div class="card">
                     <div class="card-header search-header">
@@ -90,7 +90,7 @@
                 </div>
             </section>
 
-            <!-- 3. 내 대여 목록 섹션 -->
+            <!-- 3. 내 대여 목록 섹션: 대여 현황 및 반납 버튼 -->
             <section id="view-my-rentals" class="view-section">
                 <div class="card">
                     <div class="card-header"><h3>내 대여 현황</h3></div>
@@ -110,7 +110,7 @@
                 </div>
             </section>
 
-            <!-- 4. 내 정보 섹션 -->
+            <!-- 4. 내 정보 섹션: 개인정보 수정 및 탈퇴 -->
             <section id="view-my-info" class="view-section">
                 <div class="card narrow-card">
                     <div class="card-header"><h3>내 정보 수정</h3></div>
@@ -141,7 +141,7 @@
     <!-- 알림 메시지용 토스트 (UI.js 연동) -->
     <div id="toastContainer"></div>
 
-    <!-- 스크립트 로드 -->
+    <!-- 스크립트 로드 순서 유지 -->
     <script src="js/app.js"></script>
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
