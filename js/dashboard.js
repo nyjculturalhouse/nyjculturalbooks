@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 user.name = newName;
                 user.이름 = newName;
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                document.getElementById('headerUserName').innerText = newName;
+                document.getElementById('headerUserName').Text = newName;
                 document.getElementById('infoPassword').value = '';
             }
         });
@@ -105,23 +105,19 @@ function renderBooks(books) {
         const tr = document.createElement('tr');
         // ISBN td를 삭제하고 나머지 항목에 가로 유지를 위한 스타일/클래스 적용
         tr.innerHTML = `
-            <td style="white-space: nowrap;">${title}</td>
-            <td style="white-space: nowrap;">${category}</td>
-            <td style="white-space: nowrap;">${author}</td>
-            <td style="white-space: nowrap;">${publisher}</td>
-            <td style="text-align: center;">
-                <span class="badge ${isAvailable ? 'available' : 'rented'}">
-                    ${isAvailable ? '대여가능' : '대여중'}
-                </span>
-            </td>
-            <td style="text-align: center;">
-                <button class="btn-sm ${isAvailable ? 'btn-primary' : 'btn-outline'}" 
-                ${!isAvailable ? 'disabled' : ''} onclick="rentBook('${isbn}')">대여</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
+    <td title="${title}">${title}</td>
+    <td>${category}</td>
+    <td>${author}</td>
+    <td style="text-align: center;">
+        <span class="badge ${isAvailable ? 'available' : 'rented'}">
+            ${isAvailable ? '대여가능' : '대여중'}
+        </span>
+    </td>
+    <td style="text-align: center;">
+        <button class="btn-sm ${isAvailable ? 'btn-primary' : 'btn-outline'}" 
+            ${!isAvailable ? 'disabled' : ''} onclick="rentBook('${isbn}')">대여</button>
+    </td>
+`;
 
 // 내 대여 현황 렌더링 (ISBN 열 제외)
 async function loadMyRentals() {
