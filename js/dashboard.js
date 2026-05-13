@@ -185,24 +185,23 @@ function renderBooks(books) {
         const publisher = b.출판사 || b.publisher || '-';
         const statusText = b.상태 || b.대여상태 || '정보없음';
         
-        // 상태 텍스트에 '가능'이 포함되어 있으면 대여 가능으로 판단
         const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
 
         const tr = document.createElement('tr');
+        // CSS에서 설정한 % 너비가 적용되도록 인라인 width를 제거하고 클래스를 활용합니다.
         tr.innerHTML = `
-            <td title="${title}" style="width: 25%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</td>
-            <td style="width: 15%;">${category}</td>
-            <td style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${author}</td>
-            <td style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${publisher}</td>
-            <td style="width: 20%; text-align: center; vertical-align: middle;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span class="badge ${isAvailable ? 'available' : 'rented'}" style="flex-shrink: 0;">
+            <td title="${title}">${title}</td>
+            <td>${category}</td>
+            <td title="${author}">${author}</td>
+            <td title="${publisher}">${publisher}</td>
+            <td>
+                <div class="status-action-cell" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                    <span class="badge ${isAvailable ? 'available' : 'rented'}">
                         ${isAvailable ? '대여가능' : '대여중'}
                     </span>
                     <button class="btn-sm ${isAvailable ? 'btn-primary' : 'btn-outline'}" 
                         ${!isAvailable ? 'disabled' : ''} 
-                        onclick="rentBook('${isbn}')" 
-                        style="padding: 4px 8px; font-size: 12px; white-space: nowrap;">
+                        onclick="rentBook('${isbn}')">
                         대여
                     </button>
                 </div>
