@@ -1,9 +1,10 @@
-/* [기존 유지] 폰트 및 변수 */
+/* 1. 고딕 A1 폰트 및 기본 변수 */
 @import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300;400;500;700&display=swap');
 
 :root {
     --primary: #5b7cff;
     --primary-hover: #4a65d6;
+    --secondary: #7c4dff;
     --bg-color: #f5f6f8;
     --text-main: #333;
     --text-light: #666;
@@ -13,79 +14,183 @@
     --success: #28a745;
     --shadow: 0 4px 12px rgba(0,0,0,0.05);
     --radius: 12px;
+    --transition: all 0.3s ease;
 }
 
 * {
     box-sizing: border-box;
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
     font-family: 'Gothic A1', sans-serif;
     letter-spacing: -0.025em;
 }
 
-body { background-color: var(--bg-color); color: var(--text-main); }
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.5;
+}
 
-/* --- [핵심 수정] 로그인 페이지 중앙 정렬 --- */
-.login-body {
+/* --- [추가] 로그인 페이지 레이아웃 (중앙 정렬) --- */
+.login-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    background-color: var(--bg-color);
 }
 
-.login-container {
+.login-card {
     width: 100%;
-    max-width: 400px; /* 로그인 박스 크기 제한 */
-    background: var(--white);
+    max-width: 400px; /* 로그인 박스 너비 고정 */
     padding: 40px;
+    background: var(--white);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
 }
 
-/* --- [핵심 수정] 검색창 & 필터 높이 (40px 고정) --- */
-.filter-bar input, .filter-bar select,
-.login-container input {
+.login-card h2 {
+    margin-bottom: 8px;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.login-card p {
+    margin-bottom: 24px;
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.btn-login {
+    width: 100%;
+    height: 48px;
+    margin-top: 16px;
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 8px;
+}
+
+/* --- 검색창 & 필터 & 입력창 공통 --- */
+input, select {
     height: 40px;
     width: 100%;
     padding: 0 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    margin-top: 8px;
-    font-size: 14px;
+    outline: none;
+    font-size: 13px;
+    transition: var(--transition);
 }
 
-/* --- 대시보드 배지 복구 --- */
+.form-group {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-main);
+}
+
+input:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(91, 124, 255, 0.1);
+}
+
+/* --- 대시보드 랭킹 배지 --- */
+.ranking-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
 .rank-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px; height: 20px;
+    width: 34px;
+    height: 20px;
     background: var(--primary);
     color: white;
     border-radius: 10px;
-    font-size: 11px; font-weight: 700;
+    font-size: 11px;
+    font-weight: 700;
     margin-right: 10px;
+    flex-shrink: 0;
 }
-.rank-badge.new { background: #ff7675; }
 
-/* --- 테이블 레이아웃 고정 --- */
-.table-container { width: 100%; overflow: hidden; border-radius: 8px; }
-.data-table { 
+.rank-badge.new {
+    background: #ff7675;
+}
+
+/* --- 테이블 가로 터짐 방지 --- */
+.table-container { 
     width: 100%; 
-    table-layout: fixed; /* 가로 터짐 방지 */
-    border-collapse: collapse; 
-}
-.data-table th, .data-table td {
-    padding: 12px 8px;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* 글자 길면 ... */
-    font-size: 13px;
+    overflow-x: hidden !important; 
+    border-radius: 8px; 
 }
 
-/* 너비 비율 */
-.data-table th:nth-child(1) { width: 30%; }
-.data-table th:nth-child(2) { width: 12%; }
-.data-table th:nth-child(3) { width: 18%; }
-.data-table th:nth-child(4) { width: 17%; }
-.data-table th:nth-child(5) { width: 23%; }
+.data-table, .rent-table { 
+    width: 100% !important; 
+    border-collapse: collapse; 
+    table-layout: fixed !important;
+}
+
+.data-table th, .data-table td,
+.rent-table th, .rent-table td { 
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--border); 
+    font-size: 13px;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.data-table th:nth-child(1), .data-table td:nth-child(1) { width: 30%; } 
+.data-table th:nth-child(2), .data-table td:nth-child(2) { width: 12%; } 
+.data-table th:nth-child(3), .data-table td:nth-child(3) { width: 18%; } 
+.data-table th:nth-child(4), .data-table td:nth-child(4) { width: 17%; } 
+.data-table th:nth-child(5), .data-table td:nth-child(5) { width: 23%; text-align: center; }
+
+/* --- 버튼 & 배지 --- */
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: var(--transition);
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-sm { padding: 4px 10px; font-size: 11px; }
+
+.badge { 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 55px;
+}
+.badge.available { background: #e6f4ea; color: var(--success); }
+.badge.rented { background: #fce8e8; color: var(--danger); }
+
+/* --- 레이아웃 --- */
+.dashboard-layout { display: flex; height: 100vh; overflow: hidden; }
+.sidebar { width: 240px; background: var(--white); border-right: 1px solid var(--border); }
+.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.content-wrapper { flex: 1; padding: 25px; overflow-y: auto; }
+.card { background: var(--white); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
