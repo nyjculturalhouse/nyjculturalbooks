@@ -6,16 +6,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const 아이디 = document.getElementById('userId').value;
-            const 비밀번호 = document.getElementById('password').value;
+            const idValue = document.getElementById('userId').value;
+            const pwValue = document.getElementById('password').value;
             
-            // 시트 헤더 명칭과 동일한 키값으로 전송
-            const res = await API.post('login', { 아이디, 비밀번호 });
+            // 전송 데이터 키를 시트 헤더와 동일하게 '아이디', '비밀번호'로 설정
+            const res = await API.post('login', { 
+                '아이디': idValue, 
+                '비밀번호': pwValue 
+            });
+            
             if (res.success) {
-                localStorage.setItem('currentUser', JSON.stringify(res.data));
-                UI.showToast(res.message);
+                const userData = res.data;
+                // 이름 표시를 위한 데이터 정리
+                const finalName = userData['이름'] || userData['아이디'] || '사용자';
+                userData.name = finalName; // 호환성을 위해 name 속성 추가
+                
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                
+                UI.showToast(`${finalName}님 환영합니다!`);
                 setTimeout(() => {
-                    window.location.href = res.data.권한 === 'ADMIN' ? 'admin.html' : 'dashboard.html';
+                    window.location.href = userData['권한'] === 'ADMIN' ? 'admin.html' : 'dashboard.html';
                 }, 1000);
             } else {
                 UI.showToast(res.message, 'error');
