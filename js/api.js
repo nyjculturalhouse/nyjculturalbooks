@@ -1,7 +1,7 @@
 // js/api.js 맨 위
 
 // 다른 파일에서 window.GAS_URL을 못 가져오는 문제를 방지하기 위해 직접 선언
-window.GAS_URL = 'https://script.google.com/macros/s/AKfycbxZbmTULBjxlBMGTd2ss1V5hcqoyFroGoZ1Cux6oM4tcDYMKcXsiMnnhG5l5Zr3a3En/exec';
+window.GAS_URL = 'https://script.google.com/macros/s/AKfycbyHmROHxGfgjPXqWz5n8WAFqzPcxESJnYzd-YLXa-bTpZm5boVMerAvDnQ89Fqj-jHu/exec';
 
 const API = {
     async post(action, payload = {}) {
