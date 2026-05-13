@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const user = checkAuth(true); // 관리자 권한 필수
+    // 관리자 권한 체크 (role 대신 '권한' 필드 사용 여부 확인 필요)
+    const user = checkAuth(true); 
     if (!user) return;
 
-    document.getElementById('headerUserName').innerText = user.name;
+    document.getElementById('headerUserName').innerText = user.이름 || user.name;
     setupTabs();
     
     loadAllData();
@@ -17,13 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
     });
 
-    // 신규 도서 등록
+    // 신규 도서 등록 (pages -> category)
     document.getElementById('addBookForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = {
             isbn: document.getElementById('addIsbn').value,
             title: document.getElementById('addTitle').value,
-            pages: document.getElementById('addPages').value,
+            category: document.getElementById('addCategory').value, // 수정됨
             author: document.getElementById('addAuthor').value,
             publisher: document.getElementById('addPublisher').value
         };
@@ -42,13 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('editBookModal').classList.add('hidden');
     });
 
-    // 도서 수정 제출
+    // 도서 수정 제출 (pages -> category)
     document.getElementById('editBookForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = {
             isbn: document.getElementById('editIsbn').value,
             title: document.getElementById('editTitle').value,
-            pages: document.getElementById('editPages').value,
+            category: document.getElementById('editCategory').value, // 수정됨
             author: document.getElementById('editAuthor').value,
             publisher: document.getElementById('editPublisher').value
         };
@@ -74,8 +75,13 @@ async function loadUsers() {
         const tbody = document.getElementById('usersTableBody');
         tbody.innerHTML = '';
         res.data.forEach(u => {
-            tbody.innerHTML += `<tr><td>${u.userId}</td><td>${u.name}</td><td>${u.role}</td>
-                                <td>${new Date(u.createdAt).toLocaleDateString()}</td></tr>`;
+            // 필드명 한글화: 아이디, 이름, 권한, 생성일
+            tbody.innerHTML += `<tr>
+                <td>${u.아이디}</td>
+                <td>${u.이름}</td>
+                <td>${u.권한}</td>
+                <td>${u.생성일 ? new Date(u.생성일).toLocaleDateString() : '-'}</td>
+            </tr>`;
         });
     }
 }
@@ -86,13 +92,16 @@ async function loadAdminBooks() {
         const tbody = document.getElementById('adminBooksTableBody');
         tbody.innerHTML = '';
         res.data.forEach(b => {
-            const isAvailable = b.status === 'AVAILABLE';
+            // 필드명 한글화: ISBN, 제목, 상태, 저자
+            const isAvailable = b.상태 === 'AVAILABLE';
             tbody.innerHTML += `<tr>
-                <td>${b.isbn}</td><td>${b.title}</td><td>${b.author}</td>
-                <td><span class="badge ${isAvailable ? 'available' : 'rented'}">${b.status}</span></td>
+                <td>${b.ISBN}</td>
+                <td>${b.제목}</td>
+                <td>${b.저자}</td>
+                <td><span class="badge ${isAvailable ? 'available' : 'rented'}">${b.상태}</span></td>
                 <td>
                     <button class="btn-sm btn-outline" onclick='openEditModal(${JSON.stringify(b)})'>수정</button>
-                    <button class="btn-sm btn-danger" onclick="deleteBook('${b.isbn}')">삭제</button>
+                    <button class="btn-sm btn-danger" onclick="deleteBook('${b.ISBN}')">삭제</button>
                 </td>
             </tr>`;
         });
@@ -100,11 +109,12 @@ async function loadAdminBooks() {
 }
 
 function openEditModal(book) {
-    document.getElementById('editIsbn').value = book.isbn;
-    document.getElementById('editTitle').value = book.title;
-    document.getElementById('editPages').value = book.pages;
-    document.getElementById('editAuthor').value = book.author;
-    document.getElementById('editPublisher').value = book.publisher;
+    // 필드명 한글화 매칭
+    document.getElementById('editIsbn').value = book.ISBN;
+    document.getElementById('editTitle').value = book.제목;
+    document.getElementById('editCategory').value = book.카테고리; // 수정됨
+    document.getElementById('editAuthor').value = book.저자;
+    document.getElementById('editPublisher').value = book.출판사;
     document.getElementById('editBookModal').classList.remove('hidden');
 }
 
@@ -126,11 +136,15 @@ async function loadRentalHistory() {
         const tbody = document.getElementById('historyTableBody');
         tbody.innerHTML = '';
         res.data.forEach(r => {
-            const status = String(r.returned) === 'true' ? '반납완료' : '대여중';
+            // 필드명 한글화: 반납여부, 대여ID, 아이디, ISBN, 제목, 대여일, 반납예정일
+            const status = String(r.반납여부) === 'true' ? '반납완료' : '대여중';
             tbody.innerHTML += `<tr>
-                <td>${r.rentalId}</td><td>${r.userId}</td><td>${r.isbn}</td><td>${r.title}</td>
-                <td>${new Date(r.rentalDate).toLocaleDateString()}</td>
-                <td>${new Date(r.dueDate).toLocaleDateString()}</td>
+                <td>${r.대여ID}</td>
+                <td>${r.아이디}</td>
+                <td>${r.ISBN}</td>
+                <td>${r.제목}</td>
+                <td>${new Date(r.대여일).toLocaleDateString()}</td>
+                <td>${new Date(r.반납예정일).toLocaleDateString()}</td>
                 <td><span class="badge ${status==='반납완료' ? 'available' : 'rented'}">${status}</span></td>
             </tr>`;
         });
@@ -143,10 +157,13 @@ async function loadCurrentRentals() {
         const tbody = document.getElementById('currentRentalsTableBody');
         tbody.innerHTML = '';
         res.data.forEach(r => {
+            // 필드명 한글화
             tbody.innerHTML += `<tr>
-                <td>${r.rentalId}</td><td>${r.userId}</td><td>${r.title}</td>
-                <td>${new Date(r.rentalDate).toLocaleDateString()}</td>
-                <td>${new Date(r.dueDate).toLocaleDateString()}</td>
+                <td>${r.대여ID}</td>
+                <td>${r.아이디}</td>
+                <td>${r.제목}</td>
+                <td>${new Date(r.대여일).toLocaleDateString()}</td>
+                <td>${new Date(r.반납예정일).toLocaleDateString()}</td>
             </tr>`;
         });
     }
