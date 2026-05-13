@@ -92,7 +92,7 @@ async function loadAdminBooks() {
         const tbody = document.getElementById('adminBooksTableBody');
         tbody.innerHTML = '';
         res.data.forEach(b => {
-            // 상태 값이 '대여 가능'인지 확인
+            // 상태 값이 '대여 가능'인지 확인 (변수명 공백 제거 수정)
             const isAvailable = b.상태 === '대여 가능';
             tbody.innerHTML += `<tr>
                 <td>${b.ISBN || '-'}</td>
@@ -103,6 +103,28 @@ async function loadAdminBooks() {
                     <button class="btn-sm btn-outline" onclick='openEditModal(${JSON.stringify(b)})'>수정</button>
                     <button class="btn-sm btn-danger" onclick="deleteBook('${b.ISBN}')">삭제</button>
                 </td>
+            </tr>`;
+        });
+    }
+}
+
+async function loadRentalHistory() {
+    const res = await API.post('getRentalHistory');
+    if (res.success) {
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = '';
+        res.data.forEach(r => {
+            // 반납여부가 true(반납완료)인지 확인
+            const isReturned = String(r.반납여부) === 'true';
+            const statusLabel = isReturned ? '반납완료' : '대여중';
+            tbody.innerHTML += `<tr>
+                <td>${r.대여ID || '-'}</td>
+                <td>${r.아이디 || '-'}</td>
+                <td>${r.ISBN || '-'}</td>
+                <td>${r.제목 || '-'}</td>
+                <td>${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
+                <td>${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
+                <td><span class="badge ${isReturned ? 'available' : 'rented'}">${statusLabel}</span></td>
             </tr>`;
         });
     }
