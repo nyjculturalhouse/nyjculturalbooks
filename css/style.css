@@ -69,6 +69,37 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; margin-bottom: 6px; font-size: 14px; color: var(--text-light); font-weight: 500; }
 
+/* [수정] 로그인 페이지 전용 스타일 - 컴팩트 박스 형태 */
+#login-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    padding: 20px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 350px; /* 너비 320~380px 사이 조정 */
+    background: var(--white);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.login-container h2 {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 24px;
+    color: var(--text-main);
+}
+
+.login-container .form-group { margin-bottom: 12px; }
+.login-container input { padding: 10px; } /* 입력창 크기 축소 */
+.login-container button { padding: 10px; margin-top: 10px; } /* 버튼 크기 축소 */
+
 /* --- 대시보드 레이아웃 --- */
 .dashboard-layout { display: flex; height: 100vh; overflow: hidden; }
 
@@ -99,7 +130,7 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
     text-decoration: none;
     font-weight: 500;
     transition: var(--transition);
-    gap: 12px; /* 아이콘과 텍스트 간격 */
+    gap: 12px;
 }
 .nav-item i { width: 20px; text-align: center; font-size: 18px; }
 .nav-item:hover, .nav-item.active { background: #f0f4ff; color: var(--primary); border-right: 4px solid var(--primary); }
@@ -162,15 +193,30 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
     box-shadow: var(--shadow);
     height: 100%;
 }
+
+/* [수정] 도서 목록 컨테이너 너비 제한 및 헤더 축소 */
+#book-list-section .card {
+    max-width: 1100px; /* 전체 너비 제한 */
+    margin: 0 auto;
+    padding: 18px 22px;
+}
+
 .card-header { 
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
-    margin-bottom: 20px; 
-    gap: 15px;
+    margin-bottom: 15px; /* 여백 축소 */
+    gap: 12px;
     flex-wrap: wrap;
 }
-.card-header h3 { font-size: 18px; font-weight: 700; color: #2d3436; }
+.card-header h3 { font-size: 17px; font-weight: 700; color: #2d3436; }
+
+/* [수정] 검색창 및 셀렉트 박스 크기 축소 */
+.card-header input, .card-header select {
+    max-width: 180px;
+    padding: 8px 12px;
+    font-size: 13px;
+}
 
 .table-container { overflow-x: auto; width: 100%; border-radius: 8px; }
 .data-table { 
@@ -179,13 +225,14 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
     text-align: left;
 }
 
+/* [수정] 테이블 셀 패딩 및 폰트 크기 축소 */
 .data-table th, .data-table td { 
-    padding: 16px 12px;
+    padding: 10px 12px; /* 행 높이 축소 */
     border-bottom: 1px solid var(--border); 
     white-space: nowrap; 
     overflow: hidden; 
     text-overflow: ellipsis;
-    font-size: 14px;
+    font-size: 13px; /* 폰트 축소 */
 }
 
 .data-table th { 
@@ -196,12 +243,12 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
     top: 0;
 }
 
-/* 테이블 열 너비 최적화 */
-.rent-table th:nth-child(1), .rent-table td:nth-child(1) { width: 35%; } 
-.rent-table th:nth-child(2), .rent-table td:nth-child(2) { width: 15%; } 
-.rent-table th:nth-child(3), .rent-table td:nth-child(3) { width: 20%; } 
-.rent-table th:nth-child(4), .rent-table td:nth-child(4) { width: 15%; text-align: center; } 
-.rent-table th:nth-child(5), .rent-table td:nth-child(5) { width: 15%; text-align: center; }
+/* [수정] 테이블 열 너비 최적화 (컴팩트하게 재배치) */
+.rent-table th:nth-child(1), .rent-table td:nth-child(1) { width: auto; min-width: 200px; } 
+.rent-table th:nth-child(2), .rent-table td:nth-child(2) { width: 120px; } 
+.rent-table th:nth-child(3), .rent-table td:nth-child(3) { width: 140px; } 
+.rent-table th:nth-child(4), .rent-table td:nth-child(4) { width: 80px; text-align: center; } 
+.rent-table th:nth-child(5), .rent-table td:nth-child(5) { width: 90px; text-align: center; }
 
 .data-table tbody tr:hover { background: #fbfcfe; }
 
@@ -277,4 +324,5 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
     .top-header { padding: 0 15px; }
     .content-wrapper { padding: 15px; }
     .summary-container { grid-template-columns: 1fr; }
+    #book-list-section .card { max-width: 100%; }
 }
