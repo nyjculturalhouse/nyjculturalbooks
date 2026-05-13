@@ -1,73 +1,100 @@
 let allBooks = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    const user = typeof checkAuth === 'function' ? checkAuth(false) : JSON.parse(localStorage.getItem('currentUser'));
+    // 1. 사용자 인증 확인
+    const user = JSON.parse(localStorage.getItem('currentUser'));
     if (!user) {
         window.location.href = 'index.html';
         return;
     }
 
-    // 이름 표시 보강: '이름'이나 'name' 키값이 없을 경우를 대비해 'userId' 등 모든 가능성 체크
-    const displayUserId = user.아이디 || user.userId || user.id || 'Unknown';
-    const displayName = user.이름 || user.name || user.displayName || displayUserId;
+    // 2. 상단 사용자 이름 표시 (모든 키값 대응)
+    const displayName = user.이름 || user.name || user.userId || "사용자";
+    if (document.getElementById('headerUserName')) {
+        document.getElementById('headerUserName').innerText = displayName;
+    }
 
-    const nameElement = document.getElementById('headerUserName');
-    if (nameElement) nameElement.innerText = displayName;
-    
-    if(document.getElementById('infoUserId')) document.getElementById('infoUserId').value = displayUserId;
+    // 3. 내 정보 수정을 위한 초기값 세팅
+    if(document.getElementById('infoUserId')) document.getElementById('infoUserId').value = user.userId || user.아이디 || '';
     if(document.getElementById('infoName')) document.getElementById('infoName').value = displayName;
 
-    if (typeof setupTabs === 'function') setupTabs();
-    loadBooks();
-    loadMyRentals();
+    // 4. 초기 실행 함수들
+    setupTabs();  // 탭 클릭 기능 활성화
+    loadBooks();  // 도서 목록 로드
+    loadMyRentals(); // 내 대여 현황 로드
 
+    // 5. 로그아웃
     document.getElementById('btnLogout').addEventListener('click', () => {
         localStorage.removeItem('currentUser');
         window.location.href = 'index.html';
     });
 
+    // 6. 도서 검색
     document.getElementById('searchBookInput').addEventListener('input', (e) => {
         const keyword = e.target.value.toLowerCase();
         const filtered = allBooks.filter(b => {
-            const title = String(b.도서명 || b.제목 || b.title || '').toLowerCase();
-            const author = String(b.저자 || b.작가 || b.author || '').toLowerCase();
+            const title = String(b.도서명 || b.제목 || '').toLowerCase();
+            const author = String(b.저자 || b.작가 || '').toLowerCase();
             return title.includes(keyword) || author.includes(keyword);
         });
         renderBooks(filtered);
     });
 });
 
+/** 탭 클릭 전환 함수 (내 정보 클릭 해결) **/
+function setupTabs() {
+    const navItems = document.querySelectorAll('.nav-item');
+    const sections = document.querySelectorAll('.view-section');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = item.getAttribute('data-tab');
+            if (!targetId) return;
+
+            // 메뉴 활성화 상태 변경
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+
+            // 섹션 화면 전환
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === targetId) {
+                    section.classList.add('active');
+                }
+            });
+        });
+    });
+}
+
+/** 도서 목록 가져오기 **/
 async function loadBooks() {
-    try {
-        const res = await API.post('getBooks');
-        if (res.success) {
-            allBooks = res.data;
-            renderBooks(allBooks);
-        }
-    } catch (err) {
-        console.error("도서 로드 실패:", err);
+    const res = await API.post('getBooks');
+    if (res.success) {
+        allBooks = res.data;
+        renderBooks(allBooks);
     }
 }
 
-// image_55093a.png의 헤더 순서(도서명, 카테고리, 저자, 출판사, 상태)에 맞게 수정
+/** 도서 목록 렌더링 (image_54b242.png 출판사 포함 버전) **/
 function renderBooks(books) {
     const tbody = document.getElementById('booksTableBody');
     if (!tbody) return;
     tbody.innerHTML = '';
     
     books.forEach(b => {
-        const isbn = b.ISBN || b.isbn || '-';
-        const title = b.도서명 || b.제목 || b.title || '-';
-        const category = b.카테고리 || b.분류 || b.category || '-';
-        const author = b.저자 || b.작가 || b.author || '-';
-        const publisher = b.출판사 || b.publisher || '-'; // 출판사 데이터 복구
+        const isbn = b.ISBN || b.isbn || '';
+        const title = b.도서명 || b.제목 || '-';
+        const category = b.카테고리 || b.분류 || '-';
+        const author = b.저자 || b.작가 || '-';
+        const publisher = b.출판사 || b.publisher || '-';
         const statusText = b.상태 || b.대여상태 || '정보없음';
         const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td title="${title}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</td>
-            <td style="white-space: nowrap;">${category}</td>
+            <td>${category}</td>
             <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${author}</td>
             <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${publisher}</td>
             <td style="text-align: center;">
@@ -82,4 +109,56 @@ function renderBooks(books) {
     });
 }
 
-// ... (rentBook, loadMyRentals, returnBook 함수는 이전과 동일)
+/** 대여 하기 **/
+async function rentBook(isbn) {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = user.userId || user.아이디 || user.id;
+    if (confirm(`도서를 대여하시겠습니까?`)) {
+        const res = await API.post('rentBook', { userId, isbn });
+        if (res.success) {
+            UI.showToast('대여 완료!');
+            loadBooks();
+            loadMyRentals();
+        } else {
+            UI.showToast(res.message, 'error');
+        }
+    }
+}
+
+/** 내 대여 현황 가져오기 **/
+async function loadMyRentals() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = user.userId || user.아이디 || user.id;
+    const res = await API.post('getMyRentals', { userId });
+    
+    const tbody = document.getElementById('myRentalsTableBody');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+
+    if (res.success && res.data) {
+        res.data.forEach(r => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${r.도서명 || r.제목}</td>
+                <td>${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
+                <td>${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
+                <td style="text-align: center;">
+                    <button class="btn-sm btn-secondary" onclick="returnBook('${r.대여ID || r.rentalId}', '${r.ISBN || r.isbn}')">반납</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+}
+
+/** 반납 하기 **/
+async function returnBook(rentalId, isbn) {
+    if (confirm('반납하시겠습니까?')) {
+        const res = await API.post('returnBook', { rentalId, isbn });
+        if (res.success) {
+            UI.showToast('반납 완료!');
+            loadBooks();
+            loadMyRentals();
+        }
+    }
+}
