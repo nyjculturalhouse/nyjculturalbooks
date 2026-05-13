@@ -188,16 +188,16 @@ function renderBooks(books) {
         const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
 
         const tr = document.createElement('tr');
-        // CSS에서 설정한 % 너비가 적용되도록 인라인 width를 제거하고 클래스를 활용합니다.
+        // td에 인라인 스타일(width)을 주지 마세요. CSS의 nth-child가 우선순위를 갖게 합니다.
         tr.innerHTML = `
             <td title="${title}">${title}</td>
             <td>${category}</td>
             <td title="${author}">${author}</td>
             <td title="${publisher}">${publisher}</td>
             <td>
-                <div class="status-action-cell" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <div class="status-action-cell">
                     <span class="badge ${isAvailable ? 'available' : 'rented'}">
-                        ${isAvailable ? '대여가능' : '대여중'}
+                        ${isAvailable ? '가능' : '불가'}
                     </span>
                     <button class="btn-sm ${isAvailable ? 'btn-primary' : 'btn-outline'}" 
                         ${!isAvailable ? 'disabled' : ''} 
