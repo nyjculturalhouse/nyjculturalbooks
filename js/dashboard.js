@@ -92,17 +92,24 @@ function renderBooks(books) {
         const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
 
         const tr = document.createElement('tr');
+        // '상태'와 '버튼'을 한 칸(td)에 넣어 레이아웃을 고정합니다.
         tr.innerHTML = `
-            <td title="${title}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</td>
-            <td>${category}</td>
-            <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${author}</td>
-            <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${publisher}</td>
-            <td style="text-align: center;">
-                <span class="badge ${isAvailable ? 'available' : 'rented'}">${isAvailable ? '대여가능' : '대여중'}</span>
-            </td>
-            <td style="text-align: center;">
-                <button class="btn-sm ${isAvailable ? 'btn-primary' : 'btn-outline'}" 
-                ${!isAvailable ? 'disabled' : ''} onclick="rentBook('${isbn}')">대여</button>
+            <td title="${title}" style="width: 25%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</td>
+            <td style="width: 15%;">${category}</td>
+            <td style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${author}</td>
+            <td style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${publisher}</td>
+            <td style="width: 20%; text-align: center; vertical-align: middle;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span class="badge ${isAvailable ? 'available' : 'rented'}" style="flex-shrink: 0;">
+                        ${isAvailable ? '대여가능' : '대여중'}
+                    </span>
+                    <button class="btn-sm ${isAvailable ? 'btn-primary' : 'btn-outline'}" 
+                        ${!isAvailable ? 'disabled' : ''} 
+                        onclick="rentBook('${isbn}')" 
+                        style="padding: 4px 8px; font-size: 12px; white-space: nowrap;">
+                        대여
+                    </button>
+                </div>
             </td>
         `;
         tbody.appendChild(tr);
