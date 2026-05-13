@@ -1,5 +1,5 @@
 // 본인의 GAS 웹앱 URL로 반드시 변경하세요.
-window.GAS_URL = 'https://script.google.com/macros/s/AKfycbyHmROHxGfgjPXqWz5n8WAFqzPcxESJnYzd-YLXa-bTpZm5boVMerAvDnQ89Fqj-jHu/exec';
+window.GAS_URL = 'https://script.google.com/macros/s/AKfycby8hvXjgaLn8SqlKtM2-PrROvd3q2D5rKqYfPVZTngCfIV2Ep6hGsVidyw6MReGMU_b/exec';
 
 // 로그인 상태 체크
 function checkAuth(requireAdmin = false) {
