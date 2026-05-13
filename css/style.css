@@ -1,20 +1,5 @@
+/* 1. 기본 폰트 및 초기화 */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
-:root {
-    --primary: #5b7cff;
-    --primary-hover: #4a65d6;
-    --secondary: #7c4dff;
-    --bg-color: #f5f6f8;
-    --text-main: #333;
-    --text-light: #666;
-    --white: #ffffff;
-    --border: #e2e8f0;
-    --danger: #ff4d4f;
-    --success: #28a745;
-    --shadow: 0 4px 12px rgba(0,0,0,0.05);
-    --radius: 12px;
-    --transition: all 0.3s ease;
-}
 
 * {
     box-sizing: border-box;
@@ -23,126 +8,224 @@
     font-family: 'Pretendard', sans-serif;
 }
 
-/* --- [핵심] 로그인/회원가입 배경 (image_47da76.png 스타일) --- */
+:root {
+    --primary: #3182f6; /* 토스 블루 */
+    --primary-hover: #1b64da;
+    --bg-color: #f2f4f6; /* 토스 연회색 배경 */
+    --text-main: #191f28;
+    --text-light: #4e5968;
+    --white: #ffffff;
+    --border: #e5e8eb;
+    --danger: #f04452; /* 토스 레드 */
+    --shadow: 0 4px 12px rgba(0,0,0,0.05);
+    --radius-lg: 24px;
+    --radius-md: 12px;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* 2. 로그인/회원가입 (이미지 2번 스타일: 화이트 & 블루) */
 .auth-body {
-    background: linear-gradient(135deg, #1e1e2f 0%, #4e54c8 50%, #8f94fb 100%);
+    background-color: var(--bg-color);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    margin: 0;
 }
 
-/* --- [핵심] 반투명 카드 디자인 --- */
 .auth-card {
-    background: rgba(255, 255, 255, 0.12); /* 반투명 흰색 */
-    backdrop-filter: blur(20px); /* 배경 흐림 처리 */
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2); /* 얇은 외곽선 */
-    padding: 50px 40px;
-    border-radius: 40px; /* 사진처럼 아주 둥글게 */
+    background: var(--white);
+    padding: 48px 40px;
+    border-radius: var(--radius-lg);
     width: 100%;
-    max-width: 420px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-    color: var(--white);
-    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    text-align: left; /* 깔끔한 왼쪽 정렬 */
 }
 
-.logo-area h2 {
-    font-size: 24px;
-    margin-bottom: 8px;
-    color: var(--white);
+.auth-card h2 {
+    font-size: 26px;
     font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
 }
 
-.logo-area p {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 40px;
-}
-
-/* --- [핵심] 사진 속 하단 라인 입력창 스타일 --- */
-.auth-card .form-group {
-    margin-bottom: 25px;
-    text-align: left;
-}
-
-.auth-card .form-group label {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 13px;
-    margin-bottom: 8px;
+.auth-card p {
+    color: var(--text-light);
+    margin-bottom: 32px;
+    font-size: 15px;
 }
 
 .auth-card input {
-    background: transparent !important;
-    border: none !important;
-    border-bottom: 1.5px solid rgba(255, 255, 255, 0.4) !important; /* 하단 실선 */
-    border-radius: 0 !important;
-    color: var(--white) !important;
-    padding: 10px 5px !important;
+    width: 100%;
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-main);
+    padding: 16px;
+    margin-bottom: 12px;
     font-size: 16px;
-}
-
-.auth-card input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    outline: none;
+    transition: all 0.2s ease;
 }
 
 .auth-card input:focus {
-    border-bottom-color: var(--white) !important;
-    box-shadow: none !important;
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.1);
 }
 
-/* --- [핵심] 로그인 버튼 그라데이션 --- */
-.auth-card .btn-primary {
-    background: linear-gradient(to right, #4e54c8, #8f94fb);
+.btn-auth {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    padding: 16px;
+    border-radius: var(--radius-md);
     border: none;
-    border-radius: 30px;
-    padding: 15px;
     font-size: 16px;
     font-weight: 600;
-    margin-top: 20px;
-    box-shadow: 0 10px 20px rgba(78, 84, 200, 0.3);
-    transition: transform 0.2s ease;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background 0.2s;
 }
 
-.auth-card .btn-primary:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
+.btn-auth:hover {
+    background: var(--primary-hover);
 }
 
-.auth-links {
-    margin-top: 30px;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.auth-links a {
-    color: var(--white);
-    text-decoration: none;
-    font-weight: 600;
-    margin-left: 8px;
-}
-
-/* 회원가입 중복확인 버튼용 */
-.input-with-btn {
-    display: flex;
-    gap: 10px;
-}
-
-.input-with-btn .btn-secondary {
-    background: rgba(255, 255, 255, 0.2);
+/* 3. 토스트 알림 (로그인 성공/실패 팝업) */
+#toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 500;
     color: white;
-    font-size: 12px;
-    border-radius: 20px;
-    white-space: nowrap;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-/* --- 기존 대시보드 스타일 유지 --- */
-.dashboard-layout { display: flex; height: 100vh; overflow: hidden; }
-.sidebar { width: 240px; background: var(--white); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; }
-.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-.content-wrapper { flex: 1; padding: 25px; overflow-y: auto; background-color: var(--bg-color); }
-.card { background: var(--white); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); width: 100%; }
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table th, .data-table td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 14px; white-space: normal; word-break: keep-all; }
-/* ... 생략된 대시보드 관련 나머지 코드들은 기존과 동일하게 유지됩니다 ... */
+#toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast-success { background-color: var(--primary); } /* 성공: 파란색 */
+.toast-error { background-color: var(--danger); }    /* 실패: 빨간색 */
+
+/* 4. 대시보드 레이아웃 (기존 레이아웃 유지하며 컬러 보정) */
+.dashboard-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 260px;
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-logo {
+    padding: 30px 25px;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--primary);
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-item {
+    padding: 16px 25px;
+    color: var(--text-light);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.nav-item.active, .nav-item:hover {
+    background: #f0f4ff;
+    color: var(--primary);
+    border-right: 4px solid var(--primary);
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.top-header {
+    height: 72px;
+    background: var(--white);
+    padding: 0 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.content-wrapper {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+}
+
+/* 5. 카드 및 테이블 (가로 꽉 차게) */
+.card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: #f9fafb;
+    padding: 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-light);
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+    padding: 18px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    white-space: normal;
+    word-break: keep-all;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary { background: var(--primary); color: white; }
