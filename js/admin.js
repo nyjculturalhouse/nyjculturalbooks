@@ -69,19 +69,33 @@ async function loadAdminBooks() {
     const res = await API.post('getBooks');
     if (res.success) {
         const tbody = document.getElementById('adminBooksTableBody');
+        if(!tbody) return;
+        
         tbody.innerHTML = '';
         res.data.forEach(b => {
-            const isAvailable = b.상태 === '대여 가능';
-            tbody.innerHTML += `<tr>
-                <td>${b.ISBN || '-'}</td>
-                <td>${b.제목 || '-'}</td>
-                <td>${b.저자 || '-'}</td>
-                <td><span class="badge ${isAvailable ? 'available' : 'rented'}">${b.상태 || '대여 불가'}</span></td>
-                <td>
-                    <button class="btn-sm btn-outline" onclick='openEditModal(${JSON.stringify(b)})'>수정</button>
-                    <button class="btn-sm btn-danger" onclick="deleteBook('${b.ISBN}')">삭제</button>
-                </td>
-            </tr>`;
+            // b.제목 이 없으면 b.도서명 을 찾아보고, 그것도 없으면 '-' 표시
+            const title = b.제목 || b.도서명 || '-';
+            const isbn = b.ISBN || b.isbn || '-';
+            const category = b.카테고리 || b.분류 || '-';
+            const author = b.저자 || b.작가 || '-';
+            const publisher = b.출판사 || '-';
+            const status = b.상태 || '정보없음';
+            
+            const isAvailable = status === '대여 가능';
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td>${isbn}</td>
+                    <td>${title}</td>
+                    <td>${category}</td>
+                    <td>${author}</td>
+                    <td>${publisher}</td>
+                    <td><span class="badge ${isAvailable ? 'available' : 'rented'}">${status}</span></td>
+                    <td>
+                        <button class="btn-sm btn-outline" onclick='openEditModal(${JSON.stringify(b)})'>수정</button>
+                        <button class="btn-sm btn-danger" onclick="deleteBook('${isbn}')">삭제</button>
+                    </td>
+                </tr>`;
         });
     }
 }
