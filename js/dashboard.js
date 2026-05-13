@@ -115,24 +115,31 @@ async function rentBook(isbn) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userId = user.userId || user.아이디 || user.id;
 
-    // 대여할 도서의 정보를 찾아 제목(title)을 추출합니다.
+    // 현재 목록(allBooks)에서 해당 도서 정보를 가져옵니다.
+    // isbn 인자가 정확히 전달되는지 확인하기 위해 String으로 변환하여 비교합니다.
     const book = allBooks.find(b => String(b.ISBN || b.isbn) === String(isbn));
-    const title = book ? (book.도서명 || book.제목) : '알 수 없는 도서';
+    
+    if (!book) {
+        UI.showToast('도서 정보를 찾을 수 없습니다.', 'error');
+        return;
+    }
+
+    const title = book.도서명 || book.제목;
 
     if (confirm(`[${title}] 도서를 대여하시겠습니까?`)) {
-        // 서버 시트 컬럼 순서에 맞게 userId, isbn, title을 전송합니다.
+        // 중요: 서버(GAS)의 rentBook 함수가 받는 인자 이름과 정확히 일치시켜야 합니다.
         const res = await API.post('rentBook', { 
             userId: userId, 
-            isbn: isbn,
-            title: title 
+            isbn: isbn,    // 'ISBN' 열로 들어갈 값
+            title: title   // '제목' 열로 들어갈 값
         });
 
         if (res.success) {
-            UI.showToast('대여 완료! 시트에 기록되었습니다.');
+            UI.showToast('대여 완료!');
             loadBooks();
             loadMyRentals();
         } else {
-            UI.showToast(res.message || '대여에 실패했습니다.', 'error');
+            UI.showToast(res.message || '대여 실패', 'error');
         }
     }
 }
