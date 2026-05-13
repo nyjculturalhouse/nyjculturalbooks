@@ -116,11 +116,60 @@ function applyFilters() {
 
 async function loadBooks() {
     const res = await API.post('getBooks');
+    const rentalRes = await API.post('getRentalHistory'); // 대여 이력 가져오기
+
     if (res.success) {
         allBooks = res.data;
-        updateFilterOptions(allBooks); // 필터 옵션 업데이트
+        updateFilterOptions(allBooks);
         renderBooks(allBooks);
+        
+        // --- 대시보드 데이터 처리 추가 ---
+        renderNewBooks(allBooks);
+        if (rentalRes.success) {
+            renderPopularBooks(allBooks, rentalRes.data);
+        }
     }
+}
+
+// 신간 도서 (시트에 마지막으로 추가된 도서 3권)
+function renderNewBooks(books) {
+    const list = document.getElementById('newBooksList');
+    if(!list) return;
+    
+    // 배열의 마지막이 최신 등록된 책이라고 가정하고 마지막 3개 추출
+    const newBooks = [...books].reverse().slice(0, 3);
+    
+    list.innerHTML = newBooks.map((b, i) => `
+        <div class="ranking-item">
+            <span><span class="rank-badge">NEW</span> ${b.도서명 || b.제목}</span>
+            <span style="color: #666;">${b.저자}</span>
+        </div>
+    `).join('');
+}
+
+// 인기 도서 순위 (대여 이력 기반 계산)
+function renderPopularBooks(books, history) {
+    const list = document.getElementById('popularBooksList');
+    if(!list) return;
+
+    // 1. 도서별 대여 횟수 카운트
+    const counts = {};
+    history.forEach(h => {
+        const title = h.도서명 || h.제목;
+        counts[title] = (counts[title] || 0) + 1;
+    });
+
+    // 2. 정렬 및 TOP 5 추출
+    const sorted = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+    list.innerHTML = sorted.map((item, i) => `
+        <div class="ranking-item">
+            <span><span class="rank-badge">${i+1}</span> ${item[0]}</span>
+            <span style="color: #ff7675; font-weight: bold;">${item[1]}회 대여</span>
+        </div>
+    `).join('');
 }
 
 function renderBooks(books) {
