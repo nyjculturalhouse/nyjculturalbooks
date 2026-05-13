@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
     });
 
-    // 도서 등록
     document.getElementById('addBookForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = {
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 도서 수정
     document.getElementById('editBookForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = {
@@ -45,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             author: document.getElementById('editAuthor').value,
             publisher: document.getElementById('editPublisher').value
         };
-        const res = await API.post('updateBook', payload); // 'updateBook' 액션 호출
+        const res = await API.post('updateBook', payload);
         if (res.success) {
             UI.showToast('도서가 수정되었습니다.');
             document.getElementById('editBookModal').classList.add('hidden');
@@ -99,7 +97,7 @@ function openEditModal(book) {
 
 async function deleteBook(isbn) {
     if (confirm('정말 삭제하시겠습니까?')) {
-        const res = await API.post('deleteBook', { isbn }); // 'deleteBook' 액션 호출
+        const res = await API.post('deleteBook', { isbn });
         if (res.success) {
             UI.showToast('삭제되었습니다.');
             loadAdminBooks();
