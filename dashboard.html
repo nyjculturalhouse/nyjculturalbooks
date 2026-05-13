@@ -1,170 +1,111 @@
-let allBooks = [];
-
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. 사용자 인증 확인
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (!user) {
-        window.location.href = 'index.html';
-        return;
-    }
-
-    // 2. 상단 사용자 이름 표시 수정 (문화의집 등 시트 데이터 우선 반영)
-    const displayName = user.이름 || user.name || user.userId || "사용자";
-    const nameElement = document.getElementById('headerUserName');
-    if (nameElement) {
-        nameElement.innerText = displayName;
-    }
-
-    // 3. 내 정보 수정을 위한 초기값 세팅
-    if(document.getElementById('infoUserId')) document.getElementById('infoUserId').value = user.userId || user.아이디 || '';
-    if(document.getElementById('infoName')) document.getElementById('infoName').value = displayName;
-
-    // 4. 초기 실행 함수들
-    setupTabs();  
-    loadBooks();  
-    loadMyRentals(); 
-
-    // 5. 로그아웃
-    document.getElementById('btnLogout').addEventListener('click', () => {
-        localStorage.removeItem('currentUser');
-        window.location.href = 'index.html';
-    });
-
-    // 6. 도서 검색
-    document.getElementById('searchBookInput').addEventListener('input', (e) => {
-        const keyword = e.target.value.toLowerCase();
-        const filtered = allBooks.filter(b => {
-            const title = String(b.도서명 || b.제목 || '').toLowerCase();
-            const author = String(b.저자 || b.작가 || '').toLowerCase();
-            return title.includes(keyword) || author.includes(keyword);
-        });
-        renderBooks(filtered);
-    });
-});
-
-/** 탭 클릭 전환 함수 **/
-function setupTabs() {
-    const navItems = document.querySelectorAll('.nav-item');
-    const sections = document.querySelectorAll('.view-section');
-
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = item.getAttribute('data-tab');
-            if (!targetId) return;
-
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-
-            sections.forEach(section => {
-                section.classList.remove('active');
-                if (section.id === targetId) {
-                    section.classList.add('active');
-                }
-            });
-        });
-    });
-}
-
-/** 도서 목록 가져오기 **/
-async function loadBooks() {
-    const res = await API.post('getBooks');
-    if (res.success) {
-        allBooks = res.data;
-        renderBooks(allBooks);
-    }
-}
-
-/** [중요수정] 도서 목록 렌더링 - 상태/대여 버튼 정렬 수정 **/
-function renderBooks(books) {
-    const tbody = document.getElementById('booksTableBody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 대시보드</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo">문화의집 소소책방</div>
+        <nav class="sidebar-nav">
+            <!-- JS의 setupTabs 함수와 일치하도록 data-tab 속성 유지 -->
+            <a href="#" class="nav-item active" data-tab="view-rent-book">도서 대여</a>
+            <a href="#" class="nav-item" data-tab="view-my-rentals">대여 정보 조회/반납</a>
+            <a href="#" class="nav-item" data-tab="view-my-info">내 정보</a>
+        </nav>
+    </aside>
     
-    books.forEach(b => {
-        const isbn = b.ISBN || b.isbn || '';
-        const title = b.도서명 || b.제목 || '-';
-        const category = b.카테고리 || b.분류 || '-';
-        const author = b.저자 || b.작가 || '-';
-        const publisher = b.출판사 || b.publisher || '-';
-        const statusText = b.상태 || b.대여상태 || '정보없음';
-        const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
-
-        const tr = document.createElement('tr');
-        // '상태' 열에 배지와 버튼을 함께 넣어 칸이 어긋나지 않게 고정
-        tr.innerHTML = `
-            <td title="${title}" style="width: 25%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</td>
-            <td style="width: 15%;">${category}</td>
-            <td style="width: 20%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${author}</td>
-            <td style="width: 15%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${publisher}</td>
-            <td style="width: 25%; text-align: center; vertical-align: middle;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span class="badge ${isAvailable ? 'available' : 'rented'}" style="flex-shrink: 0; min-width: 65px;">
-                        ${isAvailable ? '대여가능' : '대여중'}
-                    </span>
-                    <button class="btn-sm ${isAvailable ? 'btn-primary' : 'btn-outline'}" 
-                        ${!isAvailable ? 'disabled' : ''} 
-                        onclick="rentBook('${isbn}')" 
-                        style="padding: 4px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0;">
-                        대여
-                    </button>
+    <main class="main-content">
+        <header class="top-header">
+            <h2 id="pageTitle">도서 대여</h2>
+            <div class="user-info">
+                <span id="headerUserName">사용자</span>님
+                <button id="btnLogout" class="btn-outline">로그아웃</button>
+            </div>
+        </header>
+        
+        <div class="content-wrapper">
+            <!-- 도서 대여 뷰 -->
+            <section id="view-rent-book" class="view-section active">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>전체 도서 목록</h3>
+                        <div class="search-box">
+                            <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <!-- ISBN 열이 삭제된 5칸 구조 (JS와 일치) -->
+                                    <th>도서명</th>
+                                    <th>카테고리</th>
+                                    <th>저자</th>
+                                    <th>출판사</th>
+                                    <th style="text-align: center;">상태</th>
+                                </tr>
+                            </thead>
+                            <tbody id="booksTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
+            </section>
 
-/** 대여 하기 **/
-async function rentBook(isbn) {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    const userId = user.userId || user.아이디 || user.id;
-    if (confirm(`도서를 대여하시겠습니까?`)) {
-        const res = await API.post('rentBook', { userId, isbn });
-        if (res.success) {
-            UI.showToast('대여 완료!');
-            loadBooks();
-            loadMyRentals();
-        } else {
-            UI.showToast(res.message, 'error');
-        }
-    }
-}
+            <!-- 내 대여 목록 뷰 -->
+            <section id="view-my-rentals" class="view-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>내 대여 목록</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <!-- ISBN 열이 삭제된 4칸 구조 -->
+                                    <th>도서명</th>
+                                    <th>대여일</th>
+                                    <th>반납예정일</th>
+                                    <th style="text-align: center;">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myRentalsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
 
-/** 내 대여 현황 가져오기 **/
-async function loadMyRentals() {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    const userId = user.userId || user.아이디 || user.id;
-    const res = await API.post('getMyRentals', { userId });
-    
-    const tbody = document.getElementById('myRentalsTableBody');
-    if(!tbody) return;
-    tbody.innerHTML = '';
+            <!-- 내 정보 뷰 -->
+            <section id="view-my-info" class="view-section">
+                <div class="card narrow-card">
+                    <h3>내 정보 수정</h3>
+                    <form id="updateInfoForm">
+                        <div class="form-group">
+                            <label>아이디</label>
+                            <input type="text" id="infoUserId" readonly disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>이름</label>
+                            <input type="text" id="infoName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>새 비밀번호 (변경시 입력)</label>
+                            <input type="password" id="infoPassword">
+                        </div>
+                        <button type="submit" class="btn-primary w-100">정보 수정</button>
+                    </form>
+                    <hr class="spacer">
+                    <button id="btnWithdraw" class="btn-danger w-100">회원 탈퇴</button>
+                </div>
+            </section>
+        </div>
+    </main>
 
-    if (res.success && res.data) {
-        res.data.forEach(r => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${r.도서명 || r.제목}</td>
-                <td>${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
-                <td>${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
-                <td style="text-align: center;">
-                    <button class="btn-sm btn-secondary" onclick="returnBook('${r.대여ID || r.rentalId}', '${r.ISBN || r.isbn}')">반납</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-}
-
-/** 반납 하기 **/
-async function returnBook(rentalId, isbn) {
-    if (confirm('반납하시겠습니까?')) {
-        const res = await API.post('returnBook', { rentalId, isbn });
-        if (res.success) {
-            UI.showToast('반납 완료!');
-            loadBooks();
-            loadMyRentals();
-        }
-    }
-}
+    <script src="js/app.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
