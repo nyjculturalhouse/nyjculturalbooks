@@ -1,15 +1,21 @@
-// js/api.js
-const API = {
-    async post(action, payload = {}) {
-        UI.showLoading();
-        try {
-            // window.GAS_URL을 사용해야 합니다.
-            const response = await fetch(window.GAS_URL, {
-                method: 'POST',
-                // 헤더를 생략하거나 간단하게 두는 것이 GAS 리다이렉션 처리에 유리합니다.
-                body: JSON.stringify({ action, payload })
-            });
+// js/api.js 수정
+async post(action, payload = {}) {
+    UI.showLoading();
+    
+    // 안전장치: URL이 없으면 실행 중단
+    if (!window.GAS_URL) {
+        UI.hideLoading();
+        console.error("에러: GAS_URL이 설정되지 않았습니다.");
+        alert("시스템 설정 오류: 관리자에게 문의하세요.");
+        return { success: false };
+    }
 
+    try {
+        const response = await fetch(window.GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action, payload })
+        });
+        // ... 이하 동일
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
