@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도서 대출 관리 시스템 - 회원가입</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-body">
+    <div class="auth-card">
+        <div class="logo-area">
+            <h2>회원가입</h2>
+            <p>새로운 계정을 생성하세요</p>
+        </div>
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="regUserId">아이디</label>
+                <div class="input-with-btn">
+                    <input type="text" id="regUserId" required placeholder="사용할 아이디">
+                    <button type="button" id="btnCheckDup" class="btn-secondary">중복확인</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">비밀번호</label>
+                <input type="password" id="regPassword" required placeholder="비밀번호">
+            </div>
+            <div class="form-group">
+                <label for="regPasswordConfirm">비밀번호 확인</label>
+                <input type="password" id="regPasswordConfirm" required placeholder="비밀번호 재입력">
+            </div>
+            <div class="form-group">
+                <label for="regName">이름</label>
+                <input type="text" id="regName" required placeholder="실명 입력">
+            </div>
+            <button type="submit" class="btn-primary w-100" id="btnSubmitSignup" disabled>회원가입</button>
+        </form>
+        <div class="auth-links">
+            <a href="index.html">로그인으로 돌아가기</a>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
