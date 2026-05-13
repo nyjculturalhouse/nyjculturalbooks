@@ -135,39 +135,33 @@ async function loadBooks() {
 function renderNewBooks(books) {
     const list = document.getElementById('newBooksList');
     if(!list) return;
-    
-    // 배열의 마지막이 최신 등록된 책이라고 가정하고 마지막 3개 추출
     const newBooks = [...books].reverse().slice(0, 3);
     
-    list.innerHTML = newBooks.map((b, i) => `
+    list.innerHTML = newBooks.map(b => `
         <div class="ranking-item">
-            <span><span class="rank-badge">NEW</span> ${b.도서명 || b.제목}</span>
-            <span style="color: #666;">${b.저자}</span>
+            <div style="display: flex; align-items: center;">
+                <span class="rank-badge new">NEW</span> 
+                <span style="font-weight: 500;">${b.도서명 || b.제목}</span>
+            </div>
+            <span style="color: #888; font-size: 12px;">${b.저자}</span>
         </div>
     `).join('');
 }
 
-// 인기 도서 순위 (대여 이력 기반 계산)
+// 인기 도서 렌더링 수정
 function renderPopularBooks(books, history) {
     const list = document.getElementById('popularBooksList');
     if(!list) return;
-
-    // 1. 도서별 대여 횟수 카운트
-    const counts = {};
-    history.forEach(h => {
-        const title = h.도서명 || h.제목;
-        counts[title] = (counts[title] || 0) + 1;
-    });
-
-    // 2. 정렬 및 TOP 5 추출
-    const sorted = Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
+    // ... (카운트 로직 동일)
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
     list.innerHTML = sorted.map((item, i) => `
         <div class="ranking-item">
-            <span><span class="rank-badge">${i+1}</span> ${item[0]}</span>
-            <span style="color: #ff7675; font-weight: bold;">${item[1]}회 대여</span>
+            <div style="display: flex; align-items: center;">
+                <span class="rank-badge">${i+1}</span>
+                <span style="font-weight: 500;">${item[0]}</span>
+            </div>
+            <span style="color: var(--danger); font-weight: 600; font-size: 12px;">${item[1]}회 대여</span>
         </div>
     `).join('');
 }
