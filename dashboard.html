@@ -5,58 +5,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>문화의집 소소책방 도서 대여</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- 아이콘 폰트 (FontAwesome) 추가 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="dashboard-layout">
+    <!-- 사이드바 -->
     <aside class="sidebar">
         <div class="sidebar-logo">문화의집 소소책방</div>
         <nav class="sidebar-nav">
-            <!-- JS의 setupTabs 함수가 data-tab 속성을 사용하므로 속성명을 통일했습니다. -->
-            <a href="#" class="nav-item active" data-tab="view-rent-book">도서 대여</a>
-            <a href="#" class="nav-item" data-tab="view-my-rentals">대여 정보 조회/반납</a>
-            <a href="#" class="nav-item" data-tab="view-my-info">내 정보</a>
+            <a href="#" class="nav-item active" data-tab="view-home">
+                <i class="fas fa-home"></i> 홈
+            </a>
+            <a href="#" class="nav-item" data-tab="view-rent-book">
+                <i class="fas fa-book"></i> 도서 대여
+            </a>
+            <a href="#" class="nav-item" data-tab="view-my-rentals">
+                <i class="fas fa-history"></i> 대여 정보 조회/반납
+            </a>
+            <a href="#" class="nav-item" data-tab="view-my-info">
+                <i class="fas fa-user"></i> 내 정보
+            </a>
         </nav>
     </aside>
     
     <main class="main-content">
+        <!-- 상단 헤더 -->
         <header class="top-header">
-            <a href="#" class="nav-item active" data-tab="dashboard-home">
-    <i class="fas fa-home"></i> 홈
-</a>
-            <h2 id="pageTitle">도서 대여</h2>
+            <h2 id="pageTitle">홈</h2>
             <div class="user-info">
-                <span id="headerUserName">사용자</span>님
+                <span id="headerUserName">사용자</span>님 반갑습니다.
                 <button id="btnLogout" class="btn-outline">로그아웃</button>
             </div>
         </header>
         
         <div class="content-wrapper">
-            <!-- 도서 대여 뷰 -->
-            <section id="view-rent-book" class="view-section active">
+            
+            <!-- 1. 홈(대시보드) 섹션 -->
+            <section id="view-home" class="view-section active">
+                <div class="summary-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                    <!-- 신간 도서 카드 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>신간 도서</h3>
+                        </div>
+                        <div id="newBooksList" class="ranking-list">
+                            <p style="padding: 20px; color: #999; text-align: center;">데이터를 불러오는 중...</p>
+                        </div>
+                    </div>
+
+                    <!-- 대여 순위 카드 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>인기 대여 순위</h3>
+                        </div>
+                        <div id="popularBooksList" class="ranking-list">
+                            <p style="padding: 20px; color: #999; text-align: center;">데이터를 불러오는 중...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. 도서 대여 뷰 -->
+            <section id="view-rent-book" class="view-section">
                 <div class="card">
                     <div class="card-header">
-    <h3>전체 도서 목록</h3>
-    <div class="search-filter-container" style="display: flex; gap: 10px; align-items: center;">
-        <!-- 검색창 -->
-        <div class="search-box" style="flex: 2;">
-            <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
-        </div>
-        
-        <!-- 카테고리 필터 -->
-        <select id="filterCategory" class="filter-select" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ddd; outline: none;">
-            <option value="">전체 카테고리</option>
-        </select>
+                        <h3>전체 도서 목록</h3>
+                        <div class="search-filter-container" style="display: flex; gap: 10px; align-items: center;">
+                            <!-- 검색창 -->
+                            <div class="search-box" style="flex: 2;">
+                                <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
+                            </div>
+                            
+                            <!-- 카테고리 필터 -->
+                            <select id="filterCategory" class="filter-select" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ddd; outline: none;">
+                                <option value="">전체 카테고리</option>
+                            </select>
 
-        <!-- 출판사 필터 -->
-        <select id="filterPublisher" class="filter-select" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ddd; outline: none;">
-            <option value="">전체 출판사</option>
-        </select>
-    </div>
-</div>
+                            <!-- 출판사 필터 -->
+                            <select id="filterPublisher" class="filter-select" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ddd; outline: none;">
+                                <option value="">전체 출판사</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <!-- ISBN 열을 제거하고 JS 렌더링 순서와 맞췄습니다. -->
                                     <th>도서명</th>
                                     <th>카테고리</th>
                                     <th>저자</th>
@@ -70,7 +104,7 @@
                 </div>
             </section>
 
-            <!-- 내 대여 목록 뷰 -->
+            <!-- 3. 내 대여 목록 뷰 -->
             <section id="view-my-rentals" class="view-section">
                 <div class="card">
                     <div class="card-header">
@@ -80,7 +114,6 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <!-- ISBN 열을 제거하고 JS 렌더링 순서와 맞췄습니다. -->
                                     <th>도서명</th>
                                     <th>대여일</th>
                                     <th>반납예정일</th>
@@ -93,7 +126,7 @@
                 </div>
             </section>
 
-            <!-- 내 정보 뷰 -->
+            <!-- 4. 내 정보 뷰 -->
             <section id="view-my-info" class="view-section">
                 <div class="card narrow-card">
                     <h3>내 정보 수정</h3>
@@ -119,6 +152,7 @@
         </div>
     </main>
 
+    <!-- 스크립트 순서 유지 -->
     <script src="js/app.js"></script>
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
