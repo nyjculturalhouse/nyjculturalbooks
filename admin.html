@@ -47,7 +47,8 @@
                     <form id="addBookForm" class="grid-form">
                         <input type="text" id="addIsbn" placeholder="ISBN" required>
                         <input type="text" id="addTitle" placeholder="도서명" required>
-                        <input type="number" id="addPages" placeholder="페이지수" required>
+                        <!-- 페이지수(number)를 카테고리(text)로 변경 -->
+                        <input type="text" id="addCategory" placeholder="카테고리 (예: 소설, 역사)" required>
                         <input type="text" id="addAuthor" placeholder="저자" required>
                         <input type="text" id="addPublisher" placeholder="출판사" required>
                         <button type="submit" class="btn-primary">등록</button>
@@ -64,7 +65,7 @@
                 </div>
             </section>
 
-            <!-- 대여 기록 -->
+            <!-- 대여 기록 (생략 가능하나 구조 유지) -->
             <section id="admin-history" class="view-section">
                 <div class="card">
                     <h3>전체 대여 기록</h3>
@@ -99,7 +100,8 @@
             <form id="editBookForm">
                 <div class="form-group"><label>ISBN (수정불가)</label><input type="text" id="editIsbn" readonly disabled></div>
                 <div class="form-group"><label>도서명</label><input type="text" id="editTitle" required></div>
-                <div class="form-group"><label>페이지수</label><input type="number" id="editPages" required></div>
+                <!-- 페이지수 라벨과 타입을 카테고리로 변경 -->
+                <div class="form-group"><label>카테고리</label><input type="text" id="editCategory" required></div>
                 <div class="form-group"><label>저자</label><input type="text" id="editAuthor" required></div>
                 <div class="form-group"><label>출판사</label><input type="text" id="editPublisher" required></div>
                 <div class="modal-actions">
