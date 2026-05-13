@@ -132,31 +132,37 @@ input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91, 124, 
 }
 .narrow-card { max-width: 500px; margin: 0 auto; }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.table-container { overflow-x: auto; }
+.table-container { overflow-x: auto; width: 100%; }
+
 .data-table { 
     width: 100%; 
     border-collapse: collapse; 
     text-align: left;
-    /* 추가: 테이블 레이아웃을 고정하여 너비 조절이 가능하게 함 */
-    table-layout: fixed; 
+    table-layout: fixed; /* 테이블 크기를 화면에 딱 맞게 고정 */
 }
-.data-table th:first-child,
-.data-table td:first-child {
-    width: 40%;           /* 전체의 40%만 차지하도록 설정 (값은 조정 가능) */
-    overflow: hidden;
-    text-overflow: ellipsis; /* 글자가 너무 길면 ...으로 표시 */
-    white-space: nowrap;
+
+/* 모든 셀 공통 설정 */
+.data-table th, .data-table td { 
+    padding: 14px 10px; /* 좌우 패딩을 줄여 공간 확보 */
+    border-bottom: 1px solid var(--border); 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; /* 넘치는 글자 ... 처리 */
+    vertical-align: middle;
 }
+
+/* 각 열 너비 재분배 (총합 100%) */
+.data-table th:nth-child(1), .data-table td:nth-child(1) { width: 35%; } /* 도서명 (너비 약간 축소) */
+.data-table th:nth-child(2), .data-table td:nth-child(2) { width: 15%; } /* 카테고리 */
+.data-table th:nth-child(3), .data-table td:nth-child(3) { width: 15%; } /* 저자 */
+.data-table th:nth-child(4), .data-table td:nth-child(4) { width: 15%; } /* 상태 */
+.data-table th:nth-child(5), .data-table td:nth-child(5) { width: 20%; } /* 대여버튼 (공간 확보) */
+
 .data-table th { 
     background: #f8fafc; 
     font-weight: 600; 
     color: var(--text-light);
-    white-space: nowrap;       /* 이 줄을 추가: 헤더('카테고리' 등)도 가로 고정 */
 }
-.data-table th:nth-child(2), .data-table td:nth-child(2) { width: 15%; } /* 카테고리 */
-.data-table th:nth-child(3), .data-table td:nth-child(3) { width: 15%; } /* 저자 */
-.data-table th:nth-child(4), .data-table td:nth-child(4) { width: 15%; } /* 상태 */
-.data-table th:nth-child(5), .data-table td:nth-child(5) { width: 15%; } /* 대여버튼 */
 .data-table tbody tr:hover { background: #f8fafc; }
 .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; }
 .spacer { margin: 24px 0; border: 0; border-top: 1px solid var(--border); }
