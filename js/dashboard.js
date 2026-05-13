@@ -204,16 +204,16 @@ async function loadMyRentals() {
     tbody.innerHTML = '';
 
     if (res.success && res.data) {
-        // 최근 대여 순으로 정렬 (선택 사항)
-        const sortedData = res.data.reverse();
+        // 최신 대여 건이 위로 오도록 역순 정렬
+        const sortedData = [...res.data].reverse();
 
         sortedData.forEach(r => {
             const tr = document.createElement('tr');
             const rId = r.대여ID || r.rentalId || r[0]; 
             const rIsbn = r.ISBN || r.isbn;
             
-            // 반납 여부 확인 (Y 이면 반납완료)
-            const isReturned = String(r.반납여부).trim().toUpperCase() === 'Y';
+            // 반납 여부 판별 로직 강화: 'Y'인 경우에만 반납완료로 간주
+            const isReturned = String(r.반납여부 || "").trim().toUpperCase() === 'Y';
 
             tr.innerHTML = `
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${r.도서명 || r.제목}</td>
@@ -221,14 +221,17 @@ async function loadMyRentals() {
                 <td>${r.반납예정일 || '-'}</td>
                 <td style="text-align: center;">
                     ${isReturned 
-                        ? `<span style="color: #999; font-size: 12px;">반납완료</span>` 
+                        ? `<span style="color: #999; font-weight: bold;">반납완료</span>` 
                         : `<button class="btn-sm btn-secondary" onclick="returnBook('${rId}', '${rIsbn}')">반납</button>`
                     }
                 </td>
             `;
             
-            // 반납된 행은 약간 흐리게 처리 (선택 사항)
-            if (isReturned) tr.style.backgroundColor = '#f9f9f9';
+            // 반납된 항목은 행 배경색을 흐리게 하여 구분
+            if (isReturned) {
+                tr.style.backgroundColor = '#f8f9fa';
+                tr.style.color = '#adb5bd';
+            }
             
             tbody.appendChild(tr);
         });
