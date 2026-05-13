@@ -58,7 +58,7 @@ button {
 /* --- 폼 요소 --- */
 input, select {
     width: 100%;
-    padding: 10px; /* 12px에서 축소 */
+    padding: 10px;
     border: 1px solid var(--border);
     border-radius: 8px;
     outline: none;
@@ -66,30 +66,99 @@ input, select {
     font-size: 14px;
 }
 input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91, 124, 255, 0.2); }
-.form-group { margin-bottom: 12px; } /* 간격 축소 */
+.form-group { margin-bottom: 12px; }
 .form-group label { display: block; margin-bottom: 4px; font-size: 13px; color: var(--text-light); font-weight: 500; }
 
-/* --- 로그인 페이지 (중앙 박스 형태) --- */
-#view-login { /* 로그인 섹션 ID 가정 */
+/* --- [수정] 로그인 페이지 (image_47e8be.png 스타일 반영) --- */
+#view-login {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    /* 몽환적인 그라데이션 배경 추가 */
+    background: linear-gradient(135deg, #1e1e2f 0%, #4e54c8 50%, #8f94fb 100%);
+    background-size: cover;
 }
+
 .login-container {
     width: 100%;
-    max-width: 350px; /* 요청한 컴팩트 사이즈 */
-    background: var(--white);
-    padding: 30px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    max-width: 380px;
+    /* 반투명 유리창 효과 (Glassmorphism) */
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 45px 35px;
+    border-radius: 30px; /* 더 둥글게 수정 */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    color: var(--white);
+    text-align: center;
+}
+
+/* 로그인 헤더 커스텀 */
+.login-header h2 {
+    color: var(--white);
+    margin-bottom: 8px;
+    font-size: 24px;
+    letter-spacing: -0.5px;
+}
+.login-header p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+/* 로그인 페이지 내 입력창 스타일 전용 수정 */
+.login-container input {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0;
+    padding: 12px 5px;
+    color: var(--white);
+    margin-bottom: 20px;
+}
+.login-container input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+.login-container input:focus {
+    background: transparent;
+    border-bottom-color: var(--white);
+    box-shadow: none;
+}
+.login-container label {
+    color: var(--white);
+    text-align: left;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* 로그인 버튼 커스텀 */
+.login-container .btn-primary {
+    background: linear-gradient(to right, #4e54c8, #8f94fb);
+    border-radius: 25px;
+    padding: 14px;
+    font-size: 16px;
+    margin-top: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-container .login-footer {
+    margin-top: 25px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+}
+.login-container .login-footer a {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 600;
 }
 
 /* --- 대시보드 레이아웃 --- */
 .dashboard-layout { display: flex; height: 100vh; overflow: hidden; }
 
 .sidebar {
-    width: 240px; /* 260px에서 축소 */
+    width: 240px;
     background: var(--white);
     border-right: 1px solid var(--border);
     display: flex;
@@ -123,7 +192,7 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 
 .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .top-header {
-    height: 60px; /* 70px에서 축소 */
+    height: 60px;
     min-height: 60px;
     background: var(--white);
     border-bottom: 1px solid var(--border);
@@ -137,7 +206,7 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 
 .content-wrapper { 
     flex: 1; 
-    padding: 20px; /* 30px에서 축소 */
+    padding: 20px; 
     overflow-y: auto; 
     background-color: var(--bg-color); 
 }
@@ -164,14 +233,13 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 .card {
     background: var(--white);
     border-radius: var(--radius);
-    padding: 18px 22px; /* 여백 축소 */
+    padding: 18px 22px;
     box-shadow: var(--shadow);
     height: fit-content;
 }
 
-/* [도서 목록 페이지 핵심 수정] */
 #view-rent-book .card {
-    max-width: 1100px; /* 너무 넓게 퍼지지 않도록 제한 */
+    max-width: 1100px;
     margin: 0 auto;
 }
 
@@ -186,10 +254,9 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 
 .search-filter-container {
     display: flex;
-    gap: 8px !important; /* 인라인 스타일 덮어쓰기 */
+    gap: 8px !important;
 }
 
-/* 검색창/필터 크기 축소 */
 .search-filter-container input,
 .search-filter-container select {
     padding: 8px 10px !important;
@@ -205,12 +272,12 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
 }
 
 .data-table th, .data-table td { 
-    padding: 10px 12px; /* 행 높이 축소 */
+    padding: 10px 12px; 
     border-bottom: 1px solid var(--border); 
     white-space: nowrap; 
     overflow: hidden; 
     text-overflow: ellipsis;
-    font-size: 13px; /* 폰트 축소 */
+    font-size: 13px;
 }
 
 .data-table th { 
@@ -219,12 +286,11 @@ input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px 
     color: var(--text-light);
 }
 
-/* 테이블 컬럼 비율 최적화 */
-.data-table th:nth-child(1), .data-table td:nth-child(1) { width: auto; min-width: 180px; } /* 도서명 */
-.data-table th:nth-child(2), .data-table td:nth-child(2) { width: 120px; } /* 카테고리 */
-.data-table th:nth-child(3), .data-table td:nth-child(3) { width: 100px; } /* 저자 */
-.data-table th:nth-child(4), .data-table td:nth-child(4) { width: 100px; } /* 출판사 */
-.data-table th:nth-child(5), .data-table td:nth-child(5) { width: 80px; text-align: center; } /* 상태 */
+.data-table th:nth-child(1), .data-table td:nth-child(1) { width: auto; min-width: 180px; }
+.data-table th:nth-child(2), .data-table td:nth-child(2) { width: 120px; }
+.data-table th:nth-child(3), .data-table td:nth-child(3) { width: 100px; }
+.data-table th:nth-child(4), .data-table td:nth-child(4) { width: 100px; }
+.data-table th:nth-child(5), .data-table td:nth-child(5) { width: 80px; text-align: center; }
 
 .data-table tbody tr:hover { background: #fbfcfe; }
 
