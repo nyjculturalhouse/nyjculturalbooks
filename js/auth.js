@@ -11,24 +11,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const userId = document.getElementById('userId').value;
             const password = document.getElementById('password').value;
 
-            const res = await API.post('login', { 
-                '아이디': userId, 
-                '비밀번호': password 
-            });
-            
-            if (res.success) {
-                const userData = res.data;
-                // 이름 표시를 위한 데이터 보강
-                userData.name = userData['이름'] || userData['아이디'] || '사용자';
+            try {
+                const res = await API.post('login', { 
+                    '아이디': userId, 
+                    '비밀번호': password 
+                });
                 
-                localStorage.setItem('currentUser', JSON.stringify(userData));
-                UI.showToast(`${userData.name}님 환영합니다!`);
-                
-                setTimeout(() => {
-                    window.location.href = userData['권한'] === 'ADMIN' ? 'admin.html' : 'dashboard.html';
-                }, 1000);
-            } else {
-                UI.showToast(res.message, 'error');
+                if (res.success) {
+                    const userData = res.data;
+                    // 이름 표시를 위한 데이터 보강 (이름이 없으면 아이디라도 사용)
+                    userData.name = userData['이름'] || userData['아이디'] || '사용자';
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(userData));
+                    UI.showToast(`${userData.name}님 환영합니다!`);
+                    
+                    setTimeout(() => {
+                        window.location.href = userData['권한'] === 'ADMIN' ? 'admin.html' : 'dashboard.html';
+                    }, 1000);
+                } else {
+                    UI.showToast(res.message || '로그인에 실패했습니다.', 'error');
+                }
+            } catch (err) {
+                UI.showToast('서버 연결 오류가 발생했습니다.', 'error');
             }
         });
     }
@@ -39,15 +43,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const userId = document.getElementById('regUserId').value;
             if (!userId) return UI.showToast('아이디를 입력하세요.', 'error');
             
-            const res = await API.post('checkDuplicateUser', { '아이디': userId });
-            if (res.success && !res.data.exists) {
-                UI.showToast('사용 가능한 아이디입니다.');
-                isIdChecked = true;
-                const submitBtn = document.getElementById('btnSubmitSignup');
-                if (submitBtn) submitBtn.disabled = false;
-            } else {
-                UI.showToast(res.message || '이미 사용 중인 아이디입니다.', 'error');
-                isIdChecked = false;
+            try {
+                const res = await API.post('checkDuplicateUser', { '아이디': userId });
+                if (res.success && !res.data.exists) {
+                    UI.showToast('사용 가능한 아이디입니다.');
+                    isIdChecked = true;
+                    const submitBtn = document.getElementById('btnSubmitSignup');
+                    if (submitBtn) submitBtn.disabled = false;
+                } else {
+                    UI.showToast(res.message || '이미 사용 중인 아이디입니다.', 'error');
+                    isIdChecked = false;
+                }
+            } catch (err) {
+                UI.showToast('중복 확인 중 오류가 발생했습니다.', 'error');
             }
         });
     }
@@ -70,17 +78,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 return UI.showToast('비밀번호가 일치하지 않습니다.', 'error');
             }
 
-            const res = await API.post('signup', { 
-                '아이디': userId, 
-                '비밀번호': password, 
-                '이름': name 
-            });
-            
-            if (res.success) {
-                UI.showToast('회원가입 완료! 로그인해주세요.');
-                setTimeout(() => window.location.href = 'index.html', 1500);
-            } else {
-                UI.showToast(res.message, 'error');
+            try {
+                const res = await API.post('signup', { 
+                    '아이디': userId, 
+                    '비밀번호': password, 
+                    '이름': name 
+                });
+                
+                if (res.success) {
+                    UI.showToast('회원가입 완료! 로그인해주세요.');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    UI.showToast(res.message || '회원가입에 실패했습니다.', 'error');
+                }
+            } catch (err) {
+                UI.showToast('서버 연결 오류가 발생했습니다.', 'error');
             }
         });
     }
