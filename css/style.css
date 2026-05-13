@@ -44,7 +44,11 @@ button {
 .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); }
 .btn-outline:hover { background-color: #f8f9fa; }
 .btn-danger { background-color: var(--danger); color: var(--white); }
-.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-sm { 
+    padding: 6px 12px; 
+    font-size: 12px; 
+    white-space: nowrap; /* 버튼 글자 꺾임 방지 */
+}
 .w-100 { width: 100%; }
 
 /* --- 폼 요소 --- */
@@ -137,9 +141,29 @@ input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91, 124, 
 .spacer { margin: 24px 0; border: 0; border-top: 1px solid var(--border); }
 
 /* --- Badge & Utils --- */
-.badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-.badge.available { background: #e6f4ea; color: var(--success); }
-.badge.rented { background: #fce8e8; color: var(--danger); }
+/* --- Badge & Utils (수정본) --- */
+.badge { 
+    display: inline-block;     /* 배지 형태 유지를 위한 블록 설정 */
+    padding: 6px 10px;         /* 상하 6px, 좌우 10px로 여백 확대 */
+    border-radius: 6px;        /* 조금 더 부드러운 라운드 적용 */
+    font-size: 12px; 
+    font-weight: 600; 
+    white-space: nowrap;       /* 핵심: 글자가 절대 줄바꿈되지 않게 설정 */
+    min-width: 65px;           /* '대여가능' 네 글자가 충분히 들어갈 최소 너비 */
+    text-align: center;        /* 글자 중앙 정렬 */
+}
+
+.badge.available { 
+    background: #e6f4ea; 
+    color: var(--success); 
+}
+
+.badge.rented { 
+    background: #fce8e8; 
+    color: var(--danger); 
+}
+
+/* 아래는 기존 유지 */
 .view-section { display: none; animation: fadeIn 0.3s; }
 .view-section.active { display: block; }
 .hidden { display: none !important; }
