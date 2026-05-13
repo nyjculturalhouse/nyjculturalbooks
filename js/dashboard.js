@@ -29,16 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
     });
 
-    // 6. 도서 검색
-    document.getElementById('searchBookInput').addEventListener('input', (e) => {
-        const keyword = e.target.value.toLowerCase();
-        const filtered = allBooks.filter(b => {
-            const title = String(b.도서명 || b.제목 || '').toLowerCase();
-            const author = String(b.저자 || b.작가 || '').toLowerCase();
-            return title.includes(keyword) || author.includes(keyword);
-        });
-        renderBooks(filtered);
-    });
+    // 6. 검색 및 필터 이벤트 연결
+    const searchInput = document.getElementById('searchBookInput');
+    const catFilter = document.getElementById('filterCategory');
+    const pubFilter = document.getElementById('filterPublisher');
+
+    if(searchInput) searchInput.addEventListener('input', applyFilters);
+    if(catFilter) catFilter.addEventListener('change', applyFilters);
+    if(pubFilter) pubFilter.addEventListener('change', applyFilters);
 });
 
 function setupTabs() {
@@ -64,10 +62,63 @@ function setupTabs() {
     });
 }
 
+// 필터 옵션을 동적으로 채워주는 함수
+function updateFilterOptions(books) {
+    const categorySelect = document.getElementById('filterCategory');
+    const publisherSelect = document.getElementById('filterPublisher');
+    
+    if (!categorySelect || !publisherSelect) return;
+
+    // 초기화
+    categorySelect.innerHTML = '<option value="">전체 카테고리</option>';
+    publisherSelect.innerHTML = '<option value="">전체 출판사</option>';
+
+    // 중복 제거 후 정렬하여 목록 추출
+    const categories = [...new Set(books.map(b => b.카테고리 || b.분류).filter(Boolean))].sort();
+    const publishers = [...new Set(books.map(b => b.출판사 || b.publisher).filter(Boolean))].sort();
+
+    categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.innerText = cat;
+        categorySelect.appendChild(opt);
+    });
+
+    publishers.forEach(pub => {
+        const opt = document.createElement('option');
+        opt.value = pub;
+        opt.innerText = pub;
+        publisherSelect.appendChild(opt);
+    });
+}
+
+// 검색 + 카테고리 + 출판사 통합 필터링 함수
+function applyFilters() {
+    const keyword = document.getElementById('searchBookInput').value.toLowerCase();
+    const selectedCategory = document.getElementById('filterCategory').value;
+    const selectedPublisher = document.getElementById('filterPublisher').value;
+
+    const filtered = allBooks.filter(book => {
+        const title = String(book.도서명 || book.제목 || '').toLowerCase();
+        const author = String(book.저자 || book.작가 || '').toLowerCase();
+        const category = String(book.카테고리 || book.분류 || '');
+        const publisher = String(book.출판사 || book.publisher || '');
+
+        const matchKeyword = title.includes(keyword) || author.includes(keyword);
+        const matchCategory = selectedCategory === "" || category === selectedCategory;
+        const matchPublisher = selectedPublisher === "" || publisher === selectedPublisher;
+
+        return matchKeyword && matchCategory && matchPublisher;
+    });
+
+    renderBooks(filtered);
+}
+
 async function loadBooks() {
     const res = await API.post('getBooks');
     if (res.success) {
         allBooks = res.data;
+        updateFilterOptions(allBooks); // 필터 옵션 업데이트
         renderBooks(allBooks);
     }
 }
@@ -84,6 +135,8 @@ function renderBooks(books) {
         const author = b.저자 || b.작가 || '-';
         const publisher = b.출판사 || b.publisher || '-';
         const statusText = b.상태 || b.대여상태 || '정보없음';
+        
+        // 상태 텍스트에 '가능'이 포함되어 있으면 대여 가능으로 판단
         const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
 
         const tr = document.createElement('tr');
@@ -110,15 +163,12 @@ function renderBooks(books) {
     });
 }
 
-/** 대여 하기: 서버의 'rentBook' 액션 호출 **/
+/** 대여 하기 **/
 async function rentBook(isbn) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userId = user.userId || user.아이디 || user.id;
 
-    // 현재 목록(allBooks)에서 해당 도서 정보를 가져옵니다.
-    // isbn 인자가 정확히 전달되는지 확인하기 위해 String으로 변환하여 비교합니다.
     const book = allBooks.find(b => String(b.ISBN || b.isbn) === String(isbn));
-    
     if (!book) {
         UI.showToast('도서 정보를 찾을 수 없습니다.', 'error');
         return;
@@ -127,11 +177,10 @@ async function rentBook(isbn) {
     const title = book.도서명 || book.제목;
 
     if (confirm(`[${title}] 도서를 대여하시겠습니까?`)) {
-        // 중요: 서버(GAS)의 rentBook 함수가 받는 인자 이름과 정확히 일치시켜야 합니다.
         const res = await API.post('rentBook', { 
             userId: userId, 
-            isbn: isbn,    // 'ISBN' 열로 들어갈 값
-            title: title   // '제목' 열로 들어갈 값
+            isbn: isbn,
+            title: title 
         });
 
         if (res.success) {
@@ -144,6 +193,7 @@ async function rentBook(isbn) {
     }
 }
 
+/** 내 대여 목록 로드 **/
 async function loadMyRentals() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userId = user.userId || user.아이디 || user.id;
@@ -156,14 +206,13 @@ async function loadMyRentals() {
     if (res.success && res.data) {
         res.data.forEach(r => {
             const tr = document.createElement('tr');
-            // r.대여ID 또는 r.rentalId 등 서버에서 내려주는 키값을 확인하여 적용
             const rId = r.대여ID || r.rentalId || r[0]; 
             const rIsbn = r.ISBN || r.isbn;
 
             tr.innerHTML = `
                 <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${r.도서명 || r.제목}</td>
-                <td>${r.대여일 ? new Date(r.대여일).toLocaleDateString() : '-'}</td>
-                <td>${r.반납예정일 ? new Date(r.반납예정일).toLocaleDateString() : '-'}</td>
+                <td>${r.대여일 || '-'}</td>
+                <td>${r.반납예정일 || '-'}</td>
                 <td style="text-align: center;">
                     <button class="btn-sm btn-secondary" onclick="returnBook('${rId}', '${rIsbn}')">반납</button>
                 </td>
@@ -173,7 +222,7 @@ async function loadMyRentals() {
     }
 }
 
-/** 반납 하기: 서버의 'returnBook' 액션 호출 **/
+/** 반납 하기 **/
 async function returnBook(rentalId, isbn) {
     if (confirm('반납하시겠습니까?')) {
         const res = await API.post('returnBook', { rentalId, isbn });
