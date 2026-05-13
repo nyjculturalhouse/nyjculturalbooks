@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (signupForm) {
+if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -69,9 +69,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const passwordConfirm = document.getElementById('regPasswordConfirm').value;
             const name = document.getElementById('regName').value;
 
+            // 데이터가 비어있는지 클라이언트에서 먼저 확인
+            if (!userId || !password) {
+                return UI.showToast('아이디와 비밀번호를 입력해주세요.', 'error');
+            }
+
             if (password !== passwordConfirm) {
                 return UI.showToast('비밀번호가 일치하지 않습니다.', 'error');
             }
+
+            console.log("서버로 보내는 데이터:", { '아이디': userId, '비밀번호': password, '이름': name });
 
             try {
                 const res = await API.post('signup', { 
@@ -82,9 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (res.success) {
                     UI.showToast('회원가입 완료! 로그인해주세요.');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1500);
+                    setTimeout(() => window.location.href = 'index.html', 1500);
                 } else {
                     UI.showToast(res.message || '회원가입에 실패했습니다.', 'error');
                 }
@@ -93,4 +98,3 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
