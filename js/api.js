@@ -7,7 +7,7 @@ const API = {
     async post(action, payload = {}) {
         UI.showLoading();
         // 주소가 undefined인지 여기서 최종 확인
-        const targetUrl = window.GAS_URL || 'https://script.google.com/macros/s/AKfycbxZbmTULBjxlBMGTd2ss1V5hcqoyFroGoZ1Cux6oM4tcDYMKcXsiMnnhG5l5Zr3a3En/exec';
+        const targetUrl = window.GAS_URL || 'https://script.google.com/macros/s/AKfycbyHmROHxGfgjPXqWz5n8WAFqzPcxESJnYzd-YLXa-bTpZm5boVMerAvDnQ89Fqj-jHu/exec';
         
         try {
             const response = await fetch(targetUrl, {
