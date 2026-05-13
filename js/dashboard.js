@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // 2. 상단 사용자 이름 표시 (모든 키값 대응)
+    // 2. 상단 사용자 이름 표시
     const displayName = user.이름 || user.name || user.userId || "사용자";
     if (document.getElementById('headerUserName')) {
         document.getElementById('headerUserName').innerText = displayName;
@@ -19,9 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(document.getElementById('infoName')) document.getElementById('infoName').value = displayName;
 
     // 4. 초기 실행 함수들
-    setupTabs();  // 탭 클릭 기능 활성화
-    loadBooks();  // 도서 목록 로드
-    loadMyRentals(); // 내 대여 현황 로드
+    setupTabs();  
+    loadBooks();  
+    loadMyRentals(); 
 
     // 5. 로그아웃
     document.getElementById('btnLogout').addEventListener('click', () => {
@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-/** 탭 클릭 전환 함수 (내 정보 클릭 해결) **/
 function setupTabs() {
     const navItems = document.querySelectorAll('.nav-item');
     const sections = document.querySelectorAll('.view-section');
@@ -52,11 +51,9 @@ function setupTabs() {
             const targetId = item.getAttribute('data-tab');
             if (!targetId) return;
 
-            // 메뉴 활성화 상태 변경
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
 
-            // 섹션 화면 전환
             sections.forEach(section => {
                 section.classList.remove('active');
                 if (section.id === targetId) {
@@ -67,7 +64,6 @@ function setupTabs() {
     });
 }
 
-/** 도서 목록 가져오기 **/
 async function loadBooks() {
     const res = await API.post('getBooks');
     if (res.success) {
@@ -76,7 +72,6 @@ async function loadBooks() {
     }
 }
 
-/** 도서 목록 렌더링 (image_54b242.png 출판사 포함 버전) **/
 function renderBooks(books) {
     const tbody = document.getElementById('booksTableBody');
     if (!tbody) return;
@@ -92,7 +87,6 @@ function renderBooks(books) {
         const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
 
         const tr = document.createElement('tr');
-        // '상태'와 '버튼'을 한 칸(td)에 넣어 레이아웃을 고정합니다.
         tr.innerHTML = `
             <td title="${title}" style="width: 25%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</td>
             <td style="width: 15%;">${category}</td>
@@ -116,14 +110,15 @@ function renderBooks(books) {
     });
 }
 
-/** 대여 하기 **/
+/** 대여 하기: 시트에 기록을 남기는 핵심 API 호출 **/
 async function rentBook(isbn) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userId = user.userId || user.아이디 || user.id;
     if (confirm(`도서를 대여하시겠습니까?`)) {
+        // API.post('rentBook', ...)이 구글 시트의 대여 기록 시트에 데이터를 추가합니다.
         const res = await API.post('rentBook', { userId, isbn });
         if (res.success) {
-            UI.showToast('대여 완료!');
+            UI.showToast('대여 완료! 시트에 기록되었습니다.');
             loadBooks();
             loadMyRentals();
         } else {
@@ -132,7 +127,6 @@ async function rentBook(isbn) {
     }
 }
 
-/** 내 대여 현황 가져오기 **/
 async function loadMyRentals() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const userId = user.userId || user.아이디 || user.id;
@@ -158,9 +152,10 @@ async function loadMyRentals() {
     }
 }
 
-/** 반납 하기 **/
+/** 반납 하기: 시트의 상태를 업데이트하는 핵심 API 호출 **/
 async function returnBook(rentalId, isbn) {
     if (confirm('반납하시겠습니까?')) {
+        // API.post('returnBook', ...)이 시트의 해당 대여 기록을 반납 처리합니다.
         const res = await API.post('returnBook', { rentalId, isbn });
         if (res.success) {
             UI.showToast('반납 완료!');
