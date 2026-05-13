@@ -228,11 +228,11 @@ function renderBooks(books) {
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td title="${title}">${title}</td>
-            <td>${category}</td>
-            <td title="${author}">${author}</td>
-            <td title="${publisher}">${publisher}</td>
-            <td>
+            <td class="col-title">${title}</td> <!-- 클래스 추가 제안 -->
+            <td class="col-category">${category}</td>
+            <td class="col-author">${author}</td>
+            <td class="col-publisher">${publisher}</td>
+            <td class="col-status">
                 <div class="status-action-cell">
                     <span class="badge ${isAvailable ? 'available' : 'rented'}">
                         ${isAvailable ? '가능' : '불가'}
