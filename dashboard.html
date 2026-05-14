@@ -7,6 +7,82 @@
     <!-- CSS 경로 확인: css 폴더 안에 style.css가 있어야 함 -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 요청사항 반영을 위한 추가/수정 스타일 */
+        
+        /* 1번 요청: 정보 수정 저장 버튼 길이를 회원탈퇴와 동일하게 (fit-content) */
+        #updateInfoForm .btn-primary {
+            width: fit-content;
+            padding: 10px 20px;
+        }
+
+        /* 2번 요청: 상단 인사말 우측 정렬 및 로그아웃 버튼 스타일(빨간색, 정보수정과 동일 UI) */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: auto; /* 우측 상단 배치 */
+        }
+        #btnLogout.btn-outline {
+            background-color: #ff4d4f; /* 빨간색 */
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px; /* 정보수정저장과 같은 UI 느낌 */
+            cursor: pointer;
+        }
+
+        /* 3번 요청: 대여 기록 없을 때 테이블 간격 해결 */
+        #myRentalsTableBody .no-data {
+            padding: 50px 0;
+            text-align: center;
+            color: #999;
+        }
+
+        /* 4번 요청: 카테고리 한줄, 저자 가운데 정렬 및 말줄임표(...) 처리 */
+        .data-table th, .data-table td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px; /* 적절한 최대 너비 설정 */
+        }
+        .data-table td:nth-child(2) { /* 카테고리 */
+            white-space: nowrap;
+        }
+        .data-table td:nth-child(3) { /* 저자 */
+            text-align: center;
+        }
+
+        /* 5번 요청: 검색 시 창 줄어듦 방지 (최소 높이 유지) */
+        #view-rent-book .table-container {
+            min-height: 500px; /* 3번 사진처럼 일정 높이 유지 */
+        }
+
+        /* 6번 요청: NEW 및 대여 횟수 UI를 정보수정저장 UI처럼 (배지 스타일) */
+        .badge-new {
+            background-color: #1890ff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+            display: inline-block;
+        }
+        .badge-rent-count {
+            background-color: transparent;
+            color: #ff4d4f;
+            border: 1px solid #ff4d4f;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body class="dashboard-layout">
     <!-- 사이드바 -->
@@ -47,12 +123,14 @@
                         <div class="card-header"><h3>신간 도서</h3></div>
                         <div id="newBooksList" class="ranking-list">
                             <p class="loading-text">데이터를 불러오는 중...</p>
+                            <!-- 스크립트에서 NEW 표시 시 <span class="badge-new">NEW</span> 형태로 생성 필요 -->
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-header"><h3>인기 대여 순위</h3></div>
                         <div id="popularBooksList" class="ranking-list">
                             <p class="loading-text">데이터를 불러오는 중...</p>
+                            <!-- 스크립트에서 2회 대여 표시 시 <span class="badge-rent-count">2회 대여</span> 형태로 생성 필요 -->
                         </div>
                     </div>
                 </div>
@@ -79,7 +157,7 @@
                                 <tr>
                                     <th>도서명</th>
                                     <th>카테고리</th>
-                                    <th>저자</th>
+                                    <th style="text-align: center;">저자</th>
                                     <th>출판사</th>
                                     <th style="width: 100px; text-align: center;">상태</th>
                                 </tr>
@@ -104,7 +182,10 @@
                                     <th style="width: 100px; text-align: center;">관리</th>
                                 </tr>
                             </thead>
-                            <tbody id="myRentalsTableBody"></tbody>
+                            <tbody id="myRentalsTableBody">
+                                <!-- 데이터 없을 시 dashboard.js 등에서 아래와 같은 구조로 출력 권장 -->
+                                <!-- <tr><td colspan="4" class="no-data">대여 기록이 없습니다.</td></tr> -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
