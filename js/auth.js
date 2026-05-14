@@ -6,6 +6,37 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
+    const checkDuplicateBtn = document.getElementById('btnCheckDuplicate'); // 중복확인 버튼
+
+    // --- 아이디 중복 확인 처리 ---
+    if (checkDuplicateBtn) {
+        checkDuplicateBtn.addEventListener('click', async () => {
+            const userId = document.getElementById('userId').value.trim();
+
+            if (!userId) {
+                UI.showToast("아이디를 입력해주세요.", "error");
+                return;
+            }
+
+            try {
+                UI.showToast("중복 확인 중...", "info");
+                // 서버 키값에 맞춰 'userId' 대신 '아이디' 사용 가능
+                const res = await API.post('checkDuplicate', { 아이디: userId });
+
+                if (res.success) {
+                    UI.showToast(res.message || "사용 가능한 아이디입니다.", "success");
+                    // 중복 확인 완료 상태를 저장하고 싶다면 dataset 등에 기록 가능
+                    checkDuplicateBtn.dataset.checked = "true";
+                } else {
+                    UI.showToast(res.message || "이미 사용 중인 아이디입니다.", "error");
+                    checkDuplicateBtn.dataset.checked = "false";
+                }
+            } catch (error) {
+                console.error("중복 확인 오류:", error);
+                UI.showToast("서버 통신 오류가 발생했습니다.", "error");
+            }
+        });
+    }
 
     // --- 로그인 처리 ---
     if (loginForm) {
@@ -26,7 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 loginBtn.disabled = true;
                 UI.showToast("로그인 확인 중...", "info");
 
-                const res = await API.post('login', { userId, password });
+                // 말씀하신 대로 서버 키값이 한글일 경우를 대비해 수정
+                const res = await API.post('login', { 아이디: userId, 비밀번호: password });
 
                 if (res.success) {
                     // 사용자 정보를 로컬 스토리지에 저장
@@ -60,11 +92,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = document.getElementById('userName').value.trim();
             const signupBtn = signupForm.querySelector('button[type="submit"]');
 
+            // 중복 확인 여부 체크 (선택 사항)
+            if (checkDuplicateBtn && checkDuplicateBtn.dataset.checked !== "true") {
+                UI.showToast("아이디 중복 확인을 해주세요.", "error");
+                return;
+            }
+
             try {
                 signupBtn.disabled = true;
                 UI.showToast("가입 처리 중...", "info");
 
-                const res = await API.post('signup', { userId, password, name });
+                // 서버 키값에 맞춰 한글로 전송
+                const res = await API.post('signup', { 아이디: userId, 비밀번호: password, 이름: name });
 
                 if (res.success) {
                     alert("회원가입이 완료되었습니다. 로그인해주세요.");
