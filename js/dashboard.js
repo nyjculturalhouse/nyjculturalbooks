@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadBooks();  
     loadMyRentals(); 
 
-    // 5. 로그아웃 버튼 이벤트 (통일된 UI 스타일 적용을 위해 처리)
+    // 5. 로그아웃 버튼 이벤트 (2번 요청: 빨간색 및 정보수정 UI와 통일)
     const btnLogout = document.getElementById('btnLogout');
     if (btnLogout) {
         btnLogout.addEventListener('click', () => {
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(catFilter) catFilter.addEventListener('change', applyFilters);
     if(pubFilter) pubFilter.addEventListener('change', applyFilters);
 
-    // 7. 정보 수정 및 회원 탈퇴 이벤트 연결 (3번 요청: 로그인 버튼 스타일 버튼 연결)
+    // 7. 정보 수정 및 회원 탈퇴 이벤트 연결
     const updateForm = document.getElementById('updateInfoForm');
     if(updateForm) {
         updateForm.addEventListener('submit', updateUserInfo);
@@ -55,10 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-/** [기능 1] 탭 전환 제어 (2번 요청: 버튼을 눌러야 섹션이 보이도록 수정) **/
+/** [기능 1] 탭 전환 제어 **/
 function setupTabs() {
     const navItems = document.querySelectorAll('.nav-item');
-    const sections = document.querySelectorAll('.view-section'); // HTML 섹션들의 클래스
+    const sections = document.querySelectorAll('.view-section');
     const pageTitle = document.getElementById('pageTitle');
 
     navItems.forEach(item => {
@@ -67,21 +67,18 @@ function setupTabs() {
             const targetId = item.getAttribute('data-tab');
             if (!targetId) return;
 
-            // 메뉴 활성화 상태 변경
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
 
-            // 섹션 전환: 모든 섹션 숨기고 선택된 섹션만 표시
             sections.forEach(section => {
-                section.style.display = 'none'; // 일단 모두 숨김
+                section.style.display = 'none';
                 section.classList.remove('active');
                 if (section.id === targetId) {
-                    section.style.display = 'block'; // 해당 섹션만 표시
+                    section.style.display = 'block';
                     section.classList.add('active');
                 }
             });
             
-            // 상단 타이틀 변경
             const titleMap = {
                 'view-home': '홈',
                 'view-rent-book': '도서 대여',
@@ -90,18 +87,16 @@ function setupTabs() {
             };
             if(pageTitle) pageTitle.innerText = titleMap[targetId] || '홈';
 
-            // 데이터 최신화
             if (targetId === 'view-my-rentals') loadMyRentals();
             if (targetId === 'view-rent-book') loadBooks();
         });
     });
 
-    // 초기 상태 설정: 홈 섹션만 보이기
     const firstTab = document.querySelector('.nav-item[data-tab="view-home"]');
     if (firstTab) firstTab.click();
 }
 
-/** [기능 2] 정보 수정 및 탈퇴 (3번 요청: 로그인 버튼과 동일한 UI 스타일의 버튼 사용) **/
+/** [기능 2] 정보 수정 및 탈퇴 **/
 async function updateUserInfo(e) {
     e.preventDefault();
     const userId = document.getElementById('infoUserId').value;
@@ -141,7 +136,7 @@ async function withdrawUser() {
     }
 }
 
-/** [기능 3] 도서 데이터 로드 및 렌더링 (1번 요청: 버튼 UI 통일) **/
+/** [기능 3] 도서 데이터 로드 및 렌더링 (4번 요청: 말줄임표 및 정렬 반영) **/
 function renderBooks(books) {
     const tbody = document.getElementById('booksTableBody');
     if (!tbody) return;
@@ -150,13 +145,16 @@ function renderBooks(books) {
         const statusText = String(b.상태 || b.대여상태 || '가능');
         const isAvail = statusText.includes('가능') || statusText.toUpperCase() === 'AVAILABLE';
 
-        // 1번 요청 반영: 로그인 버튼과 같은 스타일의 클래스(btn-primary) 적용
         return `
             <tr>
-                <td><strong>${b.도서명 || b.제목}</strong></td>
-                <td>${b.카테고리 || b.분류 || '-'}</td>
-                <td>${b.저자 || b.작가 || '-'}</td>
-                <td>${b.출판사 || b.publisher || '-'}</td>
+                <td title="${b.도서명 || b.제목}" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <strong>${b.도서명 || b.제목}</strong>
+                </td>
+                <td style="white-space: nowrap;">${b.카테고리 || b.분류 || '-'}</td>
+                <td style="text-align: center; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${b.저자 || b.작가 || '-'}">
+                    ${b.저자 || b.작가 || '-'}
+                </td>
+                <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${b.출판사 || b.publisher || '-'}</td>
                 <td style="text-align: center;">
                     <div class="status-action-cell">
                         <span class="badge ${isAvail ? 'available' : 'rented'}">${isAvail ? '대여가능' : '대여중'}</span>
@@ -170,7 +168,7 @@ function renderBooks(books) {
     }).join('');
 }
 
-/** [기능 4] 대여 및 반납 로직 (1번 요청: 버튼 UI 통일) **/
+/** [기능 4] 대여 및 반납 로직 (3번 요청: 대여 기록 없을 때 간격 해결) **/
 async function loadMyRentals() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const res = await API.post('getMyRentals', { userId: user.userId || user.아이디 });
@@ -181,10 +179,9 @@ async function loadMyRentals() {
         tbody.innerHTML = res.data.reverse().map(r => {
             const isReturned = String(r.반납여부 || "").trim().toUpperCase() === 'Y';
             const rId = r.대여ID || r.rentalId || r[0];
-            // 1번 요청 반영: 반납 버튼도 btn-primary 스타일 적용 (반납 버튼은 보조색을 위해 btn-secondary 클래스 유지하되 스타일은 통일)
             return `
                 <tr style="${isReturned ? 'color:#adb5bd; background:#f8f9fa;' : ''}">
-                    <td>${r.도서명 || r.제목}</td>
+                    <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${r.도서명 || r.제목}</td>
                     <td>${r.대여일 || '-'}</td>
                     <td>${r.반납예정일 || '-'}</td>
                     <td style="text-align: center;">
@@ -194,11 +191,11 @@ async function loadMyRentals() {
             `;
         }).join('');
     } else {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#999;">대여 기록이 없습니다.</td></tr>';
+        // 3번 요청 반영: 패딩을 주어 헤더와 붙지 않게 처리
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:100px 0; color:#999;">대여 기록이 없습니다.</td></tr>';
     }
 }
 
-// 아래 기존 필터 및 렌더링 로직(loadBooks, renderNewBooks, renderPopularBooks, applyFilters 등)은 기존 코드와 동일하게 유지됨
 async function loadBooks() {
     try {
         const res = await API.post('getBooks');
@@ -216,21 +213,23 @@ async function loadBooks() {
     } catch (error) { console.error("데이터 로드 오류:", error); }
 }
 
+/** 6번 요청: NEW 배지를 정보수정 UI 스타일로 변경 **/
 function renderNewBooks(books) {
     const list = document.getElementById('newBooksList');
     if(!list) return;
     const newBooks = [...books].reverse().slice(0, 3);
     list.innerHTML = newBooks.map(b => `
-        <div class="ranking-item">
-            <div style="display: flex; align-items: center;">
-                <span class="rank-badge new">NEW</span> 
-                <span style="font-weight: 500;">${b.도서명 || b.제목}</span>
+        <div class="ranking-item" style="margin-bottom: 15px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="background-color: #1890ff; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold;">NEW</span> 
+                <span style="font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${b.도서명 || b.제목}</span>
             </div>
-            <span style="color: #888; font-size: 12px;">${b.저자 || '-'}</span>
+            <div style="color: #888; font-size: 12px; margin-top: 4px; padding-left: 55px;">${b.저자 || '-'}</div>
         </div>
     `).join('');
 }
 
+/** 6번 요청: 2회 대여 배지를 정보수정 UI 스타일로 변경 (빨간색 유지) **/
 function renderPopularBooks(books, history) {
     const list = document.getElementById('popularBooksList');
     if(!list) return;
@@ -241,12 +240,12 @@ function renderPopularBooks(books, history) {
     });
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
     list.innerHTML = sorted.map((item, i) => `
-        <div class="ranking-item">
-            <div style="display: flex; align-items: center;">
+        <div class="ranking-item" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 10px;">
                 <span class="rank-badge">${i+1}</span>
-                <span style="font-weight: 500;">${item[0]}</span>
+                <span style="font-weight: 500; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item[0]}</span>
             </div>
-            <span style="color: #f04452; font-weight: 600; font-size: 12px;">${item[1]}회 대여</span>
+            <span style="border: 1px solid #f04452; color: #f04452; padding: 3px 10px; border-radius: 20px; font-weight: 600; font-size: 11px;">${item[1]}회 대여</span>
         </div>
     `).join('');
 }
@@ -288,8 +287,8 @@ function applyFilters() {
     const selectedPublisher = document.getElementById('filterPublisher').value;
     const filtered = allBooks.filter(book => {
         const matchKeyword = (book.도서명 || book.제목 || '').toLowerCase().includes(keyword) || (book.저자 || book.작가 || '').toLowerCase().includes(keyword);
-        const matchCategory = selectedCategory === "" || (book.카테고리 || book.분류) === selectedCategory;
-        const matchPublisher = selectedPublisher === "" || (book.출판사 || book.publisher) === selectedPublisher;
+        const matchCategory = selectedCategory === "" || (book.카테고리 || b.분류) === selectedCategory;
+        const matchPublisher = selectedPublisher === "" || (book.출판사 || b.publisher) === selectedPublisher;
         return matchKeyword && matchCategory && matchPublisher;
     });
     renderBooks(filtered);
