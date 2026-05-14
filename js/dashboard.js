@@ -1,5 +1,6 @@
 let allBooks = [];
 
+/** [초기화] 페이지 로드 시 실행 **/
 document.addEventListener('DOMContentLoaded', () => {
     // 1. 사용자 인증 확인
     const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -15,13 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 3. 내 정보 수정을 위한 초기값 세팅
-    if(document.getElementById('infoUserId')) document.getElementById('infoUserId').value = user.userId || user.아이디 || '';
-    if(document.getElementById('infoName')) document.getElementById('infoName').value = displayName;
+    if (document.getElementById('infoUserId')) document.getElementById('infoUserId').value = user.userId || user.아이디 || '';
+    if (document.getElementById('infoName')) document.getElementById('infoName').value = displayName;
 
     // 4. 초기 실행 함수들
-    setupTabs();  
-    loadBooks();  
-    loadMyRentals(); 
+    setupTabs();
+    loadBooks();
+    loadMyRentals();
 
     // 5. 로그아웃 버튼 이벤트
     const btnLogout = document.getElementById('btnLogout');
@@ -39,19 +40,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const catFilter = document.getElementById('filterCategory');
     const pubFilter = document.getElementById('filterPublisher');
 
-    if(searchInput) searchInput.addEventListener('input', applyFilters);
-    if(catFilter) catFilter.addEventListener('change', applyFilters);
-    if(pubFilter) pubFilter.addEventListener('change', applyFilters);
+    if (searchInput) searchInput.addEventListener('input', applyFilters);
+    if (catFilter) catFilter.addEventListener('change', applyFilters);
+    if (pubFilter) pubFilter.addEventListener('change', applyFilters);
 
     // 7. 정보 수정 및 회원 탈퇴 이벤트 연결
     const updateForm = document.getElementById('updateInfoForm');
-    if(updateForm) updateForm.addEventListener('submit', updateUserInfo);
-    
+    if (updateForm) updateForm.addEventListener('submit', updateUserInfo);
+
     const btnWithdraw = document.getElementById('btnWithdraw');
-    if(btnWithdraw) btnWithdraw.addEventListener('click', withdrawUser);
+    if (btnWithdraw) btnWithdraw.addEventListener('click', withdrawUser);
 });
 
-/** [기능 1] 탭 전환 제어 **/
+/** [기능 1] 탭 전환 제어 (image_caeb39.jpg 기반) **/
 function setupTabs() {
     const navItems = document.querySelectorAll('.nav-item');
     const sections = document.querySelectorAll('.view-section');
@@ -63,9 +64,11 @@ function setupTabs() {
             const targetId = item.getAttribute('data-tab');
             if (!targetId) return;
 
+            // 사이드바 활성화 클래스 교체
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
 
+            // 섹션 전환
             sections.forEach(section => {
                 section.style.display = 'none';
                 section.classList.remove('active');
@@ -74,25 +77,28 @@ function setupTabs() {
                     section.classList.add('active');
                 }
             });
-            
+
+            // 페이지 타이틀 변경
             const titleMap = {
                 'view-home': '홈',
                 'view-rent-book': '도서 대여',
                 'view-my-rentals': '대여 정보 조회/반납',
                 'view-my-info': '내 정보'
             };
-            if(pageTitle) pageTitle.innerText = titleMap[targetId] || '홈';
+            if (pageTitle) pageTitle.innerText = titleMap[targetId] || '홈';
 
+            // 데이터 갱신
             if (targetId === 'view-my-rentals') loadMyRentals();
             if (targetId === 'view-rent-book') loadBooks();
         });
     });
 
+    // 초기 탭 설정 (홈 화면)
     const firstTab = document.querySelector('.nav-item[data-tab="view-home"]');
     if (firstTab) firstTab.click();
 }
 
-/** [기능 2] 정보 수정 및 탈퇴 **/
+/** [기능 2] 정보 수정 및 회원 탈퇴 **/
 async function updateUserInfo(e) {
     e.preventDefault();
     const userId = document.getElementById('infoUserId').value;
@@ -108,7 +114,7 @@ async function updateUserInfo(e) {
             const user = JSON.parse(localStorage.getItem('currentUser'));
             user.이름 = newName;
             localStorage.setItem('currentUser', JSON.stringify(user));
-            if(document.getElementById('headerUserName')) {
+            if (document.getElementById('headerUserName')) {
                 document.getElementById('headerUserName').innerText = newName;
             }
         } else {
@@ -121,7 +127,7 @@ async function withdrawUser() {
     if (confirm("정말로 탈퇴하시겠습니까? 모든 대여 기록이 삭제됩니다.")) {
         const user = JSON.parse(localStorage.getItem('currentUser'));
         const res = await API.post('withdrawUser', { userId: user.userId || user.아이디 });
-        
+
         if (res.success) {
             alert("회원 탈퇴가 완료되었습니다.");
             localStorage.removeItem('currentUser');
@@ -136,7 +142,7 @@ async function withdrawUser() {
 function renderBooks(books) {
     const tbody = document.getElementById('booksTableBody');
     if (!tbody) return;
-    
+
     tbody.innerHTML = books.map(b => {
         const isbn = b.ISBN || b.isbn || '';
         const statusText = String(b.상태 || b.대여상태 || '가능');
@@ -148,9 +154,7 @@ function renderBooks(books) {
                     <strong>${b.도서명 || b.제목}</strong>
                 </td>
                 <td>${b.카테고리 || b.분류 || '-'}</td>
-                <td title="${b.저자 || b.작가 || '-'}">
-                    ${b.저자 || b.작가 || '-'}
-                </td>
+                <td title="${b.저자 || b.작가 || '-'}">${b.저자 || b.작가 || '-'}</td>
                 <td title="${b.출판사 || b.publisher || '-'}">${b.출판사 || b.publisher || '-'}</td>
                 <td>
                     <button class="btn-rent ${!isAvail ? 'rented' : ''}" 
@@ -164,20 +168,19 @@ function renderBooks(books) {
     }).join('');
 }
 
-/** [기능 4] 대여 및 반납 로직 **/
+/** [기능 4] 내 대여 현황 및 인기/신간 로직 **/
 async function loadMyRentals() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const res = await API.post('getMyRentals', { userId: user.userId || user.아이디 });
     const tbody = document.getElementById('myRentalsTableBody');
-    if(!tbody) return;
+    if (!tbody) return;
 
     if (res.success && res.data.length > 0) {
-        // 최신 대여건이 위로 오도록 reverse
         tbody.innerHTML = res.data.reverse().map(r => {
             const isReturned = String(r.반납여부 || "").trim().toUpperCase() === 'Y';
             const rId = r.대여ID || r.rentalId || r[0];
             return `
-                <tr class="${isReturned ? 'returned-row' : ''}">
+                <tr>
                     <td class="title" title="${r.도서명 || r.제목}">${r.도서명 || r.제목}</td>
                     <td>${r.대여일 || '-'}</td>
                     <td>${r.반납예정일 || '-'}</td>
@@ -195,41 +198,37 @@ async function loadMyRentals() {
 async function loadBooks() {
     try {
         const res = await API.post('getBooks');
-        const rentalRes = await API.post('getRentalHistory'); 
+        const rentalRes = await API.post('getRentalHistory');
         if (res.success) {
             allBooks = res.data;
             updateFilterOptions(allBooks);
             renderBooks(allBooks);
             renderNewBooks(allBooks);
-            const popularList = document.getElementById('popularBooksList');
-            if (rentalRes.success && rentalRes.data && popularList) {
+            if (rentalRes.success && rentalRes.data) {
                 renderPopularBooks(allBooks, rentalRes.data);
             }
         }
     } catch (error) { console.error("데이터 로드 오류:", error); }
 }
 
-/** 신간 도서 배지 렌더링 (디자인 보정 반영) **/
 function renderNewBooks(books) {
     const list = document.getElementById('newBooksList');
-    if(!list) return;
-    // 최신 등록 순으로 3권
+    if (!list) return;
     const newBooks = [...books].reverse().slice(0, 3);
     list.innerHTML = newBooks.map(b => `
         <div class="ranking-item">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <span class="new-badge">NEW</span> 
-                <span class="new-book-title" style="font-weight: 600; color: var(--text-main);">${b.도서명 || b.제목}</span>
+                <span class="new-book-title" style="font-weight: 600;">${b.도서명 || b.제목}</span>
             </div>
             <div style="color: var(--text-light); font-size: 13px; margin-top: 4px; padding-left: 50px;">${b.저자 || '-'}</div>
         </div>
     `).join('');
 }
 
-/** 인기 도서 배지 렌더링 **/
 function renderPopularBooks(books, history) {
     const list = document.getElementById('popularBooksList');
-    if(!list) return;
+    if (!list) return;
     const counts = {};
     history.forEach(record => {
         const title = record.도서명 || record.제목 || record[1];
@@ -239,7 +238,7 @@ function renderPopularBooks(books, history) {
     list.innerHTML = sorted.map((item, i) => `
         <div class="ranking-item" style="display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="rank-badge" style="background:var(--bg-color); color:var(--text-light); padding: 2px 8px; border-radius: 6px; font-size:12px; font-weight:700;">${i+1}</span>
+                <span class="rank-badge" style="background:var(--bg-color); padding: 2px 8px; border-radius: 6px; font-size:12px; font-weight:700;">${i + 1}</span>
                 <span style="font-weight: 600; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item[0]}</span>
             </div>
             <span class="rent-count-badge">${item[1]}회 대여</span>
@@ -247,6 +246,7 @@ function renderPopularBooks(books, history) {
     `).join('');
 }
 
+/** [기능 5] 대여/반납 및 필터링 **/
 async function rentBook(isbn) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const book = allBooks.find(b => String(b.ISBN || b.isbn) === String(isbn));
@@ -268,10 +268,10 @@ function updateFilterOptions(books) {
     const categorySelect = document.getElementById('filterCategory');
     const publisherSelect = document.getElementById('filterPublisher');
     if (!categorySelect || !publisherSelect) return;
-    
+
     categorySelect.innerHTML = '<option value="">전체 카테고리</option>';
     publisherSelect.innerHTML = '<option value="">전체 출판사</option>';
-    
+
     [...new Set(books.map(b => b.카테고리 || b.분류).filter(Boolean))].sort().forEach(cat => {
         const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; categorySelect.appendChild(opt);
     });
@@ -284,7 +284,7 @@ function applyFilters() {
     const keyword = document.getElementById('searchBookInput').value.toLowerCase();
     const selectedCategory = document.getElementById('filterCategory').value;
     const selectedPublisher = document.getElementById('filterPublisher').value;
-    
+
     const filtered = allBooks.filter(book => {
         const title = (book.도서명 || book.제목 || '').toLowerCase();
         const author = (book.저자 || book.작가 || '').toLowerCase();
@@ -294,7 +294,7 @@ function applyFilters() {
         const matchKeyword = title.includes(keyword) || author.includes(keyword);
         const matchCategory = selectedCategory === "" || category === selectedCategory;
         const matchPublisher = selectedPublisher === "" || publisher === selectedPublisher;
-        
+
         return matchKeyword && matchCategory && matchPublisher;
     });
     renderBooks(filtered);
