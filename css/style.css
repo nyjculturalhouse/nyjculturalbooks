@@ -149,6 +149,8 @@ input:focus, select:focus {
     cursor: pointer;
     transition: all 0.2s;
     width: 100%;
+    height: 54px;
+    font-size: 17px;
     text-decoration: none;
     display: flex;
     justify-content: center;
@@ -202,6 +204,16 @@ input:focus, select:focus {
     display: flex;
     gap: 10px;
     margin-top: 20px;
+}
+
+/* 아이디/비밀번호 아이콘 제거 */
+.input-wrapper i {
+    display: none;
+}
+
+/* 아이콘 제거 후 input 정렬 유지 */
+.input-wrapper input {
+    padding-left: 16px !important;
 }
 
 /* --- 5. 레이아웃 시스템 --- */
@@ -296,7 +308,7 @@ input:focus, select:focus {
 
 @keyframes slideUp {
     from {
-        opacity: 0;
+        opacity: 1;
         transform: translateY(20px);
     }
     to {
