@@ -66,8 +66,16 @@
         .badge-new { background-color: #1890ff; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         .badge-rent-count { border: 1px solid #ff4d4f; color: #ff4d4f; padding: 3px 10px; border-radius: 20px; font-weight: 600; font-size: 11px; }
 
-        /* 1번 사진 요청: 인기대여순위 말줄임표 제거 (도서명 전체 표시) */
-        .ranking-item .book-title { white-space: normal; word-break: break-all; font-weight: 600; flex: 1; line-height: 1.4; }
+        /* 1번 사진 요청: 인기대여순위 말줄임표 완벽 제거 및 줄바꿈 허용 */
+        .ranking-item .book-title { 
+            white-space: normal !important; 
+            word-break: break-all !important; 
+            text-overflow: clip !important;
+            overflow: visible !important;
+            font-weight: 600; 
+            flex: 1; 
+            line-height: 1.4; 
+        }
 
         /* 내 정보 수정 폼 */
         .form-group { margin-bottom: 15px; }
@@ -75,6 +83,66 @@
         .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         
         #view-rent-book .table-container { min-height: 550px; }
+
+        /* --- 로그인 & 회원가입 전용 디자인 (중앙 배치 수정) --- */
+        .auth-page {
+            background-color: #f2f4f6; /* --bg-color 대용 */
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 380px;
+            background: #ffffff; 
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+        }
+
+        .auth-card h2 {
+            color: #191f28; 
+            font-weight: 800;
+            font-size: 20px; 
+            margin-bottom: 8px;
+            line-height: 1.4;
+            word-break: keep-all; 
+        }
+
+        /* 로그인 & 회원가입 버튼 가로 정렬 그룹 */
+        .auth-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .auth-btn-group .btn-primary,
+        .auth-btn-group .btn-signup-gray {
+            flex: 1;
+            height: 50px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-btn-group .btn-primary { background: #3182f6; color: white; }
+        .auth-btn-group .btn-signup-gray { background: #9ca3af; color: white; }
+        .auth-btn-group .btn-primary:hover { background: #1b64da; }
+        .auth-btn-group .btn-signup-gray:hover { background: #6b7280; }
     </style>
 </head>
 <body class="dashboard-layout">
