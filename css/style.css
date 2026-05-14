@@ -113,7 +113,9 @@ input:focus, select:focus {
 }
 
 /* --- 4. 버튼 및 폼 그룹 UI --- */
-.form-group { margin-bottom: 24px; }
+.form-group { 
+    margin-bottom: 24px; 
+}
 
 .form-group label {
     display: block;
@@ -125,7 +127,8 @@ input:focus, select:focus {
 /* 모든 인증 관련 버튼 높이 통일 */
 .btn-primary, 
 .btn-secondary-custom {
-    height: 54px; /* 높이 고정 */
+    height: 54px;
+    min-height: 54px;
     width: 100%;
     border-radius: var(--radius-md);
     font-weight: 700;
@@ -137,7 +140,9 @@ input:focus, select:focus {
     align-items: center;
     border: none;
     text-decoration: none;
-    box-sizing: border-box; /* 패딩이 높이에 영향을 주지 않도록 설정 */
+    box-sizing: border-box;
+    padding: 0 20px;
+    line-height: 1;
 }
 
 /* 로그인 버튼 (파랑) */
@@ -165,12 +170,27 @@ input:focus, select:focus {
     display: flex;
     gap: 10px;
     margin-top: 20px;
-    align-items: stretch; /* 자식 요소들의 높이를 동일하게 맞춤 */
+    align-items: stretch;
 }
 
 .auth-button-group .btn-primary,
 .auth-button-group .btn-secondary-custom {
-    flex: 1; /* 가로 비율을 동일하게 1:1로 맞춤 */
+    flex: 1;
+}
+
+/* 아이디/비밀번호 이모티콘 제거 */
+.input-wrapper i,
+.input-icon,
+.fa-user,
+.fa-lock,
+.fa-id-card,
+.fa-key {
+    display: none !important;
+}
+
+/* 아이콘 제거 후 input 정렬 */
+.input-wrapper input {
+    padding-left: 16px !important;
 }
 
 /* --- 5. 레이아웃 시스템 --- */
@@ -325,26 +345,22 @@ input:focus, select:focus {
 }
 
 /* 대여순위 도서명 말줄임표 없이 전체 노출 */
-/* 대여순위 도서명 말줄임표 없이 전체 노출 */
 .ranking-item .book-title { 
-    /* 줄바꿈 허용 */
     white-space: normal !important; 
-    /* 단어 단위 끊기 허용 */
     word-break: break-all !important; 
-    /* 말줄임표 해제 */
     text-overflow: clip !important; 
     overflow: visible !important;
     
     font-weight: 600; 
     flex: 1; 
     line-height: 1.4;
-    padding-right: 10px; /* 대여 횟수 배지와 겹치지 않게 여백 추가 */
+    padding-right: 10px;
 }
 
 /* 랭킹 아이템 내부 레이아웃 정렬 */
 .ranking-item {
     display: flex;
-    align-items: flex-start; /* 텍스트가 길어져 두 줄이 되어도 위쪽 기준 정렬 */
+    align-items: flex-start;
     padding: 10px 0;
 }
 
@@ -412,8 +428,6 @@ input:focus, select:focus {
 
 .auth-card .btn-primary {
     margin-top: 16px;
-    height: 54px;
-    font-size: 17px;
     background: var(--primary); 
     box-shadow: none;
 }
