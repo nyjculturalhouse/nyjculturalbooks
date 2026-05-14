@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.location.replace('dashboard.html');
                     }, 500);
                 } else {
+                    // [수정/확인] res.message가 "아이디 또는 비밀번호가 일치하지 않습니다"로 오는 부분
                     UI.showToast(res.message || "로그인 실패: 정보를 확인하세요.", "error");
                     loginBtn.disabled = false;
                 }
