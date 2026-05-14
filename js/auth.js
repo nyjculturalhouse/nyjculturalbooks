@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 UI.showToast("중복 확인 중...", "info");
                 // 서버 키값에 맞춰 '아이디' 사용
-                const res = await API.post('checkDuplicate', { 아이디: userId });
+                const res = await API.post('checkDuplicateUser', { 아이디: userId });
 
                 if (res.success) {
                     UI.showToast(res.message || "사용 가능한 아이디입니다.", "success");
