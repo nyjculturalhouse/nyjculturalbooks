@@ -100,6 +100,15 @@ input:focus, select:focus {
     transform: translateY(-1px);
 }
 
+/* [추가수정] 3번 사진: 대여중일 때 버튼 색상 (회색 배경 + 빨간 글씨) */
+.btn-rent.rented {
+    background-color: #f1f3f5 !important;
+    color: var(--danger) !important;
+    cursor: not-allowed;
+    border: 1px solid #e5e8eb;
+    transform: none !important;
+}
+
 /* --- 4. 정보수정 & 회원탈퇴 버튼 UI (image_cc53db.png 보정) --- */
 .form-group { margin-bottom: 24px; }
 .form-group label {
@@ -223,20 +232,28 @@ input:focus, select:focus {
     margin-bottom: 24px;
 }
 
+/* [추가수정] 1번 사진: 토스트 알림을 화면 정중앙으로 배치 */
 #toastContainer {
     position: fixed;
-    top: 30px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%); /* 화면 한가운데 정렬 */
     z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
 }
 
 .toast {
-    padding: 14px 28px;
-    border-radius: 40px;
-    font-weight: 600;
+    padding: 18px 40px; /* 크기를 좀 더 키움 */
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.2rem;
     color: white;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    background-color: rgba(0, 0, 0, 0.85); /* 시인성을 위해 어두운 배경 적용 */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    margin-bottom: 10px;
 }
 
 .view-section { display: none; }
@@ -275,6 +292,12 @@ input:focus, select:focus {
     text-overflow: ellipsis; /* 너무 길면 ... 표시 */
 }
 
+/* [추가수정] 2번 사진: 대여일 칸(두 번째 열) 가운데 정렬 명시 */
+.book-table th:nth-child(2),
+.book-table td:nth-child(2) {
+    text-align: center;
+}
+
 /* 도서명 왼쪽 정렬 유지 */
 .book-table td.title {
     text-align: left;
@@ -290,6 +313,14 @@ input:focus, select:focus {
     font-weight: 800;
     margin-right: 6px;
     display: inline-block;
+}
+
+/* [추가수정] 5번 사진: 신간도서 제목 전체 노출 (말줄임 해제) */
+.ranking-item .new-book-title {
+    white-space: normal !important;      /* 줄바꿈 허용 */
+    overflow: visible !important;        /* 넘침 허용 */
+    text-overflow: clip !important;      /* 말줄임표 제거 */
+    word-break: break-all;               /* 단어 단위 끊기 */
 }
 
 .rent-count-badge {
