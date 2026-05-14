@@ -109,20 +109,21 @@ input:focus, select:focus {
     color: var(--text-light);
 }
 
-/* 정보 수정 저장 버튼 */
+/* 정보 수정 저장 버튼 (너비 수정 반영) */
 .btn-primary {
     background: var(--primary);
     color: white;
     border: none;
-    padding: 14px 24px;
+    padding: 10px 20px; /* 높이와 패딩 조절 */
     border-radius: var(--radius-md);
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
-    width: 100%; /* 내 정보 섹션에서 꽉 차게 */
+    width: auto; /* 꽉 차던 너비를 해제하여 회원탈퇴와 사이즈 통일 */
+    min-width: 100px;
 }
 
-/* 회원 탈퇴 버튼 (대여 버튼 같은 스타일 + 빨간색) */
+/* 회원 탈퇴 버튼 */
 .btn-link-danger {
     background-color: var(--danger);
     color: white;
@@ -137,6 +138,38 @@ input:focus, select:focus {
 .btn-link-danger:hover {
     background-color: #d93d4a;
     transform: translateY(-1px);
+}
+
+/* 로그아웃 버튼 (정보수정과 같은 UI + 빨간색) */
+.btn-logout {
+    background-color: var(--danger);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    background-color: #d93d4a;
+}
+
+/* 상단 헤더 정렬 (반갑습니다 & 로그아웃 오른쪽 상단 배치용) */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 /* --- 5. 레이아웃 시스템 (사이드바 고정) --- */
@@ -215,4 +248,57 @@ input:focus, select:focus {
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 추가 수정 사항 반영 (테이블 고정 및 텍스트 처리) --- */
+
+/* 2번 사진: 대여 도서 없을 때 붙어 뜨는 현상 해결 */
+.empty-message {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-light);
+}
+
+/* 3번 사진: 테이블 레이아웃 고정 및 텍스트 생략 (...) */
+.book-table {
+    width: 100%;
+    table-layout: fixed; /* 검색 시 창 줄어듦 방지 */
+    border-collapse: collapse;
+}
+
+.book-table th, .book-table td {
+    padding: 12px 8px;
+    text-align: center; /* 저자 등 기본 가운데 정렬 */
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 너무 길면 ... 표시 */
+}
+
+/* 도서명 왼쪽 정렬 유지 */
+.book-table td.title {
+    text-align: left;
+}
+
+/* 5번 사진: 배지 UI 스타일 (정보수정 UI 스타일 계승) */
+.new-badge {
+    background-color: var(--primary);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    margin-right: 6px;
+    display: inline-block;
+}
+
+.rent-count-badge {
+    background-color: #ffeeef;
+    color: var(--danger);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-block;
+    margin-top: 5px;
 }
