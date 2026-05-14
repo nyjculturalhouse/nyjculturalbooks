@@ -44,7 +44,6 @@ select {
     outline: none;
     transition: all 0.2s;
     width: 100%;
-    /* max-width는 개별 컨테이너 내에서 조절되도록 수정 */
 }
 
 input:focus, select:focus {
@@ -123,7 +122,7 @@ input:focus, select:focus {
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
-    width: 100%; /* 로그인 등에서는 꽉 차게, 대시보드에서는 auto로 개별 지정 가능 */
+    width: 100%;
 }
 
 .btn-primary:hover {
@@ -300,69 +299,69 @@ input:focus, select:focus {
     margin-top: 5px;
 }
 
-/* --- 8. [신규 추가] 로그인 & 회원가입 전용 디자인 (image_bf37ba.png 테마) --- */
+/* --- 8. [수정 완료] 로그인 & 회원가입 전용 디자인 --- */
 
 .auth-page {
-    background: radial-gradient(circle at top left, #4a1d4a, #2a2d5a, #1a1c2c); /* 배경 그라데이션 */
+    background-color: var(--bg-color); /* 배경색을 밝은 톤으로 수정 */
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* 가로 중앙 */
+    align-items: center;     /* 세로 중앙 */
     height: 100vh;
 }
 
 .auth-card {
     width: 100%;
     max-width: 400px;
-    background: rgba(255, 255, 255, 0.1); /* 투명한 유리 느낌 */
-    backdrop-filter: blur(20px); /* 블러 처리 */
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--white); /* 깔끔한 흰색 카드로 수정 */
     border-radius: var(--radius-lg);
     padding: 48px 40px;
     text-align: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* 부드러운 그림자 */
 }
 
 .auth-card h2 {
-    color: var(--white);
+    color: var(--text-main); /* 폰트 색상을 검정색 계열로 변경 */
     font-weight: 800;
-    font-size: 28px;
+    font-size: 22px; /* 글씨 크기를 줄여서 한 줄에 잘 들어오게 수정 */
+    margin-bottom: 8px;
+    line-height: 1.4;
+    word-break: keep-all; /* 단어 단위 줄바꿈 방지 */
+}
+
+.auth-card .auth-subtitle {
+    color: var(--text-light);
+    font-size: 14px;
     margin-bottom: 32px;
 }
 
 .auth-card .form-group label {
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-light);
     text-align: left;
 }
 
 .auth-card input {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--white);
+    background: #f9fafb;
+    border: 1px solid var(--border);
+    color: var(--text-main);
     margin-bottom: 8px;
 }
 
 .auth-card input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.auth-card input:focus {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: var(--primary);
+    color: #adb5bd;
 }
 
 .auth-card .btn-primary {
     margin-top: 16px;
     height: 54px;
     font-size: 17px;
-    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); /* 그라데이션 버튼 */
-    box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+    background: var(--primary); /* 그라데이션 제거 후 요청하신 파란색 적용 */
+    box-shadow: none;
 }
 
 .auth-footer {
     margin-top: 24px;
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-light);
 }
 
 .auth-footer a {
