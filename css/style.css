@@ -336,8 +336,12 @@ input:focus, select:focus {
     display: flex;
     justify-content: center; 
     align-items: center;
+
     width: 100%;
     min-height: 100vh;
+
+    position: fixed;
+    inset: 0;
 }
 
 .auth-card {
