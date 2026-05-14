@@ -87,7 +87,7 @@ input:focus, select:focus {
     color: var(--danger); 
 }
 
-/* 대여 버튼 파란색 수정 및 대여불가 빨간색 수정 */
+/* 대여 버튼 */
 .btn-rent {
     background-color: var(--primary);
     color: white;
@@ -124,7 +124,7 @@ input:focus, select:focus {
     color: var(--text-light);
 }
 
-/* 모든 인증 관련 버튼 높이 통일 */
+/* 기본 버튼 스타일 */
 .btn-primary, 
 .btn-secondary-custom {
     height: 54px;
@@ -145,7 +145,7 @@ input:focus, select:focus {
     line-height: 1;
 }
 
-/* 로그인 버튼 (파랑) */
+/* 로그인 버튼 (파랑 유지) */
 .btn-primary {
     background: var(--primary);
     color: white;
@@ -155,17 +155,31 @@ input:focus, select:focus {
     background: var(--primary-hover);
 }
 
-/* 회원가입 버튼 (회색) */
-.btn-secondary-custom {
+/* 🔥 추가: 회색 버튼 통일 스타일 */
+.btn-secondary-custom,
+.btn-secondary {
     background-color: #9ca3af;
     color: white;
+    height: 54px;
+    min-height: 54px;
+    width: 100%;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 17px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    transition: all 0.2s;
 }
 
-.btn-secondary-custom:hover {
-    background-color: #4b5563;
+.btn-secondary-custom:hover,
+.btn-secondary:hover {
+    background-color: #6b7280;
 }
 
-/* 로그인 버튼 + 회원가입 버튼 가로 배치 컨테이너 */
+/* 로그인 버튼 + 회원가입 버튼 가로 배치 */
 .auth-button-group {
     display: flex;
     gap: 10px;
@@ -188,7 +202,7 @@ input:focus, select:focus {
     display: none !important;
 }
 
-/* 아이콘 제거 후 input 정렬 */
+/* 입력 정렬 */
 .input-wrapper input {
     padding-left: 16px !important;
 }
@@ -251,7 +265,6 @@ input:focus, select:focus {
     margin-bottom: 24px;
 }
 
-/* 화면 중앙 오버레이 */
 #toast-overlay {
     position: fixed;
     inset: 0;
@@ -263,7 +276,6 @@ input:focus, select:focus {
     backdrop-filter: blur(2px);
 }
 
-/* 토스트 */
 .toast {
     padding: 18px 40px;
     border-radius: 50px;
@@ -277,7 +289,6 @@ input:focus, select:focus {
     transition: all 0.25s ease;
 }
 
-/* 팝콘 애니메이션 */
 .toast.show {
     transform: scale(1);
     opacity: 1;
@@ -303,7 +314,7 @@ input:focus, select:focus {
     }
 }
 
-/* --- 7. 테이블 및 텍스트 처리 (수정됨) --- */
+/* --- 7. 테이블 --- */
 .book-table {
     width: 100%;
     table-layout: fixed;
@@ -317,14 +328,12 @@ input:focus, select:focus {
     vertical-align: middle;
 }
 
-/* 카테고리 한 줄 처리 및 너비 확보 */
 .book-table th:nth-child(2),
 .book-table td:nth-child(2) {
     white-space: nowrap;
     width: 100px;
 }
 
-/* 도서명 및 저자 긴 경우 말줄임표(...) 처리 */
 .book-table td.title,
 .book-table td:nth-child(3) { 
     text-align: left; 
@@ -344,20 +353,6 @@ input:focus, select:focus {
     display: inline-block;
 }
 
-/* 대여순위 도서명 말줄임표 없이 전체 노출 */
-.ranking-item .book-title { 
-    white-space: normal !important; 
-    word-break: break-all !important; 
-    text-overflow: clip !important; 
-    overflow: visible !important;
-    
-    font-weight: 600; 
-    flex: 1; 
-    line-height: 1.4;
-    padding-right: 10px;
-}
-
-/* 랭킹 아이템 내부 레이아웃 정렬 */
 .ranking-item {
     display: flex;
     align-items: flex-start;
@@ -372,10 +367,9 @@ input:focus, select:focus {
     font-size: 12px;
     font-weight: 700;
     display: inline-block;
-    margin-top: 5px;
 }
 
-/* --- 8. 로그인 & 회원가입 전용 디자인 --- */
+/* --- 8. auth --- */
 .auth-page {
     background-color: var(--bg-color); 
     display: flex;
@@ -393,54 +387,4 @@ input:focus, select:focus {
     padding: 48px 40px;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
-}
-
-.auth-card h2 {
-    color: var(--text-main); 
-    font-weight: 800;
-    font-size: 22px; 
-    margin-bottom: 8px;
-    line-height: 1.4;
-    word-break: keep-all; 
-}
-
-.auth-card .auth-subtitle {
-    color: var(--text-light);
-    font-size: 14px;
-    margin-bottom: 32px;
-}
-
-.auth-card .form-group label {
-    color: var(--text-light);
-    text-align: left;
-}
-
-.auth-card input {
-    background: #f9fafb;
-    border: 1px solid var(--border);
-    color: var(--text-main);
-    margin-bottom: 8px;
-}
-
-.auth-card input::placeholder {
-    color: #adb5bd;
-}
-
-.auth-card .btn-primary {
-    margin-top: 16px;
-    background: var(--primary); 
-    box-shadow: none;
-}
-
-.auth-footer {
-    margin-top: 24px;
-    font-size: 14px;
-    color: var(--text-light);
-}
-
-.auth-footer a {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 700;
-    margin-left: 8px;
 }
