@@ -311,12 +311,22 @@ input:focus, select:focus {
 }
 
 /* 대여순위 도서명 말줄임표 없이 전체 노출 */
-.ranking-item .new-book-title {
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    word-break: break-all;
-    flex: 1;
+.ranking-item .book-title { 
+    /* 기존의 한 줄 강제 설정을 해제합니다 */
+    white-space: normal; 
+    
+    /* 단어가 너무 길 경우를 대비해 줄바꿈 허용 */
+    word-break: break-all; 
+    
+    /* 레이아웃 정렬을 위해 유연한 너비 확보 */
+    flex: 1; 
+    
+    /* 텍스트 가독성을 위해 줄 간격 조정 (선택사항) */
+    line-height: 1.4; 
+    
+    /* 기존에 있던 ellipsis(말줄임표) 관련 설정이 있다면 무시됩니다 */
+    overflow: visible;
+    text-overflow: clip;
 }
 
 .rent-count-badge {
