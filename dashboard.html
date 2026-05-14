@@ -1,175 +1,208 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>문화의집 소소책방 도서 대여</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* [공통] 레이아웃 및 가독성 확장 */
-        .top-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px; /* 좌우 여백을 넓혀 가독성 확보 */
-        }
-        .content-wrapper {
-            padding: 0 40px;
-        }
-        .card {
-            width: 100%; /* 카드 너비를 로그아웃 버튼 라인까지 확장 */
-            max-width: none; 
-            margin-bottom: 20px;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문화의집 소소책방 도서 대여</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* [공통] 레이아웃 및 가독성 확장 */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
+        .content-wrapper {
+            padding: 0 40px;
+        }
+        .card {
+            width: 100%;
+            max-width: none; 
+            margin-bottom: 20px;
+        }
 
-        /* [표] 구분선 및 정렬 (요청 3, 4 반영) */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .data-table tr {
-            border-bottom: 1px solid #f0f0f0; /* 도서들 사이 연한 회색 구분선 */
-        }
-        .data-table th, .data-table td {
-            padding: 15px 10px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .data-table td:nth-child(3) { text-align: center; } /* 저자 가운데 정렬 */
+        /* [표] 구분선 및 정렬 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .data-table th, .data-table td {
+            padding: 15px 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .data-table td:nth-child(3) { text-align: center; } /* 저자 가운데 정렬 */
 
-        /* [버튼] 대여/로그아웃 스타일 (요청 1, 2 반영) */
-        .btn-primary {
-            background-color: #28a745; /* 대여 버튼 초록색 */
-            border: none;
-            color: white;
-            width: 80px; height: 35px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .btn-primary.disabled {
-            background-color: #e0e0e0; /* 대여불가 시 회색 */
-            color: #999;
-            cursor: not-allowed;
-        }
-        #btnLogout {
-            background-color: #ff4d4f; /* 로그아웃 빨간색 */
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+        /* [버튼] 대여/로그아웃 스타일 */
+        .btn-primary {
+            background-color: #28a745; /* 대여 버튼 초록색 */
+            border: none;
+            color: white;
+            width: 80px; height: 35px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-primary.disabled {
+            background-color: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+        }
+        #btnLogout {
+            background-color: #ff4d4f; /* 로그아웃 빨간색 */
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
 
-        /* [배지] NEW 및 대여 횟수 (요청 5 반영) */
-        .badge-new {
-            background-color: #1890ff; /* 파란색 */
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px; /* 대여 버튼과 같은 라운드 UI */
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .badge-rent-count {
-            border: 1px solid #ff4d4f; /* 빨간색 선 유지 */
-            color: #ff4d4f;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 11px;
-            display: inline-block;
-        }
+        /* [배지] NEW 및 대여 횟수 */
+        .badge-new {
+            background-color: #1890ff; /* 파란색 */
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-rent-count {
+            border: 1px solid #ff4d4f;
+            color: #ff4d4f;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 11px;
+            display: inline-block;
+        }
 
-        /* 검색 시 창 줄어듦 방지 */
-        #view-rent-book .table-container { min-height: 550px; }
-    </style>
+        /* 내 정보 수정 폼 스타일 */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn-withdraw { color: #ff4d4f; background: none; border: none; cursor: pointer; text-decoration: underline; margin-top: 20px; }
+
+        #view-rent-book .table-container { min-height: 550px; }
+    </style>
 </head>
 <body class="dashboard-layout">
-    <aside class="sidebar">
-        <div class="sidebar-logo">소소책방</div>
-        <nav class="sidebar-nav">
-            <a href="#" class="nav-item active" data-tab="view-home"><i class="fas fa-home"></i> 홈</a>
-            <a href="#" class="nav-item" data-tab="view-rent-book"><i class="fas fa-book"></i> 도서 대여</a>
-            <a href="#" class="nav-item" data-tab="view-my-rentals"><i class="fas fa-history"></i> 대여 정보 조회/반납</a>
-            <a href="#" class="nav-item" data-tab="view-my-info"><i class="fas fa-user"></i> 내 정보</a>
-        </nav>
-    </aside>
-    
-    <main class="main-content">
-        <header class="top-header">
-            <h2 id="pageTitle">홈</h2>
-            <div class="user-info">
-                <span id="headerUserName">사용자</span>님 반갑습니다.
-                <button id="btnLogout">로그아웃</button>
-            </div>
-        </header>
-        
-        <div class="content-wrapper">
-            <section id="view-home" class="view-section active">
-                <div class="summary-grid">
-                    <div class="card">
-                        <div class="card-header"><h3>신간 도서</h3></div>
-                        <div id="newBooksList" class="ranking-list"></div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header"><h3>인기 대여 순위</h3></div>
-                        <div id="popularBooksList" class="ranking-list"></div>
-                    </div>
-                </div>
-            </section>
+    <aside class="sidebar">
+        <div class="sidebar-logo">소소책방</div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-tab="view-home"><i class="fas fa-home"></i> 홈</a>
+            <a href="#" class="nav-item" data-tab="view-rent-book"><i class="fas fa-book"></i> 도서 대여</a>
+            <a href="#" class="nav-item" data-tab="view-my-rentals"><i class="fas fa-history"></i> 대여 정보 조회/반납</a>
+            <a href="#" class="nav-item" data-tab="view-my-info"><i class="fas fa-user"></i> 내 정보</a>
+        </nav>
+    </aside>
+    
+    <main class="main-content">
+        <header class="top-header">
+            <h2 id="pageTitle">홈</h2>
+            <div class="user-info">
+                <span id="headerUserName">사용자</span>님 반갑습니다.
+                <button id="btnLogout">로그아웃</button>
+            </div>
+        </header>
+        
+        <div class="content-wrapper">
+            <!-- 섹션 1: 홈 -->
+            <section id="view-home" class="view-section active">
+                <div class="summary-grid">
+                    <div class="card">
+                        <div class="card-header"><h3>신간 도서</h3></div>
+                        <div id="newBooksList" class="ranking-list"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>인기 대여 순위</h3></div>
+                        <div id="popularBooksList" class="ranking-list"></div>
+                    </div>
+                </div>
+            </section>
 
-            <section id="view-rent-book" class="view-section">
-                <div class="card">
-                    <div class="card-header search-header">
-                        <h3>전체 도서 목록</h3>
-                        <div class="search-filter-container">
-                            <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
-                            <select id="filterCategory" class="filter-select"><option value="">전체 카테고리</option></select>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>도서명</th>
-                                    <th>카테고리</th>
-                                    <th>저자</th>
-                                    <th>출판사</th>
-                                    <th style="width: 120px; text-align: center;">상태</th>
-                                </tr>
-                            </thead>
-                            <tbody id="booksTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+            <!-- 섹션 2: 도서 대여 -->
+            <section id="view-rent-book" class="view-section">
+                <div class="card">
+                    <div class="card-header search-header">
+                        <h3>전체 도서 목록</h3>
+                        <div class="search-filter-container">
+                            <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
+                            <select id="filterCategory" class="filter-select"><option value="">전체 카테고리</option></select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>도서명</th>
+                                    <th>카테고리</th>
+                                    <th>저자</th>
+                                    <th>출판사</th>
+                                    <th style="width: 120px; text-align: center;">상태</th>
+                                </tr>
+                            </thead>
+                            <tbody id="booksTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
 
-            <!-- 내 대여 현황 섹션 (너비 확장 동일 적용) -->
-            <section id="view-my-rentals" class="view-section">
-                <div class="card">
-                    <div class="card-header"><h3>내 대여 현황</h3></div>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>도서명</th>
-                                    <th>대여일</th>
-                                    <th>반납예정일</th>
-                                    <th style="width: 100px; text-align: center;">관리</th>
-                                </tr>
-                            </thead>
-                            <tbody id="myRentalsTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-    <script src="js/app.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/dashboard.js"></script>
+            <!-- 섹션 3: 대여 정보 조회/반납 -->
+            <section id="view-my-rentals" class="view-section">
+                <div class="card">
+                    <div class="card-header"><h3>내 대여 현황</h3></div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>도서명</th>
+                                    <th>대여일</th>
+                                    <th>반납예정일</th>
+                                    <th style="width: 100px; text-align: center;">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myRentalsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 섹션 4: 내 정보 수정 (image_caeb39.jpg 기능 대응) -->
+            <section id="view-my-info" class="view-section">
+                <div class="card" style="max-width: 500px; margin: 0 auto;">
+                    <div class="card-header"><h3>내 정보 수정</h3></div>
+                    <div style="padding: 20px;">
+                        <form id="updateInfoForm">
+                            <div class="form-group">
+                                <label for="infoUserId">아이디</label>
+                                <input type="text" id="infoUserId" readonly style="background-color: #f5f5f5;">
+                            </div>
+                            <div class="form-group">
+                                <label for="infoName">이름</label>
+                                <input type="text" id="infoName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="infoPassword">새 비밀번호</label>
+                                <input type="password" id="infoPassword" placeholder="변경할 비밀번호 입력">
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%; height: 45px; margin-top: 10px;">정보 수정</button>
+                        </form>
+                        <button id="btnWithdraw" class="btn-withdraw">회원 탈퇴하기</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>
