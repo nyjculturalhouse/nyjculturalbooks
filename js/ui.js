@@ -43,27 +43,24 @@ const UI = {
         if (spinner) spinner.remove();
     },
 
-    // 팝콘처럼 톡 튀어나오는 토스트 알림 (4번 요청: 로그인 창 위에 뜨도록 수정)
+    // 팝콘처럼 톡 튀어나오는 토스트 알림 (화면 중앙 + 배경 어둡게 수정)
     showToast(message, type = 'success') {
-        let container = document.getElementById('toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'toast-container';
-            
-            // 로그인 화면(auth-card)이 있으면 그 바로 위에 삽입, 없으면 body에 삽입
-            const authCard = document.querySelector('.auth-card');
-            if (authCard) {
-                authCard.parentNode.insertBefore(container, authCard);
-            } else {
-                document.body.appendChild(container);
-            }
-        }
 
+        // 기존 토스트 제거
+        const oldOverlay = document.getElementById('toast-overlay');
+        if (oldOverlay) oldOverlay.remove();
+
+        // 오버레이 생성
+        const overlay = document.createElement('div');
+        overlay.id = 'toast-overlay';
+
+        // 토스트 생성
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         toast.innerText = message;
-        
-        container.appendChild(toast);
+
+        overlay.appendChild(toast);
+        document.body.appendChild(overlay);
 
         // 10ms 뒤에 'show' 클래스를 추가하여 팝콘 애니메이션 발동
         setTimeout(() => {
@@ -73,9 +70,11 @@ const UI = {
         // 3초 후 다시 작아지며 사라지고 요소 삭제
         setTimeout(() => {
             toast.classList.remove('show');
+
             setTimeout(() => {
-                toast.remove();
+                overlay.remove();
             }, 400);
+
         }, 3000);
     }
 };
