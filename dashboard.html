@@ -96,7 +96,13 @@
                         <h3>전체 도서 목록</h3>
                         <div class="search-filter-container">
                             <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
-                            <select id="filterCategory" class="filter-select"><option value="">전체 카테고리</option></select>
+                            <select id="filterCategory" class="filter-select">
+                                <option value="">전체 카테고리</option>
+                            </select>
+                            <!-- [수정] JS 로직에 대응하기 위해 출판사 필터 추가 -->
+                            <select id="filterPublisher" class="filter-select">
+                                <option value="">전체 출판사</option>
+                            </select>
                         </div>
                     </div>
                     <div class="table-container">
