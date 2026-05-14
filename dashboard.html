@@ -12,36 +12,49 @@
         .content-wrapper { padding: 0 40px; }
         .card { width: 100%; max-width: none; margin-bottom: 20px; }
 
-        /* [표] 수정: 2번 사진 요청 반영 */
-        .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; } /* 고정 레이아웃으로 변경 */
+        /* [표] 수정 사항 */
+        .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .data-table tr { border-bottom: 1px solid #f0f0f0; }
         .data-table th, .data-table td { padding: 15px 10px; text-align: left; }
         
-        /* 카테고리(2번째 열) 가운데 정렬 및 한 줄 처리 */
+        /* 카테고리(2번째 열) 가운데 정렬 */
         .data-table th:nth-child(2), 
         .data-table td:nth-child(2) { 
             white-space: nowrap; 
             width: 100px; 
-            text-align: center; /* 가운데 정렬 추가 */
+            text-align: center; 
         } 
         
         /* 상태/대여(5번째 열) 가운데 정렬 */
         .data-table th:nth-child(5),
         .data-table td:nth-child(5) {
-            text-align: center; /* 가운데 정렬 추가 */
+            text-align: center;
         }
 
         /* 도서명(1번째) 및 저자(3번째) 말줄임표 처리 */
-        .data-table td:nth-child(1),
-        .data-table td:nth-child(3) { 
+        .data-table td:nth-child(1) { 
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis; 
         }
         
-        .data-table td:nth-child(3) { text-align: center; } /* 저자 가운데 정렬 유지 */
+        /* 저자(3번째 열) 가운데 정렬 */
+        .data-table td:nth-child(3) { 
+            text-align: center; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
 
-        /* [버튼] 1번 사진 요청: 대여(파랑), 대여불가(빨강) */
+        /* ★ 추가 수정: [내 대여 현황] 테이블의 반납예정일 가운데 정렬 ★ */
+        #view-my-rentals .data-table th:nth-child(2),
+        #view-my-rentals .data-table td:nth-child(2),
+        #view-my-rentals .data-table th:nth-child(3),
+        #view-my-rentals .data-table td:nth-child(3) {
+            text-align: center;
+        }
+
+        /* [버튼 스타일] */
         .btn-rent-action { 
             background-color: #1890ff; border: none; color: white; 
             width: 90px; height: 35px; border-radius: 8px; cursor: pointer; font-weight: bold;
@@ -49,8 +62,6 @@
         .btn-rent-action.disabled { 
             background-color: #ff4d4f; color: white; cursor: not-allowed; 
         }
-
-        /* [버튼] 3번 사진 요청: 정보수정(파랑), 회원탈퇴(빨강 버튼 UI) */
         .btn-info-update { 
             background-color: #1890ff; color: white; border: none; 
             width: 100%; height: 45px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px;
@@ -59,14 +70,13 @@
             background-color: #ff4d4f; color: white; border: none; 
             width: 100%; height: 45px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px;
         }
-
         #btnLogout { background-color: #ff4d4f; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
 
-        /* [배지] NEW 및 대여 횟수 */
+        /* [배지] */
         .badge-new { background-color: #1890ff; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         .badge-rent-count { border: 1px solid #ff4d4f; color: #ff4d4f; padding: 3px 10px; border-radius: 20px; font-weight: 600; font-size: 11px; }
 
-        /* 1번 사진 요청: 인기대여순위 말줄임표 완벽 제거 및 줄바꿈 허용 */
+        /* 인기대여순위 텍스트 전체 표시 */
         .ranking-item .book-title { 
             white-space: normal !important; 
             word-break: break-all !important; 
@@ -81,12 +91,11 @@
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        
         #view-rent-book .table-container { min-height: 550px; }
 
-        /* --- 로그인 & 회원가입 전용 디자인 (중앙 배치 수정) --- */
+        /* 로그인 & 회원가입 중앙 배치 */
         .auth-page {
-            background-color: #f2f4f6; /* --bg-color 대용 */
+            background-color: #f2f4f6;
             display: flex;
             justify-content: center; 
             align-items: center;
@@ -96,7 +105,6 @@
             inset: 0;
             z-index: 9999;
         }
-
         .auth-card {
             width: 100%;
             max-width: 380px;
@@ -106,43 +114,14 @@
             text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
         }
-
-        .auth-card h2 {
-            color: #191f28; 
-            font-weight: 800;
-            font-size: 20px; 
-            margin-bottom: 8px;
-            line-height: 1.4;
-            word-break: keep-all; 
+        .auth-card h2 { color: #191f28; font-weight: 800; font-size: 20px; margin-bottom: 8px; line-height: 1.4; word-break: keep-all; }
+        .auth-btn-group { display: flex; gap: 10px; margin-top: 16px; }
+        .auth-btn-group .btn-primary, .auth-btn-group .btn-signup-gray {
+            flex: 1; height: 50px; font-size: 15px; font-weight: 700; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s;
         }
-
-        /* 로그인 & 회원가입 버튼 가로 정렬 그룹 */
-        .auth-btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-
-        .auth-btn-group .btn-primary,
-        .auth-btn-group .btn-signup-gray {
-            flex: 1;
-            height: 50px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
         .auth-btn-group .btn-primary { background: #3182f6; color: white; }
         .auth-btn-group .btn-signup-gray { background: #9ca3af; color: white; }
-        .auth-btn-group .btn-primary:hover { background: #1b64da; }
-        .auth-btn-group .btn-signup-gray:hover { background: #6b7280; }
     </style>
 </head>
 <body class="dashboard-layout">
@@ -221,8 +200,8 @@
                             <thead>
                                 <tr>
                                     <th>도서명</th>
-                                    <th>대여일</th>
-                                    <th>반납예정일</th>
+                                    <th style="width: 150px;">대여일</th>
+                                    <th style="width: 150px;">반납예정일</th>
                                     <th style="width: 100px; text-align: center;">관리</th>
                                 </tr>
                             </thead>
