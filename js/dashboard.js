@@ -64,11 +64,9 @@ function setupTabs() {
             const targetId = item.getAttribute('data-tab');
             if (!targetId) return;
 
-            // 사이드바 활성화 클래스 교체
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
 
-            // 섹션 전환
             sections.forEach(section => {
                 section.style.display = 'none';
                 section.classList.remove('active');
@@ -78,7 +76,6 @@ function setupTabs() {
                 }
             });
 
-            // 페이지 타이틀 변경
             const titleMap = {
                 'view-home': '홈',
                 'view-rent-book': '도서 대여',
@@ -87,13 +84,11 @@ function setupTabs() {
             };
             if (pageTitle) pageTitle.innerText = titleMap[targetId] || '홈';
 
-            // 데이터 갱신
             if (targetId === 'view-my-rentals') loadMyRentals();
             if (targetId === 'view-rent-book') loadBooks();
         });
     });
 
-    // 초기 탭 설정 (홈 화면)
     const firstTab = document.querySelector('.nav-item[data-tab="view-home"]');
     if (firstTab) firstTab.click();
 }
@@ -200,21 +195,36 @@ async function loadBooks() {
         const res = await API.post('getBooks');
         const rentalRes = await API.post('getRentalHistory');
         if (res.success) {
-            allBooks = res.data;
+
+            // 시트는 유지 + 화면에서만 정렬 (가나다순)
+            allBooks = res.data.sort((a, b) =>
+                String(a.도서명 || a.제목 || '').localeCompare(
+                    String(b.도서명 || b.제목 || ''),
+                    'ko'
+                )
+            );
+
             updateFilterOptions(allBooks);
             renderBooks(allBooks);
-            renderNewBooks(allBooks);
+
+            renderNewBooks(res.data); // 신작은 원본 사용
+
             if (rentalRes.success && rentalRes.data) {
                 renderPopularBooks(allBooks, rentalRes.data);
             }
         }
-    } catch (error) { console.error("데이터 로드 오류:", error); }
+    } catch (error) {
+        console.error("데이터 로드 오류:", error);
+    }
 }
 
 function renderNewBooks(books) {
     const list = document.getElementById('newBooksList');
     if (!list) return;
-    const newBooks = [...books].reverse().slice(0, 3);
+
+    // 최신 추가 기준 유지
+    const newBooks = [...books].slice(-3).reverse();
+
     list.innerHTML = newBooks.map(b => `
         <div class="ranking-item">
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -229,12 +239,15 @@ function renderNewBooks(books) {
 function renderPopularBooks(books, history) {
     const list = document.getElementById('popularBooksList');
     if (!list) return;
+
     const counts = {};
     history.forEach(record => {
         const title = record.도서명 || record.제목 || record[1];
         if (title) counts[title] = (counts[title] || 0) + 1;
     });
+
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
     list.innerHTML = sorted.map((item, i) => `
         <div class="ranking-item" style="display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -308,5 +321,6 @@ function applyFilters() {
 
         return matchKeyword && matchCategory && matchPublisher;
     });
+
     renderBooks(filtered);
 }
