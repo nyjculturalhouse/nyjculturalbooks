@@ -3,173 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>문화의집 소소책방 도서 대여</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* [공통] 레이아웃 및 가독성 확장 */
-        .top-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px; /* 좌우 여백을 넓혀 가독성 확보 */
-        }
-        .content-wrapper {
-            padding: 0 40px;
-        }
-        .card {
-            width: 100%; /* 카드 너비를 로그아웃 버튼 라인까지 확장 */
-            max-width: none; 
-            margin-bottom: 20px;
-        }
-
-        /* [표] 구분선 및 정렬 (요청 3, 4 반영) */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .data-table tr {
-            border-bottom: 1px solid #f0f0f0; /* 도서들 사이 연한 회색 구분선 */
-        }
-        .data-table th, .data-table td {
-            padding: 15px 10px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .data-table td:nth-child(3) { text-align: center; } /* 저자 가운데 정렬 */
-
-        /* [버튼] 대여/로그아웃 스타일 (요청 1, 2 반영) */
-        .btn-primary {
-            background-color: #28a745; /* 대여 버튼 초록색 */
-            border: none;
-            color: white;
-            width: 80px; height: 35px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .btn-primary.disabled {
-            background-color: #e0e0e0; /* 대여불가 시 회색 */
-            color: #999;
-            cursor: not-allowed;
-        }
-        #btnLogout {
-            background-color: #ff4d4f; /* 로그아웃 빨간색 */
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        /* [배지] NEW 및 대여 횟수 (요청 5 반영) */
-        .badge-new {
-            background-color: #1890ff; /* 파란색 */
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px; /* 대여 버튼과 같은 라운드 UI */
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .badge-rent-count {
-            border: 1px solid #ff4d4f; /* 빨간색 선 유지 */
-            color: #ff4d4f;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 11px;
-            display: inline-block;
-        }
-
-        /* 검색 시 창 줄어듦 방지 */
-        #view-rent-book .table-container { min-height: 550px; }
-    </style>
+    <title>도서관리 시스템 - 대시보드</title>
+    <link rel="stylesheet" href="style.css"> <!-- 이전에 작성한 CSS 파일 -->
 </head>
-<body class="dashboard-layout">
-    <aside class="sidebar">
-        <div class="sidebar-logo">소소책방</div>
-        <nav class="sidebar-nav">
-            <a href="#" class="nav-item active" data-tab="view-home"><i class="fas fa-home"></i> 홈</a>
-            <a href="#" class="nav-item" data-tab="view-rent-book"><i class="fas fa-book"></i> 도서 대여</a>
-            <a href="#" class="nav-item" data-tab="view-my-rentals"><i class="fas fa-history"></i> 대여 정보 조회/반납</a>
-            <a href="#" class="nav-item" data-tab="view-my-info"><i class="fas fa-user"></i> 내 정보</a>
-        </nav>
-    </aside>
-    
-    <main class="main-content">
-        <header class="top-header">
-            <h2 id="pageTitle">홈</h2>
-            <div class="user-info">
-                <span id="headerUserName">사용자</span>님 반갑습니다.
-                <button id="btnLogout">로그아웃</button>
-            </div>
-        </header>
-        
-        <div class="content-wrapper">
+<body>
+
+    <div class="dashboard-layout">
+        <!-- 1. 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">LIBRARY</div>
+            <nav>
+                <a href="#" class="nav-item active" data-tab="view-home">
+                    <span>🏠</span> 홈
+                </a>
+                <a href="#" class="nav-item" data-tab="view-rent-book">
+                    <span>📚</span> 도서 대여
+                </a>
+                <a href="#" class="nav-item" data-tab="view-my-rentals">
+                    <span>🕒</span> 대여/반납 조회
+                </a>
+                <a href="#" class="nav-item" data-tab="view-my-info">
+                    <span>👤</span> 내 정보 수정
+                </a>
+            </nav>
+        </aside>
+
+        <!-- 2. 메인 콘텐츠 영역 -->
+        <main class="main-content">
+            <!-- 상단 헤더 -->
+            <header class="header-container">
+                <h2 id="pageTitle">홈</h2>
+                <div class="user-status">
+                    <span id="headerUserName">사용자</span>님 반갑습니다
+                    <button id="btnLogout" class="btn-logout">로그아웃</button>
+                </div>
+            </header>
+
+            <!-- 섹션 1: 홈 (대시보드 요약) -->
             <section id="view-home" class="view-section active">
-                <div class="summary-grid">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <!-- 신간 도서 -->
                     <div class="card">
-                        <div class="card-header"><h3>신간 도서</h3></div>
-                        <div id="newBooksList" class="ranking-list"></div>
+                        <h3>🆕 신간 도서</h3>
+                        <div id="newBooksList" style="margin-top: 20px;">
+                            <!-- JS: renderNewBooks() -->
+                        </div>
                     </div>
+                    <!-- 인기 도서 -->
                     <div class="card">
-                        <div class="card-header"><h3>인기 대여 순위</h3></div>
-                        <div id="popularBooksList" class="ranking-list"></div>
+                        <h3>🔥 인기 대여 도서</h3>
+                        <div id="popularBooksList" style="margin-top: 20px;">
+                            <!-- JS: renderPopularBooks() -->
+                        </div>
                     </div>
                 </div>
             </section>
 
+            <!-- 섹션 2: 도서 대여 (목록 및 검색) -->
             <section id="view-rent-book" class="view-section">
                 <div class="card">
-                    <div class="card-header search-header">
-                        <h3>전체 도서 목록</h3>
-                        <div class="search-filter-container">
-                            <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색...">
-                            <select id="filterCategory" class="filter-select"><option value="">전체 카테고리</option></select>
-                        </div>
+                    <div class="search-filter-container">
+                        <input type="text" id="searchBookInput" placeholder="도서명 또는 저자 검색">
+                        <select id="filterCategory">
+                            <option value="">전체 카테고리</option>
+                        </select>
+                        <select id="filterPublisher">
+                            <option value="">전체 출판사</option>
+                        </select>
                     </div>
-                    <div class="table-container">
-                        <table class="data-table">
+                    <div style="margin-top: 24px; overflow-x: auto;">
+                        <table class="book-table">
                             <thead>
                                 <tr>
-                                    <th>도서명</th>
+                                    <th style="width: 40%; text-align: left;">도서명</th>
                                     <th>카테고리</th>
                                     <th>저자</th>
                                     <th>출판사</th>
-                                    <th style="width: 120px; text-align: center;">상태</th>
+                                    <th>관리</th>
                                 </tr>
                             </thead>
-                            <tbody id="booksTableBody"></tbody>
+                            <tbody id="booksTableBody">
+                                <!-- JS: renderBooks() -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <!-- 내 대여 현황 섹션 (너비 확장 동일 적용) -->
+            <!-- 섹션 3: 대여 정보 조회/반납 -->
             <section id="view-my-rentals" class="view-section">
                 <div class="card">
-                    <div class="card-header"><h3>내 대여 현황</h3></div>
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>도서명</th>
-                                    <th>대여일</th>
-                                    <th>반납예정일</th>
-                                    <th style="width: 100px; text-align: center;">관리</th>
-                                </tr>
-                            </thead>
-                            <tbody id="myRentalsTableBody"></tbody>
-                        </table>
-                    </div>
+                    <table class="book-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 45%; text-align: left;">도서명</th>
+                                <th>대여일</th>
+                                <th>반납예정일</th>
+                                <th>상태/반납</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myRentalsTableBody">
+                            <!-- JS: loadMyRentals() -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
-        </div>
-    </main>
-    <script src="js/app.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/dashboard.js"></script>
+
+            <!-- 섹션 4: 내 정보 수정 -->
+            <section id="view-my-info" class="view-section">
+                <div class="card" style="max-width: 500px;">
+                    <form id="updateInfoForm">
+                        <div class="form-group">
+                            <label>아이디</label>
+                            <input type="text" id="infoUserId" readonly style="background: #eee; cursor: not-allowed;">
+                        </div>
+                        <div class="form-group">
+                            <label>이름</label>
+                            <input type="text" id="infoName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>새 비밀번호</label>
+                            <input type="password" id="infoPassword" placeholder="변경할 비밀번호 입력">
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 32px;">
+                            <button type="submit" class="btn-primary">정보 수정 저장</button>
+                            <button type="button" id="btnWithdraw" class="btn-link-danger">회원 탈퇴</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 토스트 알림 컨테이너 -->
+    <div id="toastContainer"></div>
+
+    <!-- 스크립트 로드 -->
+    <script src="api.js"></script> <!-- API 공통 모듈 -->
+    <script src="ui.js"></script>  <!-- UI/Toast 공통 모듈 -->
+    <script src="script.js"></script> <!-- 제공해주신 JS 코드 -->
 </body>
 </html>
