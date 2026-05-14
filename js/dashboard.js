@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadBooks();  
     loadMyRentals(); 
 
-    // 5. 로그아웃 버튼 이벤트 (빨간색 스타일은 CSS에서 처리 권장)
+    // 5. 로그아웃 버튼 이벤트
     const btnLogout = document.getElementById('btnLogout');
     if (btnLogout) {
         btnLogout.addEventListener('click', () => {
@@ -136,27 +136,27 @@ async function withdrawUser() {
 function renderBooks(books) {
     const tbody = document.getElementById('booksTableBody');
     if (!tbody) return;
+    
     tbody.innerHTML = books.map(b => {
         const isbn = b.ISBN || b.isbn || '';
         const statusText = String(b.상태 || b.대여상태 || '가능');
         const isAvail = statusText.includes('가능') || statusText.toUpperCase() === 'AVAILABLE';
 
         return `
-            <tr style="border-bottom: 1px solid #f0f0f0;">
-                <td title="${b.도서명 || b.제목}" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 15px 10px;">
+            <tr>
+                <td class="title" title="${b.도서명 || b.제목}">
                     <strong>${b.도서명 || b.제목}</strong>
                 </td>
-                <td style="white-space: nowrap; padding: 15px 10px;">${b.카테고리 || b.분류 || '-'}</td>
-                <td style="text-align: center; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 15px 10px;" title="${b.저자 || b.작가 || '-'}">
+                <td>${b.카테고리 || b.분류 || '-'}</td>
+                <td title="${b.저자 || b.작가 || '-'}">
                     ${b.저자 || b.작가 || '-'}
                 </td>
-                <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 15px 10px;">${b.출판사 || b.publisher || '-'}</td>
-                <td style="text-align: center; padding: 15px 10px;">
-                    <button class="btn-primary" 
-                            style="width: 80px; height: 35px; font-size: 13px; border-radius: 8px; border: none; cursor: ${isAvail ? 'pointer' : 'not-allowed'}; background-color: ${isAvail ? '#28a745' : '#e0e0e0'}; color: ${isAvail ? 'white' : '#999'};"
+                <td title="${b.출판사 || b.publisher || '-'}">${b.출판사 || b.publisher || '-'}</td>
+                <td>
+                    <button class="btn-rent ${!isAvail ? 'rented' : ''}" 
                             ${!isAvail ? 'disabled' : ''} 
                             onclick="rentBook('${isbn}')">
-                        ${isAvail ? '대여' : '대여불가'}
+                        ${isAvail ? '대여' : '대여중'}
                     </button>
                 </td>
             </tr>
@@ -172,22 +172,23 @@ async function loadMyRentals() {
     if(!tbody) return;
 
     if (res.success && res.data.length > 0) {
+        // 최신 대여건이 위로 오도록 reverse
         tbody.innerHTML = res.data.reverse().map(r => {
             const isReturned = String(r.반납여부 || "").trim().toUpperCase() === 'Y';
             const rId = r.대여ID || r.rentalId || r[0];
             return `
-                <tr style="border-bottom: 1px solid #f0f0f0; ${isReturned ? 'color:#adb5bd; background:#f8f9fa;' : ''}">
-                    <td style="max-width: 350px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 15px 10px;">${r.도서명 || r.제목}</td>
-                    <td style="padding: 15px 10px;">${r.대여일 || '-'}</td>
-                    <td style="padding: 15px 10px;">${r.반납예정일 || '-'}</td>
-                    <td style="text-align: center; padding: 15px 10px;">
-                        ${isReturned ? '<b>반납완료</b>' : `<button class="btn-primary" style="width: 70px; height: 35px; font-size: 13px; background-color:#28a745; color:white; border:none; border-radius:8px;" onclick="returnBook('${rId}', '${r.ISBN || r.isbn}')">반납</button>`}
+                <tr class="${isReturned ? 'returned-row' : ''}">
+                    <td class="title" title="${r.도서명 || r.제목}">${r.도서명 || r.제목}</td>
+                    <td>${r.대여일 || '-'}</td>
+                    <td>${r.반납예정일 || '-'}</td>
+                    <td>
+                        ${isReturned ? '<span class="badge available">반납완료</span>' : `<button class="btn-rent" style="background-color:var(--primary);" onclick="returnBook('${rId}', '${r.ISBN || r.isbn}')">반납</button>`}
                     </td>
                 </tr>
             `;
         }).join('');
     } else {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:100px 0; color:#999;">대여 기록이 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-message">대여 중인 도서가 없습니다.</td></tr>';
     }
 }
 
@@ -208,18 +209,19 @@ async function loadBooks() {
     } catch (error) { console.error("데이터 로드 오류:", error); }
 }
 
-/** 신간 도서 배지 렌더링 **/
+/** 신간 도서 배지 렌더링 (디자인 보정 반영) **/
 function renderNewBooks(books) {
     const list = document.getElementById('newBooksList');
     if(!list) return;
+    // 최신 등록 순으로 3권
     const newBooks = [...books].reverse().slice(0, 3);
     list.innerHTML = newBooks.map(b => `
-        <div class="ranking-item" style="margin-bottom: 15px; border-bottom: 1px solid #f9f9f9; padding-bottom: 10px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="background-color: #1890ff; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold;">NEW</span> 
-                <span style="font-weight: 500; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${b.도서명 || b.제목}</span>
+        <div class="ranking-item">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="new-badge">NEW</span> 
+                <span class="new-book-title" style="font-weight: 600; color: var(--text-main);">${b.도서명 || b.제목}</span>
             </div>
-            <div style="color: #888; font-size: 12px; margin-top: 4px; padding-left: 55px;">${b.저자 || '-'}</div>
+            <div style="color: var(--text-light); font-size: 13px; margin-top: 4px; padding-left: 50px;">${b.저자 || '-'}</div>
         </div>
     `).join('');
 }
@@ -235,12 +237,12 @@ function renderPopularBooks(books, history) {
     });
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
     list.innerHTML = sorted.map((item, i) => `
-        <div class="ranking-item" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f9f9f9; padding-bottom: 10px;">
+        <div class="ranking-item" style="display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="rank-badge" style="background:#eee; padding: 2px 8px; border-radius: 4px; font-size:12px;">${i+1}</span>
-                <span style="font-weight: 500; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item[0]}</span>
+                <span class="rank-badge" style="background:var(--bg-color); color:var(--text-light); padding: 2px 8px; border-radius: 6px; font-size:12px; font-weight:700;">${i+1}</span>
+                <span style="font-weight: 600; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item[0]}</span>
             </div>
-            <span style="border: 1px solid #ff4d4f; color: #ff4d4f; padding: 3px 10px; border-radius: 20px; font-weight: 600; font-size: 11px;">${item[1]}회 대여</span>
+            <span class="rent-count-badge">${item[1]}회 대여</span>
         </div>
     `).join('');
 }
@@ -266,8 +268,10 @@ function updateFilterOptions(books) {
     const categorySelect = document.getElementById('filterCategory');
     const publisherSelect = document.getElementById('filterPublisher');
     if (!categorySelect || !publisherSelect) return;
+    
     categorySelect.innerHTML = '<option value="">전체 카테고리</option>';
     publisherSelect.innerHTML = '<option value="">전체 출판사</option>';
+    
     [...new Set(books.map(b => b.카테고리 || b.분류).filter(Boolean))].sort().forEach(cat => {
         const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; categorySelect.appendChild(opt);
     });
@@ -279,10 +283,19 @@ function updateFilterOptions(books) {
 function applyFilters() {
     const keyword = document.getElementById('searchBookInput').value.toLowerCase();
     const selectedCategory = document.getElementById('filterCategory').value;
+    const selectedPublisher = document.getElementById('filterPublisher').value;
+    
     const filtered = allBooks.filter(book => {
-        const matchKeyword = (book.도서명 || book.제목 || '').toLowerCase().includes(keyword) || (book.저자 || book.작가 || '').toLowerCase().includes(keyword);
-        const matchCategory = selectedCategory === "" || (book.카테고리 || book.분류) === selectedCategory;
-        return matchKeyword && matchCategory;
+        const title = (book.도서명 || book.제목 || '').toLowerCase();
+        const author = (book.저자 || book.작가 || '').toLowerCase();
+        const category = book.카테고리 || book.분류 || '';
+        const publisher = book.출판사 || book.publisher || '';
+
+        const matchKeyword = title.includes(keyword) || author.includes(keyword);
+        const matchCategory = selectedCategory === "" || category === selectedCategory;
+        const matchPublisher = selectedPublisher === "" || publisher === selectedPublisher;
+        
+        return matchKeyword && matchCategory && matchPublisher;
     });
     renderBooks(filtered);
 }
