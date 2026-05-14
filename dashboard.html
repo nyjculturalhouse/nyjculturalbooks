@@ -87,6 +87,22 @@
             line-height: 1.4; 
         }
 
+        /* 추가 수정: 인기대여순위 줄바꿈 대응 */
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .ranking-item-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
         /* 내 정보 수정 폼 */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
