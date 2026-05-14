@@ -4,50 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>문화의집 소소책방 도서 대여 프로그램 - 로그인</title>
+
     <!-- CSS 파일 경로 -->
     <link rel="stylesheet" href="css/style.css">
+
     <!-- 아이콘 폰트 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body class="auth-body">
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="logo-area">
-                <h1>소소책방 도서 대여 프로그램</h1>
-                <p>로그인하여 서비스를 이용하세요</p>
-            </div>
-            
-            <form id="loginForm" class="auth-form">
-                <div class="form-group">
-                    <label for="userId">아이디</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="userId" required placeholder="아이디를 입력하세요">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">비밀번호</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" required placeholder="비밀번호를 입력하세요">
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn-primary w-100">로그인</button>
-            </form>
-            
-            <div class="auth-links">
-                <span>계정이 없으신가요?</span>
-                <a href="signup.html">회원가입</a>
-            </div>
+
+    <div class="auth-card">
+
+        <div class="logo-area">
+            <h2>소소책방 도서 대여 프로그램</h2>
+            <p>로그인하여 서비스를 이용하세요</p>
         </div>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label for="userId">아이디</label>
+
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+
+                    <input 
+                        type="text" 
+                        id="userId" 
+                        required 
+                        placeholder="아이디를 입력하세요"
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+
+                    <input 
+                        type="password" 
+                        id="password" 
+                        required 
+                        placeholder="비밀번호를 입력하세요"
+                    >
+                </div>
+            </div>
+
+            <!-- 버튼 그룹 -->
+            <div class="auth-button-group">
+
+                <button type="submit" class="btn-primary">
+                    로그인
+                </button>
+
+                <a href="signup.html" class="btn-secondary-custom btn-link-style">
+                    회원가입
+                </a>
+
+            </div>
+
+        </form>
+
     </div>
 
     <!-- 알림 메시지 컨테이너 -->
     <div id="toastContainer"></div>
 
-    <!-- 자바스크립트 로드 (공백 제거) -->
+    <!-- 자바스크립트 로드 -->
     <script src="js/app.js"></script>
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
@@ -56,6 +82,7 @@
     <script>
         window.onload = function() {
             console.log("페이지 주소:", window.location.href);
+
             if (typeof window.GAS_URL === 'undefined') {
                 console.error("경고: app.js 로드 실패. js 폴더 내 app.js 파일과 경로를 확인하세요.");
             } else {
@@ -63,5 +90,6 @@
             }
         };
     </script>
+
 </body>
 </html>
