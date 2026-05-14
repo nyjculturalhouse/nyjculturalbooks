@@ -122,98 +122,55 @@ input:focus, select:focus {
     color: var(--text-light);
 }
 
+/* 모든 인증 관련 버튼 높이 통일 */
+.btn-primary, 
+.btn-secondary-custom {
+    height: 54px; /* 높이 고정 */
+    width: 100%;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    text-decoration: none;
+    box-sizing: border-box; /* 패딩이 높이에 영향을 주지 않도록 설정 */
+}
+
+/* 로그인 버튼 (파랑) */
 .btn-primary {
     background: var(--primary);
     color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: var(--radius-md);
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
 }
 
 .btn-primary:hover {
     background: var(--primary-hover);
 }
 
-/* 회원가입 버튼 회색 */
+/* 회원가입 버튼 (회색) */
 .btn-secondary-custom {
     background-color: #9ca3af;
     color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: var(--radius-md);
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
-    height: 54px;
-    font-size: 17px;
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .btn-secondary-custom:hover {
     background-color: #4b5563;
 }
 
-.btn-link-danger {
-    background-color: var(--danger);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: var(--radius-md);
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-link-danger:hover {
-    background-color: #d93d4a;
-    transform: translateY(-1px);
-}
-
-.btn-logout {
-    background-color: var(--danger);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: var(--radius-md);
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-logout:hover {
-    background-color: #d93d4a;
-}
-
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-/* 로그인 버튼 + 회원가입 버튼 가로 배치 */
+/* 로그인 버튼 + 회원가입 버튼 가로 배치 컨테이너 */
 .auth-button-group {
     display: flex;
     gap: 10px;
     margin-top: 20px;
+    align-items: stretch; /* 자식 요소들의 높이를 동일하게 맞춤 */
 }
 
-/* 아이디/비밀번호 아이콘 제거 */
-.input-wrapper i {
-    display: none;
-}
-
-/* 아이콘 제거 후 input 정렬 유지 */
-.input-wrapper input {
-    padding-left: 16px !important;
+.auth-button-group .btn-primary,
+.auth-button-group .btn-secondary-custom {
+    flex: 1; /* 가로 비율을 동일하게 1:1로 맞춤 */
 }
 
 /* --- 5. 레이아웃 시스템 --- */
