@@ -17,10 +17,20 @@
         .data-table tr { border-bottom: 1px solid #f0f0f0; }
         .data-table th, .data-table td { padding: 15px 10px; text-align: left; }
         
-        /* 카테고리 한 줄 처리 */
+        /* 카테고리(2번째 열) 가운데 정렬 및 한 줄 처리 */
         .data-table th:nth-child(2), 
-        .data-table td:nth-child(2) { white-space: nowrap; width: 100px; } 
+        .data-table td:nth-child(2) { 
+            white-space: nowrap; 
+            width: 100px; 
+            text-align: center; /* 가운데 정렬 추가 */
+        } 
         
+        /* 상태/대여(5번째 열) 가운데 정렬 */
+        .data-table th:nth-child(5),
+        .data-table td:nth-child(5) {
+            text-align: center; /* 가운데 정렬 추가 */
+        }
+
         /* 도서명(1번째) 및 저자(3번째) 말줄임표 처리 */
         .data-table td:nth-child(1),
         .data-table td:nth-child(3) { 
