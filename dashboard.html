@@ -7,87 +7,50 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* [공통] 레이아웃 및 가독성 확장 */
-        .top-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-        }
-        .content-wrapper {
-            padding: 0 40px;
-        }
-        .card {
-            width: 100%;
-            max-width: none; 
-            margin-bottom: 20px;
-        }
+        /* [공통] 레이아웃 및 가독성 */
+        .top-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; }
+        .content-wrapper { padding: 0 40px; }
+        .card { width: 100%; max-width: none; margin-bottom: 20px; }
 
-        /* [표] 구분선 및 정렬 */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .data-table tr {
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .data-table th, .data-table td {
-            padding: 15px 10px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        /* [표] 1번 사진 잘림 방지 및 구분선 */
+        .data-table { width: 100%; border-collapse: collapse; table-layout: auto; }
+        .data-table tr { border-bottom: 1px solid #f0f0f0; }
+        .data-table th, .data-table td { padding: 15px 10px; text-align: left; }
         .data-table td:nth-child(3) { text-align: center; } /* 저자 가운데 정렬 */
 
-        /* [버튼] 대여/로그아웃 스타일 */
-        .btn-primary {
-            background-color: #28a745; /* 대여 버튼 초록색 */
-            border: none;
-            color: white;
-            width: 80px; height: 35px;
-            border-radius: 8px;
-            cursor: pointer;
+        /* [버튼] 1번 사진 요청: 대여(파랑), 대여불가(빨강) */
+        .btn-rent-action { 
+            background-color: #1890ff; border: none; color: white; 
+            width: 90px; height: 35px; border-radius: 8px; cursor: pointer; font-weight: bold;
         }
-        .btn-primary.disabled {
-            background-color: #e0e0e0;
-            color: #999;
-            cursor: not-allowed;
+        .btn-rent-action.disabled { 
+            background-color: #ff4d4f; color: white; cursor: not-allowed; 
         }
-        #btnLogout {
-            background-color: #ff4d4f; /* 로그아웃 빨간색 */
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
+
+        /* [버튼] 3번 사진 요청: 정보수정(파랑), 회원탈퇴(빨강 버튼 UI) */
+        .btn-info-update { 
+            background-color: #1890ff; color: white; border: none; 
+            width: 100%; height: 45px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px;
         }
+        .btn-info-withdraw { 
+            background-color: #ff4d4f; color: white; border: none; 
+            width: 100%; height: 45px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px;
+        }
+
+        #btnLogout { background-color: #ff4d4f; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
 
         /* [배지] NEW 및 대여 횟수 */
-        .badge-new {
-            background-color: #1890ff; /* 파란색 */
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .badge-rent-count {
-            border: 1px solid #ff4d4f;
-            color: #ff4d4f;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 11px;
-            display: inline-block;
-        }
+        .badge-new { background-color: #1890ff; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .badge-rent-count { border: 1px solid #ff4d4f; color: #ff4d4f; padding: 3px 10px; border-radius: 20px; font-weight: 600; font-size: 11px; }
 
-        /* 내 정보 수정 폼 스타일 */
+        /* 2번 사진 요청: 인기대여순위 말줄임표 제거 */
+        .ranking-item .book-title { white-space: normal; word-break: keep-all; font-weight: 600; flex: 1; line-height: 1.4; }
+
+        /* 내 정보 수정 폼 */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        .btn-withdraw { color: #ff4d4f; background: none; border: none; cursor: pointer; text-decoration: underline; margin-top: 20px; }
-
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        
         #view-rent-book .table-container { min-height: 550px; }
     </style>
 </head>
@@ -173,11 +136,11 @@
                 </div>
             </section>
 
-            <!-- 섹션 4: 내 정보 수정 (image_caeb39.jpg 기능 대응) -->
+            <!-- 섹션 4: 내 정보 수정 -->
             <section id="view-my-info" class="view-section">
-                <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <div class="card" style="max-width: 450px; margin: 0 auto;">
                     <div class="card-header"><h3>내 정보 수정</h3></div>
-                    <div style="padding: 20px;">
+                    <div style="padding: 25px;">
                         <form id="updateInfoForm">
                             <div class="form-group">
                                 <label for="infoUserId">아이디</label>
@@ -191,9 +154,9 @@
                                 <label for="infoPassword">새 비밀번호</label>
                                 <input type="password" id="infoPassword" placeholder="변경할 비밀번호 입력">
                             </div>
-                            <button type="submit" class="btn-primary" style="width: 100%; height: 45px; margin-top: 10px;">정보 수정</button>
+                            <button type="submit" class="btn-info-update">정보 수정</button>
                         </form>
-                        <button id="btnWithdraw" class="btn-withdraw">회원 탈퇴하기</button>
+                        <button id="btnWithdraw" class="btn-info-withdraw">회원 탈퇴하기</button>
                     </div>
                 </div>
             </section>
