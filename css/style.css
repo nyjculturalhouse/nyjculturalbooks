@@ -19,7 +19,7 @@
     --danger: #f04452; 
     --shadow: 0 4px 12px rgba(0,0,0,0.05);
     --radius-lg: 24px;
-    --radius-md: 14px; /* 조금 더 둥글게 보정 */
+    --radius-md: 14px;
 }
 
 body {
@@ -35,6 +35,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    position: relative; /* 토스트 위치 기준 */
 }
 
 .auth-card {
@@ -44,9 +45,9 @@ body {
     width: 100%;
     max-width: 420px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    z-index: 10;
 }
 
-/* 제목 가로 사이즈 한 줄 고정 (image_cd3fba.png 문제 해결) */
 .logo-area h1 {
     font-size: 22px; 
     font-weight: 800;
@@ -63,7 +64,7 @@ body {
     margin-bottom: 32px;
 }
 
-/* 3. 입력창 스타일 (아이콘 포함) */
+/* 3. 입력창 스타일 */
 .form-group {
     margin-bottom: 18px;
 }
@@ -105,10 +106,10 @@ body {
     box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.1);
 }
 
-/* 4. 로그인 버튼 (크고 둥글게) */
+/* 4. 로그인 버튼 */
 .btn-primary.w-100 {
     width: 100%;
-    height: 58px; /* 큼직한 높이 */
+    height: 58px;
     background: var(--primary);
     color: white;
     padding: 0;
@@ -128,34 +129,37 @@ body {
     box-shadow: 0 8px 20px rgba(49, 130, 246, 0.3);
 }
 
-/* 5. 팝콘 토스트 애니메이션 (둥글고 탄력 있게) */
+/* 5. 팝콘 토스트 메시지 (로그인창 위에 뜨게 설정) */
 #toastContainer {
-    position: fixed;
-    bottom: 40px;
+    position: absolute;
+    top: calc(50% - 250px); /* 로그인 카드 중앙 기준 위쪽으로 배치 */
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
+    pointer-events: none;
 }
 
-#toast {
-    padding: 16px 32px;
-    border-radius: 40px; /* 팝콘처럼 둥근 형태 */
+.toast {
+    padding: 14px 28px;
+    border-radius: 40px;
     font-size: 15px;
     font-weight: 600;
     color: white;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     opacity: 0;
-    transform: scale(0.6); /* 처음에 작게 */
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 튕기는 효과 */
+    transform: translateY(20px) scale(0.8); /* 밑에서 톡 튀어오름 */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: inline-block;
+    white-space: nowrap;
 }
 
-#toast.show {
+.toast.show {
     opacity: 1;
-    transform: scale(1); /* 톡! 하고 커짐 */
+    transform: translateY(0) scale(1);
 }
 
-.toast-success { background-color: #3182f6; }
-.toast-error { background-color: #f04452; }
+.toast.success { background-color: var(--primary); }
+.toast.error { background-color: var(--danger); }
 
 /* 6. 하단 링크 및 대시보드 공통 */
 .auth-links {
@@ -171,23 +175,76 @@ body {
     margin-left: 5px;
 }
 
-/* 기존 대시보드 카드/테이블 스타일 유지 */
-.card {
-    background: var(--white);
-    border-radius: 18px;
-    padding: 28px;
-    box-shadow: var(--shadow);
-    margin-bottom: 24px;
+/* 기존 대시보드 스타일 개편 (1번 사진 UI -> 2번 사진 스타일) */
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
 }
 
+.sidebar {
+    width: 240px;
+    background: var(--white);
+    padding: 24px;
+    border-right: 1px solid var(--border);
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px;
+    background: var(--bg-color);
+}
+
+.card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    border: none;
+}
+
+.card h3 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: var(--text-main);
+}
+
+/* 테이블 스타일 개편 */
 .data-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+    padding: 16px;
+    font-size: 15px;
+    border-bottom: 1px solid #f9fafb;
+}
+
+/* 버튼 및 배지 스타일 */
+.btn-sm {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
 }
 
 .badge {
-    padding: 4px 8px;
-    border-radius: 6px;
+    padding: 5px 10px;
+    border-radius: 8px;
     font-size: 12px;
     font-weight: 700;
 }
