@@ -6,77 +6,112 @@
     <title>도서 대출 관리 시스템 - 회원가입</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="auth-body">
+
     <div class="auth-card">
+
         <div class="logo-area">
             <h2>회원가입</h2>
             <p>새로운 계정을 생성하세요</p>
         </div>
 
         <form id="signupForm">
+
             <div class="form-group">
                 <label for="regUserId">아이디</label>
+
                 <div class="input-with-btn">
-                    <input type="text" id="regUserId" required placeholder="사용할 아이디">
-                    <button type="button" id="btnCheckDup" class="btn-secondary">중복확인</button>
+                    <input
+                        type="text"
+                        id="regUserId"
+                        required
+                        placeholder="사용할 아이디"
+                    >
+
+                    <button
+                        type="button"
+                        id="btnCheckDup"
+                        class="btn-secondary"
+                    >
+                        중복확인
+                    </button>
                 </div>
             </div>
 
             <!-- 전화번호 -->
             <div class="form-group">
                 <label for="regPhone">전화번호</label>
-                <input type="text" id="regPhone" required placeholder="01012345678">
+
+                <input
+                    type="text"
+                    id="regPhone"
+                    required
+                    placeholder="01012345678"
+                >
+
                 <small class="helper-text">
                     비밀번호는 전화번호 뒤 4자리로 자동 설정됩니다.
                 </small>
             </div>
 
-            <!-- 비밀번호 표시용 (읽기전용) -->
+            <!-- 비밀번호 -->
             <div class="form-group">
                 <label for="regPassword">비밀번호</label>
-                <input type="text" id="regPassword" readonly placeholder="전화번호 입력 시 자동 생성">
+
+                <input
+                    type="password"
+                    id="regPassword"
+                    readonly
+                    placeholder="전화번호 뒤 4자리 자동 생성"
+                >
+            </div>
+
+            <!-- 비밀번호 확인 -->
+            <div class="form-group">
+                <label for="regPasswordConfirm">비밀번호 확인</label>
+
+                <input
+                    type="password"
+                    id="regPasswordConfirm"
+                    readonly
+                    placeholder="자동 입력"
+                >
             </div>
 
             <div class="form-group">
                 <label for="regName">이름</label>
-                <input type="text" id="regName" required placeholder="실명 입력">
+
+                <input
+                    type="text"
+                    id="regName"
+                    required
+                    placeholder="실명 입력"
+                >
             </div>
 
-            <button type="submit" class="btn-primary w-100" id="btnSubmitSignup" disabled>
+            <button
+                type="submit"
+                class="btn-primary w-100"
+                id="btnSubmitSignup"
+                disabled
+            >
                 회원가입
             </button>
+
         </form>
 
         <div class="auth-links">
-            <a href="index.html">로그인으로 돌아가기</a>
+            <a href="index.html">
+                로그인으로 돌아가기
+            </a>
         </div>
+
     </div>
 
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
-
-    <script>
-        // 전화번호 뒤 4자리 자동 입력
-        const phoneInput = document.getElementById('regPhone');
-        const passwordInput = document.getElementById('regPassword');
-
-        phoneInput.addEventListener('input', () => {
-
-            // 숫자만 남김
-            let phone = phoneInput.value.replace(/[^0-9]/g, '');
-
-            // 입력값 갱신
-            phoneInput.value = phone;
-
-            // 뒤 4자리 추출
-            if (phone.length >= 4) {
-                passwordInput.value = phone.slice(-4);
-            } else {
-                passwordInput.value = '';
-            }
-        });
-    </script>
-
     <script src="js/auth.js"></script>
+
 </body>
 </html>
