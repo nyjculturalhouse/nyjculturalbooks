@@ -269,7 +269,7 @@ input:focus, select:focus {
     }
 }
 
-/* --- 7. 테이블 및 텍스트 처리 --- */
+/* --- 7. 테이블 및 텍스트 처리 (수정됨) --- */
 .book-table {
     width: 100%;
     table-layout: fixed;
@@ -283,15 +283,16 @@ input:focus, select:focus {
     vertical-align: middle;
 }
 
-/* 카테고리 한 줄 처리 */
+/* 카테고리 한 줄 처리 및 너비 확보 */
 .book-table th:nth-child(2),
 .book-table td:nth-child(2) {
     white-space: nowrap;
     width: 100px;
 }
 
-/* 도서명 긴 경우 말줄임표 처리 */
-.book-table td.title { 
+/* 도서명 및 저자 긴 경우 말줄임표(...) 처리 */
+.book-table td.title,
+.book-table td:nth-child(3) { 
     text-align: left; 
     white-space: nowrap;
     overflow: hidden;
@@ -309,7 +310,7 @@ input:focus, select:focus {
     display: inline-block;
 }
 
-/* 대여순위 도서명 끝까지 나오도록 수정 */
+/* 대여순위 도서명 말줄임표 없이 전체 노출 */
 .ranking-item .new-book-title {
     white-space: normal !important;
     overflow: visible !important;
