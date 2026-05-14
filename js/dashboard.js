@@ -251,16 +251,27 @@ async function rentBook(isbn) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const book = allBooks.find(b => String(b.ISBN || b.isbn) === String(isbn));
     if (!book) return;
-    if (confirm(`[${book.도서명 || book.제목}] 도서를 대여하시겠습니까?`)) {
-        const res = await API.post('rentBook', { userId: user.userId || user.아이디, isbn, title: book.도서명 || book.제목 });
-        if (res.success) { UI.showToast('대여 완료!'); loadBooks(); loadMyRentals(); }
+
+    const res = await API.post('rentBook', {
+        userId: user.userId || user.아이디,
+        isbn,
+        title: book.도서명 || book.제목
+    });
+
+    if (res.success) {
+        UI.showToast('대여 완료!');
+        loadBooks();
+        loadMyRentals();
     }
 }
 
 async function returnBook(rentalId, isbn) {
-    if (confirm('반납하시겠습니까?')) {
-        const res = await API.post('returnBook', { rentalId, isbn });
-        if (res.success) { UI.showToast('반납 완료!'); loadBooks(); loadMyRentals(); }
+    const res = await API.post('returnBook', { rentalId, isbn });
+
+    if (res.success) {
+        UI.showToast('반납 완료!');
+        loadBooks();
+        loadMyRentals();
     }
 }
 
