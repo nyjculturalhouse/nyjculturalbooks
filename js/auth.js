@@ -6,12 +6,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
-    const checkDuplicateBtn = document.getElementById('btnCheckDuplicate'); // 중복확인 버튼
+    
+    // HTML의 실제 ID인 'btnCheckDup'으로 참조를 수정합니다.
+    const checkDuplicateBtn = document.getElementById('btnCheckDup'); 
 
     // --- 아이디 중복 확인 처리 ---
     if (checkDuplicateBtn) {
         checkDuplicateBtn.addEventListener('click', async () => {
-            const userId = document.getElementById('userId').value.trim();
+            // 회원가입 페이지의 아이디 입력창 ID는 'regUserId'입니다.
+            const userIdElement = document.getElementById('regUserId');
+            const userId = userIdElement ? userIdElement.value.trim() : "";
 
             if (!userId) {
                 UI.showToast("아이디를 입력해주세요.", "error");
@@ -20,13 +24,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 UI.showToast("중복 확인 중...", "info");
-                // 서버 키값에 맞춰 'userId' 대신 '아이디' 사용 가능
+                // 서버 키값에 맞춰 '아이디' 사용
                 const res = await API.post('checkDuplicate', { 아이디: userId });
 
                 if (res.success) {
                     UI.showToast(res.message || "사용 가능한 아이디입니다.", "success");
-                    // 중복 확인 완료 상태를 저장하고 싶다면 dataset 등에 기록 가능
+                    // 중복 확인 완료 상태 저장
                     checkDuplicateBtn.dataset.checked = "true";
+                    
+                    // [수정] 중복 확인 성공 시 비활성화된 회원가입 버튼을 활성화
+                    const signupBtn = document.getElementById('btnSubmitSignup');
+                    if (signupBtn) {
+                        signupBtn.disabled = false;
+                    }
                 } else {
                     UI.showToast(res.message || "이미 사용 중인 아이디입니다.", "error");
                     checkDuplicateBtn.dataset.checked = "false";
@@ -36,12 +46,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 UI.showToast("서버 통신 오류가 발생했습니다.", "error");
             }
         });
+
+        // [추가] 만약 중복확인 후 아이디를 다시 수정하면 버튼을 다시 비활성화 (보안)
+        const regUserIdInput = document.getElementById('regUserId');
+        if (regUserIdInput) {
+            regUserIdInput.addEventListener('input', () => {
+                checkDuplicateBtn.dataset.checked = "false";
+                const signupBtn = document.getElementById('btnSubmitSignup');
+                if (signupBtn) signupBtn.disabled = true;
+            });
+        }
     }
 
     // --- 로그인 처리 ---
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // 중요: 브라우저 기본 제출 동작(새로고침) 방지
+            e.preventDefault(); // 브라우저 기본 제출 동작 방지
 
             const userId = document.getElementById('userId').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -53,24 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                // 버튼 비활성화 (중복 클릭 방지)
                 loginBtn.disabled = true;
                 UI.showToast("로그인 확인 중...", "info");
 
-                // 말씀하신 대로 서버 키값이 한글일 경우를 대비해 수정
                 const res = await API.post('login', { 아이디: userId, 비밀번호: password });
 
                 if (res.success) {
-                    // 사용자 정보를 로컬 스토리지에 저장
                     localStorage.setItem('currentUser', JSON.stringify(res.data));
                     UI.showToast("로그인 성공! 이동합니다.");
                     
-                    // Throttling 에러 방지를 위해 약간의 지연 후 이동하거나 replace 사용
                     setTimeout(() => {
                         window.location.replace('dashboard.html');
                     }, 500);
                 } else {
-                    // [수정/확인] res.message가 "아이디 또는 비밀번호가 일치하지 않습니다"로 오는 부분
                     UI.showToast(res.message || "로그인 실패: 정보를 확인하세요.", "error");
                     loginBtn.disabled = false;
                 }
@@ -91,11 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('regPassword').value.trim();
             const passwordConfirm = document.getElementById('regPasswordConfirm').value.trim();
             const name = document.getElementById('regName').value.trim();
-
-            /* 전화번호 추가 */
             const phone = document.getElementById('regPhone').value.trim();
 
-            const signupBtn = signupForm.querySelector('button[type="submit"]');
+            const signupBtn = document.getElementById('btnSubmitSignup');
 
             // 비밀번호 확인 체크
             if (password !== passwordConfirm) {
@@ -103,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 중복 확인 여부 체크 (선택 사항)
+            // 중복 확인 여부 체크
             if (checkDuplicateBtn && checkDuplicateBtn.dataset.checked !== "true") {
                 UI.showToast("아이디 중복 확인을 해주세요.", "error");
                 return;
@@ -113,13 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 signupBtn.disabled = true;
                 UI.showToast("가입 처리 중...", "info");
 
-                // 서버 키값에 맞춰 한글로 전송
                 const res = await API.post('signup', {
                     아이디: userId,
                     비밀번호: password,
                     이름: name,
-
-                    /* 전화번호 추가 */
                     전화번호: phone
                 });
 
