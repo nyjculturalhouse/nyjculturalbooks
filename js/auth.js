@@ -87,10 +87,21 @@ document.addEventListener('DOMContentLoaded', () => {
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const userId = document.getElementById('userId').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const name = document.getElementById('userName').value.trim();
+            const userId = document.getElementById('regUserId').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const passwordConfirm = document.getElementById('regPasswordConfirm').value.trim();
+            const name = document.getElementById('regName').value.trim();
+
+            /* 전화번호 추가 */
+            const phone = document.getElementById('regPhone').value.trim();
+
             const signupBtn = signupForm.querySelector('button[type="submit"]');
+
+            // 비밀번호 확인 체크
+            if (password !== passwordConfirm) {
+                UI.showToast("비밀번호가 일치하지 않습니다.", "error");
+                return;
+            }
 
             // 중복 확인 여부 체크 (선택 사항)
             if (checkDuplicateBtn && checkDuplicateBtn.dataset.checked !== "true") {
@@ -103,7 +114,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 UI.showToast("가입 처리 중...", "info");
 
                 // 서버 키값에 맞춰 한글로 전송
-                const res = await API.post('signup', { 아이디: userId, 비밀번호: password, 이름: name });
+                const res = await API.post('signup', {
+                    아이디: userId,
+                    비밀번호: password,
+                    이름: name,
+
+                    /* 전화번호 추가 */
+                    전화번호: phone
+                });
 
                 if (res.success) {
                     alert("회원가입이 완료되었습니다. 로그인해주세요.");
