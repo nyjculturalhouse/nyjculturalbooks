@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>문화의집 소소책방 도서 대여 프로그램 - 로그인</title>
-    <!-- CSS 파일이 css 폴더 내에 있는지 확인하세요 -->
+    <!-- CSS 파일 경로가 정확한지 다시 한번 확인하세요 -->
     <link rel="stylesheet" href="css/style.css">
     <!-- 아이콘 폰트 추가 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -34,7 +34,8 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="btn-primary w-100">로그인</button>
+                <!-- w-100 클래스는 style.css의 btn-primary 스타일을 확장하여 적용됩니다 -->
+                <button type="submit" class="btn-primary" style="width: 100%;">로그인</button>
             </form>
             
             <div class="auth-links">
@@ -44,10 +45,10 @@
         </div>
     </div>
 
-    <!-- 알림 메시지 출력을 위한 컨테이너 -->
+    <!-- 알림 메시지 출력을 위한 컨테이너 (style.css에서 정중앙 배치 설정됨) -->
     <div id="toastContainer"></div>
 
-    <!-- 자바스크립트 로드 순서 유지 -->
+    <!-- 자바스크립트 로드 순서: 전역변수(app) -> 통신(api) -> 화면(ui) -> 기능(auth) -->
     <script src="js/app.js"></script> 
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
@@ -56,11 +57,12 @@
     <script>
         // 페이지 로드 상태 및 설정값 확인
         window.onload = function() {
-            console.log("페이지 주소:", window.location.href);
+            console.log("현재 접속 경로:", window.location.href);
+            // GAS_URL은 app.js에서 정의되어야 합니다.
             if (typeof window.GAS_URL === 'undefined') {
-                console.error("경고: app.js 로드 실패. js 폴더 내 app.js 파일과 경로를 확인하세요.");
+                console.error("오류: app.js 로드 실패. js 폴더 구조와 파일명을 확인하세요.");
             } else {
-                console.log("GAS_URL 로드 성공:", window.GAS_URL);
+                console.log("API 설정 로드 완료:", window.GAS_URL);
             }
         };
     </script>
