@@ -32,7 +32,7 @@ body {
     min-height: 100vh;
 }
 
-/* --- 2. 입력창 & 선택창 둥글게 (image_cc56fd.png, image_cc53db.png 보정) --- */
+/* --- 2. 입력창 & 선택창 둥글게 --- */
 input[type="text"], 
 input[type="password"], 
 select {
@@ -44,7 +44,7 @@ select {
     outline: none;
     transition: all 0.2s;
     width: 100%;
-    max-width: 300px;
+    /* max-width는 개별 컨테이너 내에서 조절되도록 수정 */
 }
 
 input:focus, select:focus {
@@ -60,7 +60,7 @@ input:focus, select:focus {
     margin-top: 16px;
 }
 
-/* --- 3. 상태 배지 & 대여 버튼 (image_cc5762.png 보정) --- */
+/* --- 3. 상태 배지 & 대여 버튼 --- */
 .badge {
     padding: 6px 12px;
     border-radius: 8px;
@@ -71,19 +71,16 @@ input:focus, select:focus {
     margin-bottom: 6px;
 }
 
-/* 대여가능: 파란색 */
 .badge.available { 
     background: #e7f3ff; 
     color: var(--primary); 
 }
 
-/* 대여불가: 빨간색 */
 .badge.rented { 
     background: #ffeeef; 
     color: var(--danger); 
 }
 
-/* 대여 버튼: 초록색 */
 .btn-rent {
     background-color: var(--success);
     color: white;
@@ -100,7 +97,6 @@ input:focus, select:focus {
     transform: translateY(-1px);
 }
 
-/* [추가수정] 3번 사진: 대여중일 때 버튼 색상 (회색 배경 + 빨간 글씨) */
 .btn-rent.rented {
     background-color: #f1f3f5 !important;
     color: var(--danger) !important;
@@ -109,7 +105,7 @@ input:focus, select:focus {
     transform: none !important;
 }
 
-/* --- 4. 정보수정 & 회원탈퇴 버튼 UI (image_cc53db.png 보정) --- */
+/* --- 4. 버튼 및 폼 그룹 UI --- */
 .form-group { margin-bottom: 24px; }
 .form-group label {
     display: block;
@@ -118,21 +114,22 @@ input:focus, select:focus {
     color: var(--text-light);
 }
 
-/* 정보 수정 저장 버튼 (너비 수정 반영) */
 .btn-primary {
     background: var(--primary);
     color: white;
     border: none;
-    padding: 10px 20px; /* 높이와 패딩 조절 */
+    padding: 12px 20px;
     border-radius: var(--radius-md);
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
-    width: auto; /* 꽉 차던 너비를 해제하여 회원탈퇴와 사이즈 통일 */
-    min-width: 100px;
+    width: 100%; /* 로그인 등에서는 꽉 차게, 대시보드에서는 auto로 개별 지정 가능 */
 }
 
-/* 회원 탈퇴 버튼 */
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
 .btn-link-danger {
     background-color: var(--danger);
     color: white;
@@ -149,7 +146,6 @@ input:focus, select:focus {
     transform: translateY(-1px);
 }
 
-/* 로그아웃 버튼 (정보수정과 같은 UI + 빨간색) */
 .btn-logout {
     background-color: var(--danger);
     color: white;
@@ -165,20 +161,11 @@ input:focus, select:focus {
     background-color: #d93d4a;
 }
 
-/* 상단 헤더 정렬 (반갑습니다 & 로그아웃 오른쪽 상단 배치용) */
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-}
-
-.user-status {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    font-weight: 600;
 }
 
 /* --- 5. 레이아웃 시스템 (사이드바 고정) --- */
@@ -232,12 +219,11 @@ input:focus, select:focus {
     margin-bottom: 24px;
 }
 
-/* [추가수정] 1번 사진: 토스트 알림을 화면 정중앙으로 배치 */
 #toastContainer {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* 화면 한가운데 정렬 */
+    transform: translate(-50%, -50%);
     z-index: 10000;
     display: flex;
     flex-direction: column;
@@ -246,12 +232,12 @@ input:focus, select:focus {
 }
 
 .toast {
-    padding: 18px 40px; /* 크기를 좀 더 키움 */
+    padding: 18px 40px;
     border-radius: 50px;
     font-weight: 700;
     font-size: 1.2rem;
     color: white;
-    background-color: rgba(0, 0, 0, 0.85); /* 시인성을 위해 어두운 배경 적용 */
+    background-color: rgba(0, 0, 0, 0.85);
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     margin-bottom: 10px;
 }
@@ -267,43 +253,24 @@ input:focus, select:focus {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- 추가 수정 사항 반영 (테이블 고정 및 텍스트 처리) --- */
-
-/* 2번 사진: 대여 도서 없을 때 붙어 뜨는 현상 해결 */
-.empty-message {
-    padding: 40px 0;
-    text-align: center;
-    color: var(--text-light);
-}
-
-/* 3번 사진: 테이블 레이아웃 고정 및 텍스트 생략 (...) */
+/* --- 7. 테이블 및 텍스트 처리 --- */
 .book-table {
     width: 100%;
-    table-layout: fixed; /* 검색 시 창 줄어듦 방지 */
+    table-layout: fixed;
     border-collapse: collapse;
 }
 
 .book-table th, .book-table td {
     padding: 12px 8px;
-    text-align: center; /* 저자 등 기본 가운데 정렬 */
+    text-align: center;
     vertical-align: middle;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* 너무 길면 ... 표시 */
+    text-overflow: ellipsis;
 }
 
-/* [추가수정] 2번 사진: 대여일 칸(두 번째 열) 가운데 정렬 명시 */
-.book-table th:nth-child(2),
-.book-table td:nth-child(2) {
-    text-align: center;
-}
+.book-table td.title { text-align: left; }
 
-/* 도서명 왼쪽 정렬 유지 */
-.book-table td.title {
-    text-align: left;
-}
-
-/* 5번 사진: 배지 UI 스타일 (정보수정 UI 스타일 계승) */
 .new-badge {
     background-color: var(--primary);
     color: white;
@@ -315,12 +282,11 @@ input:focus, select:focus {
     display: inline-block;
 }
 
-/* [추가수정] 5번 사진: 신간도서 제목 전체 노출 (말줄임 해제) */
 .ranking-item .new-book-title {
-    white-space: normal !important;      /* 줄바꿈 허용 */
-    overflow: visible !important;        /* 넘침 허용 */
-    text-overflow: clip !important;      /* 말줄임표 제거 */
-    word-break: break-all;               /* 단어 단위 끊기 */
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    word-break: break-all;
 }
 
 .rent-count-badge {
@@ -332,4 +298,76 @@ input:focus, select:focus {
     font-weight: 700;
     display: inline-block;
     margin-top: 5px;
+}
+
+/* --- 8. [신규 추가] 로그인 & 회원가입 전용 디자인 (image_bf37ba.png 테마) --- */
+
+.auth-page {
+    background: radial-gradient(circle at top left, #4a1d4a, #2a2d5a, #1a1c2c); /* 배경 그라데이션 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.1); /* 투명한 유리 느낌 */
+    backdrop-filter: blur(20px); /* 블러 처리 */
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-lg);
+    padding: 48px 40px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.auth-card h2 {
+    color: var(--white);
+    font-weight: 800;
+    font-size: 28px;
+    margin-bottom: 32px;
+}
+
+.auth-card .form-group label {
+    color: rgba(255, 255, 255, 0.8);
+    text-align: left;
+}
+
+.auth-card input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    margin-bottom: 8px;
+}
+
+.auth-card input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.auth-card input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--primary);
+}
+
+.auth-card .btn-primary {
+    margin-top: 16px;
+    height: 54px;
+    font-size: 17px;
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); /* 그라데이션 버튼 */
+    box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+}
+
+.auth-footer {
+    margin-top: 24px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.auth-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 8px;
 }
