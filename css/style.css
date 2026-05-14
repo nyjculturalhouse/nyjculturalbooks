@@ -347,13 +347,27 @@ input:focus, select:focus {
 }
 
 /* 대여순위 도서명 말줄임표 없이 전체 노출 */
+/* 대여순위 도서명 말줄임표 없이 전체 노출 */
 .ranking-item .book-title { 
-    white-space: normal; 
-    word-break: break-all; 
+    /* 줄바꿈 허용 */
+    white-space: normal !important; 
+    /* 단어 단위 끊기 허용 */
+    word-break: break-all !important; 
+    /* 말줄임표 해제 */
+    text-overflow: clip !important; 
+    overflow: visible !important;
+    
+    font-weight: 600; 
     flex: 1; 
-    line-height: 1.4; 
-    overflow: visible;
-    text-overflow: clip;
+    line-height: 1.4;
+    padding-right: 10px; /* 대여 횟수 배지와 겹치지 않게 여백 추가 */
+}
+
+/* 랭킹 아이템 내부 레이아웃 정렬 */
+.ranking-item {
+    display: flex;
+    align-items: flex-start; /* 텍스트가 길어져 두 줄이 되어도 위쪽 기준 정렬 */
+    padding: 10px 0;
 }
 
 .rent-count-badge {
