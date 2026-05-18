@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof setupTabs === 'function') setupTabs();
     
-    // [개선] 첫 페이지 진입 시에는 '첫 번째 활성화된 탭'의 데이터만 로드합니다.
+    // 첫 페이지 진입 시에는 '첫 번째 활성화된 탭'의 데이터만 로드합니다.
     const activeTab = document.querySelector('.nav-item.active');
     if (activeTab) {
         const targetView = activeTab.getAttribute('data-target');
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await API.post('updateBook', payload);
         if (res.success) {
             UI.showToast('도서가 수정되었습니다.');
-            closeEditModal(); // 모달 닫기 안심 함수 실행
+            closeEditModal(); 
             loadAdminBooks(); 
         } else {
             UI.showToast(res.message, 'error');
@@ -85,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 모달을 확실하게 화면에서 숨기고 띄우는 안심 제어 함수
 function closeEditModal() {
     const modal = document.getElementById('editBookModal');
     if (modal) {
@@ -123,7 +122,6 @@ async function loadAdminBooks() {
         tbody.innerHTML = '';
         
         allBooks.forEach((b, index) => {
-            // 구글 시트 혹은 API에서 넘어오는 데이터 키값 매핑 안심 보장
             const isbn = b.ISBN || b.isbn || '-';
             const title = b.도서명 || b.제목 || b.title || '-';
             const category = b.카테고리 || b.분류 || b.category || '-';
@@ -133,23 +131,22 @@ async function loadAdminBooks() {
             
             const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
             
-            // html의 7개 th 헤더(ISBN | 도서명 | 카테고리 | 저자 | 출판사 | 상태 | 관리) 순서와 1:1로 정확하게 일치시킴
+            // [개선] white-space: nowrap 주입으로 글자 잘림/줄바꿈 방지 및 균등한 min-width 설정
             tbody.innerHTML += `
                 <tr>
-                    <td style="text-align: center; padding: 12px 8px;">${isbn}</td>
-                    <td style="text-align: center; padding: 12px 8px; font-weight: 500;">${title}</td>
-                    <td style="text-align: center; padding: 12px 8px;">${category}</td>
-                    <td style="text-align: center; padding: 12px 8px;">${author}</td>
-                    <td style="text-align: center; padding: 12px 8px;">${publisher}</td>
-                    <td style="text-align: center; padding: 12px 8px;"><span class="badge ${isAvailable ? 'available' : 'rented'}">${statusText}</span></td>
-                    <td style="text-align: center; padding: 12px 8px;">
-                        <button class="btn-sm btn-outline" style="display:inline-block !important; margin-right:5px;" onclick="openEditByIndex(${index})">수정</button>
-                        <button class="btn-sm btn-danger" style="display:inline-block !important;" onclick="deleteBook('${isbn}')">삭제</button>
+                    <td style="text-align: center; padding: 12px 10px; white-space: nowrap;">${isbn}</td>
+                    <td style="text-align: left; padding: 12px 10px; font-weight: 500;">${title}</td>
+                    <td style="text-align: center; padding: 12px 10px; white-space: nowrap; min-width: 90px;">${category}</td>
+                    <td style="text-align: center; padding: 12px 10px; white-space: nowrap;">${author}</td>
+                    <td style="text-align: center; padding: 12px 10px; white-space: nowrap;">${publisher}</td>
+                    <td style="text-align: center; padding: 12px 10px; white-space: nowrap;"><span class="badge ${isAvailable ? 'available' : 'rented'}">${statusText}</span></td>
+                    <td style="text-align: center; padding: 12px 10px; white-space: nowrap; min-width: 130px;">
+                        <button class="btn-sm btn-outline" style="display:inline-block !important; margin-right:5px; padding: 4px 10px;" onclick="openEditByIndex(${index})">수정</button>
+                        <button class="btn-sm btn-danger" style="display:inline-block !important; padding: 4px 10px;" onclick="deleteBook('${isbn}')">삭제</button>
                     </td>
                 </tr>`;
         });
         
-        // 화면 레이아웃을 무너뜨리던 모달 팝업 강제 숨김 유지
         const modal = document.getElementById('editBookModal');
         if (modal && !modal.classList.contains('show')) {
             modal.style.display = 'none';
@@ -167,7 +164,6 @@ function openEditByIndex(index) {
     document.getElementById('editAuthor').value = book.저자 || book.작가 || book.author || '';
     document.getElementById('editPublisher').value = book.출판사 || book.publisher || '';
     
-    // 모달창 팝업 스타일을 화면 중앙 고정 레이어로 강제 강제 주입
     const modal = document.getElementById('editBookModal');
     if (modal) {
         modal.classList.remove('hidden');
@@ -205,12 +201,12 @@ async function loadUsers() {
         tbody.innerHTML = '';
         res.data.forEach(u => {
             tbody.innerHTML += `<tr>
-                <td>${u.아이디 || u.userId || '-'}</td>
-                <td>${u.비밀번호 || u.password || '-'}</td>
-                <td>${u.이름 || u.name || '-'}</td>
-                <td>${u.권한 || u.role || '-'}</td>
-                <td>${u.생성일 || u.createdAt || '-'}</td>
-                <td>${u.전화번호 || u.phone || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${u.아이디 || u.userId || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${u.비밀번호 || u.password || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${u.이름 || u.name || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${u.권한 || u.role || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${u.생성일 || u.createdAt || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${u.전화번호 || u.phone || '-'}</td>
             </tr>`;
         });
     }
@@ -227,13 +223,13 @@ async function loadRentalHistory() {
             const isReturned = returnedVal === 'true' || returnedVal === 'y';
             
             tbody.innerHTML += `<tr>
-                <td>${r.대여ID || r.rentalId || '-'}</td>
-                <td>${r.아이디 || r.userId || '-'}</td>
-                <td>${r.ISBN || r.isbn || '-'}</td>
-                <td>${r.도서명 || r.제목 || r.title || '-'}</td>
-                <td>${r.대여일 || r.rentalDate || '-'}</td>
-                <td>${r.반납예정일 || r.dueDate || '-'}</td>
-                <td><span class="badge ${isReturned ? 'available' : 'rented'}">${isReturned ? '반납완료' : '대여중'}</span></td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${r.대여ID || r.rentalId || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${r.아이디 || r.userId || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${r.ISBN || r.isbn || '-'}</td>
+                <td style="padding: 12px 10px; text-align: left;">${r.도서명 || r.제목 || r.title || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${r.대여일 || r.rentalDate || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${r.반납예정일 || r.dueDate || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;"><span class="badge ${isReturned ? 'available' : 'rented'}">${isReturned ? '반납완료' : '대여중'}</span></td>
             </tr>`;
         });
     }
@@ -263,12 +259,12 @@ async function loadCurrentRentals() {
             }
 
             tbody.innerHTML += `<tr>
-                <td>${r.대여ID || r.rentalId || '-'}</td>
-                <td>${r.아이디 || r.userId || '-'}</td>
-                <td>${r.도서명 || r.제목 || r.title || '-'}</td>
-                <td>${r.대여일 || r.rentalDate || '-'}</td>
-                <td>${dueDateStr || '-'}</td>
-                <td>${statusBadge}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${r.대여ID || r.rentalId || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${r.아이디 || r.userId || '-'}</td>
+                <td style="padding: 12px 10px; text-align: left;">${r.도서명 || r.제목 || r.title || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${r.대여일 || r.rentalDate || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${dueDateStr || '-'}</td>
+                <td style="padding: 12px 10px; text-align: center; white-space: nowrap;">${statusBadge}</td>
             </tr>`;
         });
     }
