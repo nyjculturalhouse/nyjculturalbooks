@@ -446,11 +446,22 @@ input:focus, select:focus {
 }
 
 /* 관리자용 데이터 테이블 공통 스타일 정의 */
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 15px;
-}
+<table class="data-table">
+
+<table class="data-table" style="table-layout: fixed; width: 100%;">
+    <thead>
+        <tr>
+            <th style="width: 18%;">ISBN</th>
+            <th style="width: 22%;">도서명</th>
+            <th style="width: 12%;">카테고리</th>
+            <th style="width: 15%;">저자</th>
+            <th style="width: 13%;">출판사</th>
+            <th style="width: 10%;">상태</th>
+            <th style="width: 10%;">관리</th>
+        </tr>
+    </thead>
+    <tbody id="adminBooksTableBody"></tbody>
+</table>
 
 .data-table th, 
 .data-table td {
