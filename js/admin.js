@@ -143,6 +143,7 @@ async function deleteBook(isbn) {
     }
 }
 
+// 회원 명단 출력 부분 수정 (순서: 아이디, 비밀번호, 이름, 권한, 생성일, 전화번호)
 async function loadUsers() {
     const res = await API.post('getUsers');
     if (res.success) {
@@ -152,9 +153,11 @@ async function loadUsers() {
         res.data.forEach(u => {
             tbody.innerHTML += `<tr>
                 <td>${u.아이디 || u.userId || '-'}</td>
+                <td>${u.비밀번호 || u.password || '-'}</td>
                 <td>${u.이름 || u.name || '-'}</td>
                 <td>${u.권한 || u.role || '-'}</td>
                 <td>${u.생성일 || u.createdAt || '-'}</td>
+                <td>${u.전화번호 || u.phone || '-'}</td>
             </tr>`;
         });
     }
@@ -183,19 +186,41 @@ async function loadRentalHistory() {
     }
 }
 
+// 현재 대여 목록에서 연체 자동 판별 추가
 async function loadCurrentRentals() {
     const res = await API.post('getCurrentRentals');
     if (res.success) {
         const tbody = document.getElementById('currentRentalsTableBody');
         if (!tbody) return;
         tbody.innerHTML = '';
+        
+        // 현재 날짜 시간 제거 상태 객체 생성
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
         res.data.forEach(r => {
+            const dueDateStr = r.반납예정일 || r.dueDate || '';
+            let isOverdue = false;
+            let statusBadge = '<span class="badge available">정상</span>';
+
+            if (dueDateStr && dueDateStr !== '-') {
+                const dueDate = new Date(dueDateStr);
+                dueDate.setHours(0, 0, 0, 0);
+                
+                // 반납예정일이 오늘보다 과거라면 연체 처리
+                if (dueDate < today) {
+                    isOverdue = true;
+                    statusBadge = '<span class="badge rented">연체</span>';
+                }
+            }
+
             tbody.innerHTML += `<tr>
                 <td>${r.대여ID || r.rentalId || '-'}</td>
                 <td>${r.아이디 || r.userId || '-'}</td>
                 <td>${r.도서명 || r.제목 || r.title || '-'}</td>
                 <td>${r.대여일 || r.rentalDate || '-'}</td>
-                <td>${r.반납예정일 || r.dueDate || '-'}</td>
+                <td>${dueDateStr || '-'}</td>
+                <td>${statusBadge}</td>
             </tr>`;
         });
     }
