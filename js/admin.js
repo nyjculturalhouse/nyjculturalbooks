@@ -20,14 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetView = activeTab.getAttribute('data-target');
         loadDataByTarget(targetView);
     } else {
-        // 혹시 활성화된 탭이 없다면 기본으로 회원 목록 로드
         loadUsers();
     }
 
-    // [개선] 모든 데이터를 한 번에 부르는 대신, 클릭한 탭의 데이터만 쏙쏙 골라서 부르기
+    // 클릭한 탭의 데이터만 선별 로드
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', (e) => {
-            // 기존 탭 클릭이 페이지를 강제로 리프레시하는 것을 방지
             const targetView = e.currentTarget.getAttribute('data-target');
             if (targetView) {
                 loadDataByTarget(targetView);
@@ -55,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (res.success) {
             UI.showToast('도서가 등록되었습니다.');
             document.getElementById('addBookForm').reset();
-            loadAdminBooks(); // 등록 후 도서 목록만 갱신
+            loadAdminBooks(); 
         } else {
             UI.showToast(res.message, 'error');
         }
@@ -74,8 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await API.post('updateBook', payload);
         if (res.success) {
             UI.showToast('도서가 수정되었습니다.');
-            document.getElementById('editBookModal').classList.add('hidden');
-            loadAdminBooks(); // 수정 후 도서 목록만 갱신
+            closeEditModal(); // 모달 닫기 안심 함수 실행
+            loadAdminBooks(); 
         } else {
             UI.showToast(res.message, 'error');
         }
@@ -83,11 +81,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 수정 취소
     document.getElementById('btnCancelEdit').addEventListener('click', () => {
-        document.getElementById('editBookModal').classList.add('hidden');
+        closeEditModal();
     });
 });
 
-// [신규 주입] data-target 속성값에 따라 원하는 API만 선별해서 호출하는 컨트롤러 타겟러
+// 모달을 확실하게 화면에서 숨기고 띄우는 안심 제어 함수
+function closeEditModal() {
+    const modal = document.getElementById('editBookModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+    }
+}
+
 function loadDataByTarget(target) {
     switch (target) {
         case 'admin-users':
@@ -126,20 +132,27 @@ async function loadAdminBooks() {
             
             const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
             
+            // 데이터 누락 및 레이아웃 깨짐을 방지하는 정밀 TD 매핑 구조
             tbody.innerHTML += `
                 <tr>
-                    <td>${isbn}</td>
-                    <td>${title}</td>
-                    <td>${category}</td>
-                    <td>${author}</td>
-                    <td>${publisher}</td>
-                    <td><span class="badge ${isAvailable ? 'available' : 'rented'}">${statusText}</span></td>
-                    <td>
-                        <button class="btn-sm btn-outline" style="display:inline-block; margin-right:5px;" onclick="openEditByIndex(${index})">수정</button>
-                        <button class="btn-sm btn-danger" style="display:inline-block;" onclick="deleteBook('${isbn}')">삭제</button>
+                    <td style="padding:16px 12px; text-align:center;">${isbn}</td>
+                    <td style="padding:16px 12px; text-align:center; font-weight:600;">${title}</td>
+                    <td style="padding:16px 12px; text-align:center;">${category}</td>
+                    <td style="padding:16px 12px; text-align:center;">${author}</td>
+                    <td style="padding:16px 12px; text-align:center;">${publisher}</td>
+                    <td style="padding:16px 12px; text-align:center;"><span class="badge ${isAvailable ? 'available' : 'rented'}">${statusText}</span></td>
+                    <td style="padding:16px 12px; text-align:center; min-width:140px;">
+                        <button class="btn-sm btn-outline" style="display:inline-block !important; margin-right:5px; padding:6px 12px;" onclick="openEditByIndex(${index})">수정</button>
+                        <button class="btn-sm btn-danger" style="display:inline-block !important; padding:6px 12px;" onclick="deleteBook('${isbn}')">삭제</button>
                     </td>
                 </tr>`;
         });
+        
+        // 초기 로드 시 구석에 찌그러져 레이아웃을 터트리던 모달을 확실하게 숨김 처리
+        const modal = document.getElementById('editBookModal');
+        if (modal && !modal.classList.contains('show')) {
+            modal.style.display = 'none';
+        }
     }
 }
 
@@ -153,7 +166,21 @@ function openEditByIndex(index) {
     document.getElementById('editAuthor').value = book.저자 || book.작가 || book.author || '';
     document.getElementById('editPublisher').value = book.출판사 || book.publisher || '';
     
-    document.getElementById('editBookModal').classList.remove('hidden');
+    // 모달창 팝업 스타일을 화면 중앙 고정 레이어로 강제 강제 주입
+    const modal = document.getElementById('editBookModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        modal.style.zIndex = '99999';
+    }
 }
 
 async function deleteBook(isbn) {
