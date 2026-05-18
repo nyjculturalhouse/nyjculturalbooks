@@ -123,6 +123,7 @@ async function loadAdminBooks() {
         tbody.innerHTML = '';
         
         allBooks.forEach((b, index) => {
+            // 구글 시트 혹은 API에서 넘어오는 데이터 키값 매핑 안심 보장
             const isbn = b.ISBN || b.isbn || '-';
             const title = b.도서명 || b.제목 || b.title || '-';
             const category = b.카테고리 || b.분류 || b.category || '-';
@@ -132,23 +133,23 @@ async function loadAdminBooks() {
             
             const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
             
-            // 데이터 누락 및 레이아웃 깨짐을 방지하는 정밀 TD 매핑 구조
+            // html의 7개 th 헤더(ISBN | 도서명 | 카테고리 | 저자 | 출판사 | 상태 | 관리) 순서와 1:1로 정확하게 일치시킴
             tbody.innerHTML += `
                 <tr>
-                    <td style="padding:16px 12px; text-align:center;">${isbn}</td>
-                    <td style="padding:16px 12px; text-align:center; font-weight:600;">${title}</td>
-                    <td style="padding:16px 12px; text-align:center;">${category}</td>
-                    <td style="padding:16px 12px; text-align:center;">${author}</td>
-                    <td style="padding:16px 12px; text-align:center;">${publisher}</td>
-                    <td style="padding:16px 12px; text-align:center;"><span class="badge ${isAvailable ? 'available' : 'rented'}">${statusText}</span></td>
-                    <td style="padding:16px 12px; text-align:center; min-width:140px;">
-                        <button class="btn-sm btn-outline" style="display:inline-block !important; margin-right:5px; padding:6px 12px;" onclick="openEditByIndex(${index})">수정</button>
-                        <button class="btn-sm btn-danger" style="display:inline-block !important; padding:6px 12px;" onclick="deleteBook('${isbn}')">삭제</button>
+                    <td style="text-align: center; padding: 12px 8px;">${isbn}</td>
+                    <td style="text-align: center; padding: 12px 8px; font-weight: 500;">${title}</td>
+                    <td style="text-align: center; padding: 12px 8px;">${category}</td>
+                    <td style="text-align: center; padding: 12px 8px;">${author}</td>
+                    <td style="text-align: center; padding: 12px 8px;">${publisher}</td>
+                    <td style="text-align: center; padding: 12px 8px;"><span class="badge ${isAvailable ? 'available' : 'rented'}">${statusText}</span></td>
+                    <td style="text-align: center; padding: 12px 8px;">
+                        <button class="btn-sm btn-outline" style="display:inline-block !important; margin-right:5px;" onclick="openEditByIndex(${index})">수정</button>
+                        <button class="btn-sm btn-danger" style="display:inline-block !important;" onclick="deleteBook('${isbn}')">삭제</button>
                     </td>
                 </tr>`;
         });
         
-        // 초기 로드 시 구석에 찌그러져 레이아웃을 터트리던 모달을 확실하게 숨김 처리
+        // 화면 레이아웃을 무너뜨리던 모달 팝업 강제 숨김 유지
         const modal = document.getElementById('editBookModal');
         if (modal && !modal.classList.contains('show')) {
             modal.style.display = 'none';
