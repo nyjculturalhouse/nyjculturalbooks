@@ -388,3 +388,221 @@ input:focus, select:focus {
     text-align: center;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
 }
+
+/* ==========================================================================
+   🔥 [추가 및 연동] 관리자 레이아웃 전용 데이터 테이블 및 공통 스타일
+   ========================================================================== */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.user-info {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    color: var(--text-light);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-outline:hover {
+    background: #f2f4f6;
+    color: var(--text-main);
+}
+
+.grid-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    align-items: center;
+}
+
+.grid-form button {
+    height: 47px;
+}
+
+.mb-4 {
+    margin-bottom: 24px;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 16px;
+}
+
+/* 관리자용 데이터 테이블 공통 스타일 정의 */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+.data-table th, 
+.data-table td {
+    padding: 16px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.data-table th {
+    background-color: #f9fafb;
+    color: var(--text-light);
+    font-weight: 700;
+}
+
+.data-table tbody tr:hover {
+    background-color: #fafafa;
+}
+
+/* 관리자 액션 작은 버튼 디자인 */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background-color: #d93845;
+}
+
+/* ==========================================================================
+   🔥 [추가 및 연동] 도서 수정 모달창 화면 정중앙 팝업 레이아웃 스타일
+   ========================================================================== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* 어두운 오버레이 레이어 */
+    display: flex;                         /* 내부 요소를 강제 정렬 */
+    align-items: center;                   /* 수직(상하) 정중앙 */
+    justify-content: center;               /* 수평(좌우) 정중앙 */
+    z-index: 9999;                         /* 사이드바 등 모든 요소 위 배치 */
+    backdrop-filter: blur(3px);            /* 배경을 미세하게 흐리게 설정 */
+    transition: opacity 0.25s ease;
+}
+
+/* 모달 숨김 처리 */
+.modal.hidden {
+    display: none !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 모달 팝업 실제 화이트 박스 컨테이너 */
+.modal-content {
+    background-color: var(--white);
+    padding: 36px;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 440px;                      /* 너무 넓어지지 않도록 고정 */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    animation: modalPopUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-content h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+/* 내부 폼 요소 간격조절 */
+.modal-content .form-group {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.modal-content label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* 모달 내부 input 강제 처리 */
+.modal-content input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ISBN 수정불가 readonly 특화 디자인 */
+.modal-content input[readonly] {
+    background-color: #f2f4f6;
+    color: #8b95a1;
+    border-color: var(--border);
+    cursor: not-allowed;
+}
+
+/* 취소 / 수정완료 버튼 가로 배치 정렬 */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 28px;
+}
+
+.modal-actions button {
+    height: 48px;
+    padding: 0 20px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.modal-actions .btn-outline {
+    background-color: var(--white);
+    border: 1px solid var(--border);
+    color: var(--text-light);
+}
+
+.modal-actions .btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+    width: auto;
+    min-height: auto;
+    height: 48px;
+}
+
+/* 팝업 오픈 시 아래에서 위로 부드럽게 튀어나오는 이펙트 */
+@keyframes modalPopUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
