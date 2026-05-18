@@ -27,27 +27,33 @@
         </header>
         
         <div class="content-wrapper">
-            <!-- 회원 조회 -->
             <section id="admin-users" class="view-section active">
                 <div class="card">
                     <h3>회원 목록</h3>
                     <div class="table-container">
                         <table class="data-table">
-                            <thead><tr><th>ID</th><th>이름</th><th>권한</th><th>가입일</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th>아이디</th>
+                                    <th>비밀번호</th>
+                                    <th>이름</th>
+                                    <th>권한</th>
+                                    <th>생성일</th>
+                                    <th>전화번호</th>
+                                </tr>
+                            </thead>
                             <tbody id="usersTableBody"></tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <!-- 도서 관리 -->
             <section id="admin-books" class="view-section">
                 <div class="card mb-4">
                     <h3>신규 도서 등록</h3>
                     <form id="addBookForm" class="grid-form">
                         <input type="text" id="addIsbn" placeholder="ISBN" required>
                         <input type="text" id="addTitle" placeholder="도서명" required>
-                        <!-- 페이지수(number)를 카테고리(text)로 변경 -->
                         <input type="text" id="addCategory" placeholder="카테고리 (예: 소설, 역사)" required>
                         <input type="text" id="addAuthor" placeholder="저자" required>
                         <input type="text" id="addPublisher" placeholder="출판사" required>
@@ -58,14 +64,13 @@
                     <h3>도서 목록 (수정/삭제)</h3>
                     <div class="table-container">
                         <table class="data-table">
-                            <thead><tr><th>ISBN</th><th>도서명</th><th>저자</th><th>상태</th><th>관리</th></tr></thead>
+                            <thead><tr><th>ISBN</th><th>도서명</th><th>카테고리</th><th>저자</th><th>출판사</th><th>상태</th><th>관리</th></tr></thead>
                             <tbody id="adminBooksTableBody"></tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <!-- 대여 기록 (생략 가능하나 구조 유지) -->
             <section id="admin-history" class="view-section">
                 <div class="card">
                     <h3>전체 대여 기록</h3>
@@ -78,13 +83,12 @@
                 </div>
             </section>
 
-            <!-- 현재 대여중 -->
             <section id="admin-current-rentals" class="view-section">
                 <div class="card">
                     <h3>현재 대여중 도서</h3>
                     <div class="table-container">
                         <table class="data-table">
-                            <thead><tr><th>대여 ID</th><th>회원 ID</th><th>도서명</th><th>대출일</th><th>반납예정일</th></tr></thead>
+                            <thead><tr><th>대여 ID</th><th>회원 ID</th><th>도서명</th><th>대출일</th><th>반납예정일</th><th>상태</th></tr></thead>
                             <tbody id="currentRentalsTableBody"></tbody>
                         </table>
                     </div>
@@ -93,14 +97,12 @@
         </div>
     </main>
 
-    <!-- 도서 수정 모달 -->
     <div id="editBookModal" class="modal hidden">
         <div class="modal-content">
             <h3>도서 수정</h3>
             <form id="editBookForm">
                 <div class="form-group"><label>ISBN (수정불가)</label><input type="text" id="editIsbn" readonly disabled></div>
                 <div class="form-group"><label>도서명</label><input type="text" id="editTitle" required></div>
-                <!-- 페이지수 라벨과 타입을 카테고리로 변경 -->
                 <div class="form-group"><label>카테고리</label><input type="text" id="editCategory" required></div>
                 <div class="form-group"><label>저자</label><input type="text" id="editAuthor" required></div>
                 <div class="form-group"><label>출판사</label><input type="text" id="editPublisher" required></div>
