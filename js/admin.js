@@ -1,23 +1,38 @@
 let allBooks = []; // 데이터를 안전하게 보관할 전역 변수
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 관리자 권한 체크 (checkAuth가 true면 ADMIN 권한 확인)
+    // 관리자 권한 체크
     const user = typeof checkAuth === 'function' ? checkAuth(true) : JSON.parse(localStorage.getItem('currentUser'));
     if (!user) {
         window.location.href = 'index.html';
         return;
     }
 
-    // 이름 표시 로직 보강
+    // 이름 표시 로직
     const nameEl = document.getElementById('headerUserName');
     if (nameEl) nameEl.innerText = user.이름 || user.name || user.아이디 || '관리자';
 
     if (typeof setupTabs === 'function') setupTabs();
-    loadAllData();
+    
+    // [개선] 첫 페이지 진입 시에는 '첫 번째 활성화된 탭'의 데이터만 로드합니다.
+    const activeTab = document.querySelector('.nav-item.active');
+    if (activeTab) {
+        const targetView = activeTab.getAttribute('data-target');
+        loadDataByTarget(targetView);
+    } else {
+        // 혹시 활성화된 탭이 없다면 기본으로 회원 목록 로드
+        loadUsers();
+    }
 
-    // 탭 클릭 시 데이터 새로고침
+    // [개선] 모든 데이터를 한 번에 부르는 대신, 클릭한 탭의 데이터만 쏙쏙 골라서 부르기
     document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', loadAllData);
+        item.addEventListener('click', (e) => {
+            // 기존 탭 클릭이 페이지를 강제로 리프레시하는 것을 방지
+            const targetView = e.currentTarget.getAttribute('data-target');
+            if (targetView) {
+                loadDataByTarget(targetView);
+            }
+        });
     });
 
     // 로그아웃
@@ -40,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (res.success) {
             UI.showToast('도서가 등록되었습니다.');
             document.getElementById('addBookForm').reset();
-            loadAdminBooks();
+            loadAdminBooks(); // 등록 후 도서 목록만 갱신
         } else {
             UI.showToast(res.message, 'error');
         }
@@ -60,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (res.success) {
             UI.showToast('도서가 수정되었습니다.');
             document.getElementById('editBookModal').classList.add('hidden');
-            loadAdminBooks();
+            loadAdminBooks(); // 수정 후 도서 목록만 갱신
         } else {
             UI.showToast(res.message, 'error');
         }
@@ -72,11 +87,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function loadAllData() {
-    loadUsers();
-    loadAdminBooks();
-    loadRentalHistory();
-    loadCurrentRentals();
+// [신규 주입] data-target 속성값에 따라 원하는 API만 선별해서 호출하는 컨트롤러 타겟러
+function loadDataByTarget(target) {
+    switch (target) {
+        case 'admin-users':
+            loadUsers();
+            break;
+        case 'admin-books':
+            loadAdminBooks();
+            break;
+        case 'admin-history':
+            loadRentalHistory();
+            break;
+        case 'admin-current-rentals':
+            loadCurrentRentals();
+            break;
+        default:
+            break;
+    }
 }
 
 async function loadAdminBooks() {
@@ -89,7 +117,6 @@ async function loadAdminBooks() {
         tbody.innerHTML = '';
         
         allBooks.forEach((b, index) => {
-            // 구글 시트 헤더 완벽 대응 (한글/영문 키값 체크)
             const isbn = b.ISBN || b.isbn || '-';
             const title = b.도서명 || b.제목 || b.title || '-';
             const category = b.카테고리 || b.분류 || b.category || '-';
@@ -97,10 +124,8 @@ async function loadAdminBooks() {
             const publisher = b.출판사 || b.publisher || '-';
             const statusText = b.상태 || b.대여상태 || '대여 가능';
             
-            // 대여 가능 여부에 따른 배지 스타일 구분
             const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
             
-            // html 헤더 순서(ISBN | 도서명 | 카테고리 | 저자 | 출판사 | 상태 | 관리)와 정확히 일치하도록 td 매핑
             tbody.innerHTML += `
                 <tr>
                     <td>${isbn}</td>
@@ -122,7 +147,6 @@ function openEditByIndex(index) {
     const book = allBooks[index];
     if (!book) return;
 
-    // 모달 필드 채우기 (다양한 키값 대응)
     document.getElementById('editIsbn').value = book.ISBN || book.isbn || '';
     document.getElementById('editTitle').value = book.도서명 || book.제목 || book.title || '';
     document.getElementById('editCategory').value = book.카테고리 || book.분류 || book.category || '';
@@ -145,7 +169,6 @@ async function deleteBook(isbn) {
     }
 }
 
-// 회원 명단 출력 부분 수정 (순서: 아이디, 비밀번호, 이름, 권한, 생성일, 전화번호)
 async function loadUsers() {
     const res = await API.post('getUsers');
     if (res.success) {
@@ -188,7 +211,6 @@ async function loadRentalHistory() {
     }
 }
 
-// 현재 대여 목록에서 연체 자동 판별 추가
 async function loadCurrentRentals() {
     const res = await API.post('getCurrentRentals');
     if (res.success) {
@@ -196,22 +218,18 @@ async function loadCurrentRentals() {
         if (!tbody) return;
         tbody.innerHTML = '';
         
-        // 현재 날짜 시간 제거 상태 객체 생성
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
         res.data.forEach(r => {
             const dueDateStr = r.반납예정일 || r.dueDate || '';
-            let isOverdue = false;
             let statusBadge = '<span class="badge available">정상</span>';
 
             if (dueDateStr && dueDateStr !== '-') {
                 const dueDate = new Date(dueDateStr);
                 dueDate.setHours(0, 0, 0, 0);
                 
-                // 반납예정일이 오늘보다 과거라면 연체 처리
                 if (dueDate < today) {
-                    isOverdue = true;
                     statusBadge = '<span class="badge rented">연체</span>';
                 }
             }
