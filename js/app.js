@@ -8,7 +8,11 @@ function checkAuth(requireAdmin = false) {
         window.location.href = 'index.html';
         return null;
     }
-    if (requireAdmin && user.role !== 'ADMIN') {
+    
+    // 한글 헤더 '권한'과 영어 'role' 모두 대응하도록 수정
+    const userRole = user.권한 || user.role || '';
+    
+    if (requireAdmin && userRole !== 'ADMIN') {
         alert('관리자 권한이 필요합니다.');
         window.location.href = 'dashboard.html';
         return null;
