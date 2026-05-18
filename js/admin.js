@@ -89,7 +89,7 @@ async function loadAdminBooks() {
         tbody.innerHTML = '';
         
         allBooks.forEach((b, index) => {
-            // 한글/영문 헤더 완벽 대응
+            // 구글 시트 헤더 완벽 대응 (한글/영문 키값 체크)
             const isbn = b.ISBN || b.isbn || '-';
             const title = b.도서명 || b.제목 || b.title || '-';
             const category = b.카테고리 || b.분류 || b.category || '-';
@@ -97,8 +97,10 @@ async function loadAdminBooks() {
             const publisher = b.출판사 || b.publisher || '-';
             const statusText = b.상태 || b.대여상태 || '대여 가능';
             
+            // 대여 가능 여부에 따른 배지 스타일 구분
             const isAvailable = statusText.includes('가능') || statusText === 'AVAILABLE';
             
+            // html 헤더 순서(ISBN | 도서명 | 카테고리 | 저자 | 출판사 | 상태 | 관리)와 정확히 일치하도록 td 매핑
             tbody.innerHTML += `
                 <tr>
                     <td>${isbn}</td>
@@ -108,8 +110,8 @@ async function loadAdminBooks() {
                     <td>${publisher}</td>
                     <td><span class="badge ${isAvailable ? 'available' : 'rented'}">${statusText}</span></td>
                     <td>
-                        <button class="btn-sm btn-outline" onclick="openEditByIndex(${index})">수정</button>
-                        <button class="btn-sm btn-danger" onclick="deleteBook('${isbn}')">삭제</button>
+                        <button class="btn-sm btn-outline" style="display:inline-block; margin-right:5px;" onclick="openEditByIndex(${index})">수정</button>
+                        <button class="btn-sm btn-danger" style="display:inline-block;" onclick="deleteBook('${isbn}')">삭제</button>
                     </td>
                 </tr>`;
         });
