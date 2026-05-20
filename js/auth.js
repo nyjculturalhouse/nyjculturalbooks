@@ -175,13 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 이 부분만 수정되었습니다.
                     // ==========================================
                     setTimeout(() => {
-                        const userRole = res.data.권한 || res.data.role || 'USER';
-                        if (userRole === 'ADMIN') {
-                            window.location.replace('admin.html');
-                        } else {
-                            window.location.replace('dashboard.html');
-                        }
-                    }, 500);
+    window.location.replace('dashboard.html');
+}, 500);
 
                 } else {
 
