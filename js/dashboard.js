@@ -245,13 +245,25 @@ async function loadMyRentals() {
                             isReturned
                             ? '<span class="badge available">반납완료</span>'
                             : `
-                                <button
-                                    class="btn-rent"
-                                    style="background-color:var(--primary);"
-                                    onclick="returnBook('${rId}', '${r.ISBN || r.isbn}')"
-                                >
-                                    반납
-                                </button>
+                                <div style="display:flex; gap:6px; justify-content:center;">
+
+                                    <button
+                                        class="btn-rent"
+                                        style="background-color:var(--primary);"
+                                        onclick="returnBook('${rId}', '${r.ISBN || r.isbn}')"
+                                    >
+                                        반납
+                                    </button>
+
+                                    <button
+                                        class="btn-rent"
+                                        style="background-color:var(--danger);"
+                                        onclick="deleteRental('${rId}', '${r.ISBN || r.isbn}')"
+                                    >
+                                        삭제
+                                    </button>
+
+                                </div>
                             `
                         }
                     </td>
@@ -440,6 +452,26 @@ async function returnBook(rentalId, isbn) {
     if (res.success) {
 
         UI.showToast('반납 완료!');
+
+        loadBooks();
+
+        loadMyRentals();
+    }
+}
+
+// 삭제 기능 추가
+async function deleteRental(rentalId, isbn) {
+
+    if (!confirm('대여 기록을 삭제하시겠습니까?')) return;
+
+    const res = await API.post('deleteRental', {
+        rentalId,
+        isbn
+    });
+
+    if (res.success) {
+
+        UI.showToast('삭제 완료!');
 
         loadBooks();
 
