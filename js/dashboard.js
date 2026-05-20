@@ -218,12 +218,20 @@ async function loadMyRentals() {
 
     if (res.success && res.data.length > 0) {
 
-        tbody.innerHTML = res.data.reverse().map(r => {
+        // 반납 완료 제외하고 현재 대여중만 표시
+        const currentRentals = res.data.filter(r => {
+            return String(r.반납여부 || "")
+                .trim()
+                .toUpperCase() !== 'Y';
+        });
 
-            const isReturned =
-                String(r.반납여부 || "")
-                    .trim()
-                    .toUpperCase() === 'Y';
+        if (currentRentals.length === 0) {
+            tbody.innerHTML =
+                '<tr><td colspan="4" class="empty-message">대여 중인 도서가 없습니다.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = currentRentals.reverse().map(r => {
 
             const rId =
                 r.대여ID ||
@@ -241,31 +249,25 @@ async function loadMyRentals() {
                     <td>${r.반납예정일 || '-'}</td>
 
                     <td>
-                        ${
-                            isReturned
-                            ? '<span class="badge available">반납완료</span>'
-                            : `
-                                <div style="display:flex; gap:6px; justify-content:center;">
+                        <div style="display:flex; gap:6px; justify-content:center;">
 
-                                    <button
-                                        class="btn-rent"
-                                        style="background-color:var(--primary);"
-                                        onclick="returnBook('${rId}', '${r.ISBN || r.isbn}')"
-                                    >
-                                        반납
-                                    </button>
+                            <button
+                                class="btn-rent"
+                                style="background-color:var(--primary);"
+                                onclick="returnBook('${rId}', '${r.ISBN || r.isbn}')"
+                            >
+                                반납
+                            </button>
 
-                                    <button
-                                        class="btn-rent"
-                                        style="background-color:var(--danger);"
-                                        onclick="deleteRental('${rId}', '${r.ISBN || r.isbn}')"
-                                    >
-                                        삭제
-                                    </button>
+                            <button
+                                class="btn-rent"
+                                style="background-color:var(--danger);"
+                                onclick="deleteRental('${rId}', '${r.ISBN || r.isbn}')"
+                            >
+                                삭제
+                            </button>
 
-                                </div>
-                            `
-                        }
+                        </div>
                     </td>
                 </tr>
             `;
