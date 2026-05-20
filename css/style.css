@@ -105,13 +105,24 @@ input:focus, select:focus {
 }
 
 /* 대여중 버튼 내부 세로 정렬 추가 */
+/* 대여중 버튼 */
 .btn-rent.rented {
+    background-color: var(--danger);
+    color: white;
+
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    text-align: center;
+    margin: 0 auto;
+
     line-height: 1.2;
     gap: 2px;
+}
+
+.btn-rent.rented:hover {
+    background-color: #d9363e;
 }
 
 /* 반납일 텍스트 */
