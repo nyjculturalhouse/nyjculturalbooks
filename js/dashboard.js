@@ -84,7 +84,7 @@ function setupTabs() {
             };
             if (pageTitle) pageTitle.innerText = titleMap[targetId] || '홈';
 
-            if (targetId === 'view-my-rentals') loadMyRentals();
+            if (targetId === 'view-my-rentals') ();
             if (targetId === 'view-rent-book') loadBooks();
         });
     });
@@ -205,7 +205,9 @@ function renderBooks(books) {
 }
 
 /** [기능 4] 내 대여 현황 및 인기/신간 로직 **/
-async function loadMyRentals() {
+/** [기능 4] 내 대여 현황 및 인기/신간 로직 **/
+async function loadMyRentals(type = 'current') {
+
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
     const res = await API.post('getMyRentals', {
@@ -216,22 +218,72 @@ async function loadMyRentals() {
 
     if (!tbody) return;
 
+    // 버튼 active 처리
+    const btnCurrent =
+        document.getElementById('btnCurrentRentals');
+
+    const btnHistory =
+        document.getElementById('btnRentalHistory');
+
+    if (btnCurrent && btnHistory) {
+
+        btnCurrent.classList.remove('active');
+        btnHistory.classList.remove('active');
+
+        if (type === 'current') {
+            btnCurrent.classList.add('active');
+        } else {
+            btnHistory.classList.add('active');
+        }
+
+        // 중복 이벤트 방지
+        btnCurrent.onclick = () => loadMyRentals('current');
+
+        btnHistory.onclick = () => loadMyRentals('history');
+    }
+
     if (res.success && res.data.length > 0) {
 
-        // 반납 완료 제외하고 현재 대여중만 표시
+        // 현재 대출중
         const currentRentals = res.data.filter(r => {
+
             return String(r.반납여부 || "")
                 .trim()
                 .toUpperCase() !== 'Y';
         });
 
-        if (currentRentals.length === 0) {
-            tbody.innerHTML =
-                '<tr><td colspan="4" class="empty-message">대여 중인 도서가 없습니다.</td></tr>';
+        // 반납 완료 이력
+        const historyRentals = res.data.filter(r => {
+
+            return String(r.반납여부 || "")
+                .trim()
+                .toUpperCase() === 'Y';
+        });
+
+        // 현재 탭 데이터 선택
+        const targetData =
+            type === 'current'
+                ? currentRentals
+                : historyRentals;
+
+        if (targetData.length === 0) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="empty-message">
+                        ${
+                            type === 'current'
+                            ? '대여 중인 도서가 없습니다.'
+                            : '대출 이력이 없습니다.'
+                        }
+                    </td>
+                </tr>
+            `;
+
             return;
         }
 
-        tbody.innerHTML = currentRentals.reverse().map(r => {
+        tbody.innerHTML = targetData.reverse().map(r => {
 
             const rId =
                 r.대여ID ||
@@ -240,35 +292,59 @@ async function loadMyRentals() {
 
             return `
                 <tr>
+
                     <td class="title" title="${r.도서명 || r.제목}">
                         ${r.도서명 || r.제목}
                     </td>
 
                     <td>${r.대여일 || '-'}</td>
 
-                    <td>${r.반납예정일 || '-'}</td>
+                    <td>
+                        ${
+                            type === 'current'
+                            ? (r.반납예정일 || '-')
+                            : (r.반납일 || '반납완료')
+                        }
+                    </td>
 
                     <td>
-                        <div style="display:flex; gap:6px; justify-content:center;">
 
-                            <button
-                                class="btn-rent"
-                                style="background-color:var(--primary);"
-                                onclick="returnBook('${rId}', '${r.ISBN || r.isbn}')"
-                            >
-                                반납
-                            </button>
+                        ${
+                            type === 'current'
+                            ? `
+                                <div style="display:flex; gap:6px; justify-content:center;">
 
-                            <button
-                                class="btn-rent"
-                                style="background-color:var(--danger);"
-                                onclick="deleteRental('${rId}', '${r.ISBN || r.isbn}')"
-                            >
-                                삭제
-                            </button>
+                                    <button
+                                        class="btn-rent"
+                                        style="background-color:var(--primary);"
+                                        onclick="returnBook('${rId}', '${r.ISBN || r.isbn}')"
+                                    >
+                                        반납
+                                    </button>
 
-                        </div>
+                                    <button
+                                        class="btn-rent"
+                                        style="background-color:var(--danger);"
+                                        onclick="deleteRental('${rId}', '${r.ISBN || r.isbn}')"
+                                    >
+                                        삭제
+                                    </button>
+
+                                </div>
+                            `
+                            : `
+                                <span style="
+                                    color:var(--text-light);
+                                    font-size:13px;
+                                    font-weight:600;
+                                ">
+                                    반납완료
+                                </span>
+                            `
+                        }
+
                     </td>
+
                 </tr>
             `;
         }).join('');
@@ -276,7 +352,7 @@ async function loadMyRentals() {
     } else {
 
         tbody.innerHTML =
-            '<tr><td colspan="4" class="empty-message">대여 중인 도서가 없습니다.</td></tr>';
+            '<tr><td colspan="4" class="empty-message">대여 정보가 없습니다.</td></tr>';
     }
 }
 
