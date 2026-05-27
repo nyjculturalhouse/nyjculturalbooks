@@ -138,6 +138,30 @@
         }
         .auth-btn-group .btn-primary { background: #3182f6; color: white; }
         .auth-btn-group .btn-signup-gray { background: #9ca3af; color: white; }
+
+        /* 추가: 대출 탭 */
+        .rental-tabs{
+            display:flex;
+            gap:10px;
+            margin-bottom:20px;
+        }
+
+        .rental-tab{
+            border:none;
+            background:#e5e7eb;
+            color:#4b5563;
+            padding:10px 18px;
+            border-radius:10px;
+            font-size:14px;
+            font-weight:700;
+            cursor:pointer;
+            transition:all 0.2s;
+        }
+
+        .rental-tab.active{
+            background:#1890ff;
+            color:white;
+        }
     </style>
 </head>
 <body class="dashboard-layout">
@@ -210,7 +234,21 @@
             <!-- 섹션 3: 대여 정보 조회/반납 -->
             <section id="view-my-rentals" class="view-section">
                 <div class="card">
-                    <div class="card-header"><h3>내 대여 현황</h3></div>
+                    <div class="card-header">
+                        <h3>내 대여 현황</h3>
+                    </div>
+
+                    <!-- 추가 -->
+                    <div class="rental-tabs">
+                        <button id="btnCurrentRentals" class="rental-tab active">
+                            대출중
+                        </button>
+
+                        <button id="btnRentalHistory" class="rental-tab">
+                            대출이력
+                        </button>
+                    </div>
+
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
