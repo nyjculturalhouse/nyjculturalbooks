@@ -322,7 +322,7 @@ function renderBooks(books) {
                 >
                     <strong>
                         ${b.도서명 || b.제목}
-                    </strong>
+                    </strong> 
                 </td>
 
                 <td>
@@ -873,15 +873,23 @@ async function rentBook(isbn) {
     }
 }
 
-/** [기능 10] 반납 **/
+/** [기능 10] 반납 (수정 완료) **/
 async function returnBook(rentalId, isbn) {
+
+    // 오늘 날짜 구하기 (YYYY-MM-DD 형식)
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const returnDate = `${yyyy}-${mm}-${dd}`;
 
     const res =
         await API.post(
             'returnBook',
             {
                 rentalId,
-                isbn
+                isbn,
+                returnDate // 반납 처리 시 시트의 반납 날짜 행에 입력될 오늘 날짜 데이터 추가
             }
         );
 
