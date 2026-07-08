@@ -1,7 +1,7 @@
-// js/api.js 맨 위
 window.GAS_URL = 'https://script.google.com/macros/s/AKfycby8hvXjgaLn8SqlKtM2-PrROvd3q2D5rKqYfPVZTngCfIV2Ep6hGsVidyw6MReGMU_b/exec';
 
 const API = {
+    // 서버와 통신하는 핵심 범용 함수
     async post(action, data = {}) {
         if (typeof UI !== 'undefined' && UI.showLoading) {
             UI.showLoading();
@@ -48,5 +48,15 @@ const API = {
                 message: "서버 연결 실패: " + error.message 
             };
         }
+    },
+
+    // 도서 목록을 불러오는 함수 (dashboard-books.js와 연동)
+    async getBooks() {
+        return await this.post('getAllBooks', {});
+    },
+
+    // 도서를 대여하는 함수 (dashboard-books.js와 연동)
+    async rentBook(bookId) {
+        return await this.post('rentBook', { bookId });
     }
 };
