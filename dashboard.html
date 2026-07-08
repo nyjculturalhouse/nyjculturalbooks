@@ -8,13 +8,12 @@
     <!-- Tailwind CSS 및 플러그인 -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     
-    <!-- Pretendard 글꼴 및 구글 아이콘 로드 -->
+    <!-- Pretendard 글꼴 및 구글 머티리얼 아이콘 최신형식 로드 -->
     <link as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=logout" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- Tailwind 테마 컬러 정의 (전달받은 스타일셋 유지) -->
+    <!-- Tailwind 테마 컬러 정의 -->
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -22,67 +21,20 @@
                 extend: {
                     "colors": {
                         "error-container": "#ffdad6",
-                        "surface-tint": "#545f73",
-                        "inverse-primary": "#bcc7de",
-                        "tertiary-fixed": "#e0e3e5",
-                        "secondary-fixed": "#e1e0ff",
-                        "background": "#F5F3EE", /* 소소책방 고유의 부드러운 배경색 유지 */
-                        "on-primary-fixed-variant": "#3c475a",
-                        "tertiary": "#111516",
-                        "secondary-container": "#6063ee",
-                        "on-tertiary-container": "#8d9092",
-                        "on-surface": "#2C2621", /* 소소책방 브라운 톤 */
-                        "on-tertiary-fixed": "#191c1e",
-                        "primary-fixed": "#d8e3fb",
-                        "surface-container-high": "#dce9ff",
-                        "secondary": "#FF5A36", /* 소소책방 오렌지 포인트 컬러 */
+                        "background": "#F5F3EE", 
+                        "on-surface": "#2C2621", 
+                        "secondary": "#FF5A36", 
                         "surface-container-lowest": "#ffffff",
-                        "on-tertiary": "#ffffff",
                         "outline-variant": "#E6E2D8",
-                        "on-secondary-container": "#fffbff",
-                        "surface-variant": "#d3e4fe",
-                        "primary-container": "#1e293b",
-                        "on-secondary-fixed-variant": "#2f2ebe",
-                        "on-error": "#ffffff",
-                        "on-error-container": "#93000a",
                         "outline": "#8C8276",
-                        "inverse-surface": "#213145",
-                        "on-background": "#2C2621",
-                        "secondary-fixed-dim": "#c0c1ff",
+                        "primary": "#2C2621", 
                         "surface-container": "#FAF9F6",
                         "surface-container-low": "#F5F3EE",
-                        "on-primary-fixed": "#111c2d",
-                        "primary": "#2C2621", /* 메인 어두운 브라운 */
-                        "error": "#ba1a1a",
-                        "surface-dim": "#cbdbf5",
-                        "surface-bright": "#f8f9ff",
-                        "on-secondary-fixed": "#07006c",
-                        "on-primary": "#ffffff",
-                        "surface-container-highest": "#d3e4fe",
-                        "on-secondary": "#ffffff",
-                        "on-tertiary-fixed-variant": "#444749",
-                        "on-primary-container": "#8590a6",
-                        "primary-fixed-dim": "#bcc7de",
-                        "inverse-on-surface": "#eaf1ff",
-                        "tertiary-container": "#26292b",
-                        "tertiary-fixed-dim": "#c4c7c9",
-                        "surface": "#ffffff",
                         "on-surface-variant": "#8C8276"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
                     },
                     "spacing": {
                         "container-max": "1200px",
-                        "margin": "40px",
-                        "stack-sm": "8px",
-                        "stack-md": "16px",
-                        "base": "4px",
-                        "gutter": "24px",
-                        "stack-lg": "32px"
+                        "gutter": "24px"
                     }
                 },
             },
@@ -94,201 +46,317 @@
             font-family: 'Pretendard', sans-serif;
             font-weight: 300;
         }
+        /* 구글 아이콘 기호 깨짐 방지 셋팅 */
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
         }
-        /* 폰트 굵기를 300으로 강제 고정하는 규칙 유지 */
-        .font-bold { font-weight: 300 !important; }
-        .font-semibold { font-weight: 300 !important; }
-        .font-medium { font-weight: 300 !important; }
+        .font-bold, .font-semibold, .font-medium { font-weight: 300 !important; }
     </style>
 </head>
 <body class="text-on-surface font-light">
 
-    <!-- 상단 네비게이션 쉘 -->
-    <header class="fixed top-0 right-0 w-full bg-surface-container-lowest z-50 h-16 flex items-center justify-center shadow-[0px_4px_20px_rgba(44,38,33,0.03)] px-gutter border-b border-outline-variant/50">
-        <div class="w-full max-w-container-max flex justify-between items-center">
+    <!-- 상단 네비게이션 헤더 -->
+    <header class="fixed top-0 right-0 w-full bg-surface-container-lowest z-50 h-16 flex items-center justify-center shadow-[0px_4px_20px_rgba(44,38,33,0.02)] px-gutter border-b border-outline-variant/60">
+        <div class="w-full max-w-container-max flex justify-between items-center px-4">
             <div class="flex items-center gap-3">
                 <span class="material-symbols-outlined text-secondary text-2xl">book</span>
-                <span class="text-lg text-primary font-light">소소책방 도서 대여 프로그램</span>
+                <span class="text-lg text-primary font-light tracking-tight">소소책방 도서 대여 프로그램</span>
             </div>
             <div class="flex items-center gap-4">
-                <!-- 복구 요청하신 로그아웃 버튼 영역 (지정 전용 아이콘 매핑) -->
-                <div class="flex items-center gap-2 bg-surface-container-low py-1.5 px-4 rounded-full border border-outline-variant cursor-pointer hover:bg-surface-container-highest/20 transition-colors">
-                    <span class="material-symbols-outlined text-secondary text-[20px]">logout</span>
-                    <span class="text-xs text-on-surface">로그아웃</span>
-                </div>
+                <!-- 상단 우측 로그아웃 버튼 복구 및 세련되게 마감 -->
+                <button class="flex items-center gap-2 bg-surface-container-low py-1.5 px-4 rounded-full border border-outline-variant/80 hover:bg-secondary/10 hover:border-secondary/30 transition-colors cursor-pointer group">
+                    <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary text-[18px]">logout</span>
+                    <span class="text-xs text-on-surface-variant group-hover:text-secondary">로그아웃</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- 사이드 네비게이션 쉘 (데스크톱 전용 오리지널 스타일 구성) -->
+    <!-- 좌측 사이드바 네비게이션 -->
     <aside class="w-[260px] h-screen fixed left-0 top-0 bg-[#2C2621] text-white py-8 px-6 hidden lg:flex flex-col z-40 pt-24">
-        <div class="flex-1 space-y-2">
+        <div class="flex-1 space-y-1.5">
             <a class="flex items-center gap-3 py-3 px-4 rounded-lg bg-[#3D352E] text-white font-light" href="dashboard.html">
-                <i class="fas fa-home text-[#FF5A36] w-5"></i>
+                <i class="fas fa-home text-[#FF5A36] w-5 text-center"></i>
                 <span class="text-sm">홈 (대시보드)</span>
             </a>
             <a class="flex items-center gap-3 py-3 px-4 rounded-lg text-[#A69E96] hover:bg-[#3D352E] hover:text-white transition-all" href="rent-books.html">
-                <i class="fas fa-book-open w-5"></i>
+                <i class="fas fa-book-open w-5 text-center"></i>
                 <span class="text-sm">도서 대여</span>
             </a>
             <a class="flex items-center gap-3 py-3 px-4 rounded-lg text-[#A69E96] hover:bg-[#3D352E] hover:text-white transition-all" href="book-location.html">
-                <i class="fas fa-map-marked-alt w-5"></i>
+                <i class="fas fa-map-marked-alt w-5 text-center"></i>
                 <span class="text-sm">도서 위치</span>
             </a>
             <a class="flex items-center gap-3 py-3 px-4 rounded-lg text-[#A69E96] hover:bg-[#3D352E] hover:text-white transition-all" href="rent-status.html">
-                <i class="fas fa-list-ul w-5"></i>
+                <i class="fas fa-list-ul w-5 text-center"></i>
                 <span class="text-sm">대여 현황</span>
             </a>
             <a class="flex items-center gap-3 py-3 px-4 rounded-lg text-[#A69E96] hover:bg-[#3D352E] hover:text-white transition-all" href="profile.html">
-                <i class="fas fa-user-cog w-5"></i>
+                <i class="fas fa-user-cog w-5 text-center"></i>
                 <span class="text-sm">내 정보</span>
             </a>
         </div>
-        <div class="pt-6 border-t border-outline-variant/20"></div>
+        <div class="pt-6 border-t border-outline-variant/10"></div>
     </aside>
 
-    <!-- 메인 콘텐츠 영역 -->
+    <!-- 메인 본문 콘텐츠 영역 -->
     <main class="lg:ml-[260px] pt-24 pb-12 px-gutter flex justify-center">
-        <div class="w-full max-w-container-max space-y-6 px-gutter">
+        <div class="w-full max-w-container-max space-y-6 px-4">
             
-            <!-- 환영 문구 헤더 -->
+            <!-- 환영인사 헤더 -->
             <header class="mb-2">
                 <h1 class="text-2xl text-primary font-light mb-1">안녕하세요, <span id="userName" class="font-light">회원</span>님! 👋</h1>
                 <p class="text-sm text-on-surface-variant">소소책방 도서 대여 프로그램에 오신 것을 환영합니다.</p>
             </header>
 
-            <!-- 상단 요약 카드 현황판 그리드 -->
-            <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_4px_15px_rgba(44,38,33,0.01)] flex items-center justify-between">
+            <!-- 상단 요약 카드 현황판 (끝선 정렬을 위해 너비를 꽉 채우고 구조 최적화) -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                <!-- 대여 중인 도서 -->
+                <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_4px_15px_rgba(44,38,33,0.01)] flex items-center justify-between w-full">
                     <div>
                         <p class="text-xs text-on-surface-variant mb-1">대여 중인 도서</p>
                         <p class="text-2xl text-primary font-light" id="rentingCount">0권</p>
                     </div>
                     <div class="w-12 h-12 rounded-lg bg-[#FFF5F2] flex items-center justify-center text-[#FF5A36]">
-                        <i class="fas fa-book text-lg"></i>
+                        <span class="material-symbols-outlined text-xl">menu_book</span>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_4px_15px_rgba(44,38,33,0.01)] flex items-center justify-between">
+                <!-- 이번 달 대여한 도서 -->
+                <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_4px_15px_rgba(44,38,33,0.01)] flex items-center justify-between w-full">
                     <div>
                         <p class="text-xs text-on-surface-variant mb-1">이번 달 대여한 도서</p>
                         <p class="text-2xl text-primary font-light" id="monthCount">0권</p>
                     </div>
                     <div class="w-12 h-12 rounded-lg bg-[#FFF5F2] flex items-center justify-center text-[#FF5A36]">
-                        <i class="fas fa-calendar-check text-lg"></i>
+                        <span class="material-symbols-outlined text-xl">calendar_today</span>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_4px_15px_rgba(44,38,33,0.01)] flex items-center justify-between">
+                <!-- 연체 중인 도서 (아래 인기대여순위 상자 우측 라인과 완전 일치시킴) -->
+                <div class="bg-white p-6 rounded-xl border border-outline-variant shadow-[0px_4px_15px_rgba(44,38,33,0.01)] flex items-center justify-between w-full">
                     <div>
                         <p class="text-xs text-on-surface-variant mb-1">연체 중인 도서</p>
                         <p class="text-2xl text-[#FF5A36] font-light" id="overdueCount">0권</p>
                     </div>
                     <div class="w-12 h-12 rounded-lg bg-[#FFF0ED] flex items-center justify-center text-[#FF5A36]">
-                        <i class="fas fa-exclamation-triangle text-lg"></i>
+                        <span class="material-symbols-outlined text-xl">warning</span>
                     </div>
                 </div>
             </section>
 
-            <!-- 메인 대시보드 스플릿 그리드 -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <!-- 메인 대시보드 2분할 콘텐츠 그리드 -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start w-full">
                 
-                <!-- 왼쪽: 새로 들어온 신간 도서 섹션 -->
-                <div class="md:col-span-8 space-y-6">
+                <!-- 왼쪽: 신간 도서 섹션 (총 8칸 그리드로 구성) -->
+                <div class="md:col-span-8">
                     <div class="bg-white rounded-xl p-8 shadow-[0px_4px_15px_rgba(44,38,33,0.01)] border border-outline-variant">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-lg text-primary flex items-center gap-2 font-light">
-                                <span class="material-symbols-outlined text-secondary">new_releases</span>
-                                새로 들어온 신간 도서
+                                <span class="material-symbols-outlined text-secondary text-2xl">new_releases</span>
+                                신간 도서
                             </h2>
                             <button class="text-secondary text-xs hover:underline font-light">전체 보기</button>
                         </div>
                         
-                        <!-- 신간 도서 그리드 컨테이너 -->
+                        <!-- 신간 도서 8칸 레이아웃 그리드 (4열 2행 구조) -->
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="newBooksContainer">
-                            <!-- Book Item 1 -->
-                            <div class="group cursor-pointer flex flex-col border border-outline-variant/30 rounded-lg p-3 bg-surface-container/30 text-center">
-                                <div class="aspect-[3/4] rounded-md bg-surface-container overflow-hidden mb-3 relative flex items-center justify-center">
-                                    <i class="fas fa-book-medical text-3xl text-[#A69E96]"></i>
+                            <!-- 1등 도서 -->
+                            <div class="group cursor-pointer flex flex-col border border-outline-variant/40 rounded-lg p-3 bg-surface-container/30 text-center hover:bg-white hover:shadow-md transition-all">
+                                <div class="aspect-[3/4] rounded-md bg-surface-container flex items-center justify-center mb-2.5">
+                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">book_2</span>
                                 </div>
-                                <h3 class="text-sm font-light truncate text-primary mb-1">불편한 편의점 2</h3>
+                                <h3 class="text-sm font-light truncate text-primary mb-0.5">불편한 편의점 2</h3>
                                 <p class="text-xs text-on-surface-variant font-light truncate">김호연 저</p>
                             </div>
-                            <!-- Book Item 2 -->
-                            <div class="group cursor-pointer flex flex-col border border-outline-variant/30 rounded-lg p-3 bg-surface-container/30 text-center">
-                                <div class="aspect-[3/4] rounded-md bg-surface-container overflow-hidden mb-3 relative flex items-center justify-center">
-                                    <i class="fas fa-book-medical text-3xl text-[#A69E96]"></i>
+                            <!-- 2등 도서 -->
+                            <div class="group cursor-pointer flex flex-col border border-outline-variant/40 rounded-lg p-3 bg-surface-container/30 text-center hover:bg-white hover:shadow-md transition-all">
+                                <div class="aspect-[3/4] rounded-md bg-surface-container flex items-center justify-center mb-2.5">
+                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">book_2</span>
                                 </div>
-                                <h3 class="text-sm font-light truncate text-primary mb-1">트렌드 코리아 2026</h3>
+                                <h3 class="text-sm font-light truncate text-primary mb-0.5">트렌드 코리아 2026</h3>
                                 <p class="text-xs text-on-surface-variant font-light truncate">김난도 외 저</p>
                             </div>
-                            <!-- Book Item 3 -->
-                            <div class="group cursor-pointer flex flex-col border border-outline-variant/30 rounded-lg p-3 bg-surface-container/30 text-center">
-                                <div class="aspect-[3/4] rounded-md bg-surface-container overflow-hidden mb-3 relative flex items-center justify-center">
-                                    <i class="fas fa-book-medical text-3xl text-[#A69E96]"></i>
+                            <!-- 3등 도서 -->
+                            <div class="group cursor-pointer flex flex-col border border-outline-variant/40 rounded-lg p-3 bg-surface-container/30 text-center hover:bg-white hover:shadow-md transition-all">
+                                <div class="aspect-[3/4] rounded-md bg-surface-container flex items-center justify-center mb-2.5">
+                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">book_2</span>
                                 </div>
-                                <h3 class="text-sm font-light truncate text-primary mb-1">마흔에 읽는 쇼펜하우어</h3>
+                                <h3 class="text-sm font-light truncate text-primary mb-0.5">마흔에 읽는 쇼펜하우어</h3>
                                 <p class="text-xs text-on-surface-variant font-light truncate">강용수 저</p>
                             </div>
-                            <!-- Book Item 4 -->
-                            <div class="group cursor-pointer flex flex-col border border-outline-variant/30 rounded-lg p-3 bg-surface-container/30 text-center">
-                                <div class="aspect-[3/4] rounded-md bg-surface-container overflow-hidden mb-3 relative flex items-center justify-center">
-                                    <i class="fas fa-book-medical text-3xl text-[#A69E96]"></i>
+                            <!-- 4등 도서 -->
+                            <div class="group cursor-pointer flex flex-col border border-outline-variant/40 rounded-lg p-3 bg-surface-container/30 text-center hover:bg-white hover:shadow-md transition-all">
+                                <div class="aspect-[3/4] rounded-md bg-surface-container flex items-center justify-center mb-2.5">
+                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">book_2</span>
                                 </div>
-                                <h3 class="text-sm font-light truncate text-primary mb-1">도시와 그 그늘</h3>
+                                <h3 class="text-sm font-light truncate text-primary mb-0.5">도시와 그 그늘</h3>
                                 <p class="text-xs text-on-surface-variant font-light truncate">무라카미 하루키</p>
+                            </div>
+                            <!-- 5등 도서 -->
+                            <div class="group cursor-pointer flex flex-col border border-outline-variant/40 rounded-lg p-3 bg-surface-container/30 text-center hover:bg-white hover:shadow-md transition-all">
+                                <div class="aspect-[3/4] rounded-md bg-surface-container flex items-center justify-center mb-2.5">
+                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">book_2</span>
+                                </div>
+                                <h3 class="text-sm font-light truncate text-primary mb-0.5">우리가 빛의 속도로 갈 수 없다면</h3>
+                                <p class="text-xs text-on-surface-variant font-light truncate">김초엽 저</p>
+                            </div>
+                            <!-- 6등 도서 -->
+                            <div class="group cursor-pointer flex flex-col border border-outline-variant/40 rounded-lg p-3 bg-surface-container/30 text-center hover:bg-white hover:shadow-md transition-all">
+                                <div class="aspect-[3/4] rounded-md bg-surface-container flex items-center justify-center mb-2.5">
+                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">book_2</span>
+                                </div>
+                                <h3 class="text-sm font-light truncate text-primary mb-0.5">아몬드</h3>
+                                <p class="text-xs text-on-surface-variant font-light truncate">손원평 저</p>
+                            </div>
+                            <!-- 7등 도서 -->
+                            <div class="group cursor-pointer flex flex-col border border-outline-variant/40 rounded-lg p-3 bg-surface-container/30 text-center hover:bg-white hover:shadow-md transition-all">
+                                <div class="aspect-[3/4] rounded-md bg-surface-container flex items-center justify-center mb-2.5">
+                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">book_2</span>
+                                </div>
+                                <h3 class="text-sm font-light truncate text-primary mb-0.5">달러구트 꿈 백화점</h3>
+                                <p class="text-xs text-on-surface-variant font-light truncate">이미예 저</p>
+                            </div>
+                            <!-- 8등 도서 -->
+                            <div class="group cursor-pointer flex flex-col border border-outline-variant/40 rounded-lg p-3 bg-surface-container/30 text-center hover:bg-white hover:shadow-md transition-all">
+                                <div class="aspect-[3/4] rounded-md bg-surface-container flex items-center justify-center mb-2.5">
+                                    <span class="material-symbols-outlined text-3xl text-on-surface-variant/40">book_2</span>
+                                </div>
+                                <h3 class="text-sm font-light truncate text-primary mb-0.5">메리골드 마음 세탁소</h3>
+                                <p class="text-xs text-on-surface-variant font-light truncate">윤정은 저</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 오른쪽: 인기 대여 순위 섹션 -->
-                <div class="md:col-span-4">
-                    <div class="bg-white rounded-xl p-8 shadow-[0px_4px_15px_rgba(44,38,33,0.01)] border border-outline-variant h-full flex flex-col justify-between">
+                <!-- 오른쪽: 인기 대여 순위 섹션 (10위 확장 및 대여횟수 표기 반영) -->
+                <div class="md:col-span-4 w-full">
+                    <div class="bg-white rounded-xl p-6 shadow-[0px_4px_15px_rgba(44,38,33,0.01)] border border-outline-variant h-full flex flex-col justify-between">
                         <div>
-                            <h2 class="text-lg text-primary mb-6 flex items-center gap-2 font-light">
-                                <span class="material-symbols-outlined text-secondary">trending_up</span>
+                            <h2 class="text-lg text-primary mb-5 flex items-center gap-2 font-light px-1">
+                                <span class="material-symbols-outlined text-secondary text-2xl">trending_up</span>
                                 인기 대여 순위
                             </h2>
                             
-                            <!-- 순위 리스트 컨테이너 -->
-                            <ol class="space-y-3" id="popularBooksContainer">
-                                <!-- Rank 1 -->
-                                <li class="flex items-center gap-4 py-2 border-b border-dashed border-outline-variant/60 group">
-                                    <div class="w-6 flex justify-center text-lg font-light text-secondary">1</div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="text-sm font-light truncate text-primary">모순</h4>
-                                        <p class="text-xs text-on-surface-variant font-light">양귀자 저</p>
+                            <!-- 10위까지 노출되는 순위 리스트 컨테이너 -->
+                            <ol class="space-y-1" id="popularBooksContainer">
+                                <!-- 1위 -->
+                                <li class="flex items-center justify-between py-2 px-2 border-b border-dashed border-outline-variant/50 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-secondary">1</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">모순</h4>
+                                            <p class="text-[11px] text-on-surface-variant">양귀자 저</p>
+                                        </div>
                                     </div>
+                                    <span class="text-xs text-secondary bg-secondary/5 border border-secondary/10 px-2 py-0.5 rounded-full whitespace-nowrap">152회</span>
                                 </li>
-                                <!-- Rank 2 -->
-                                <li class="flex items-center gap-4 py-2 border-b border-dashed border-outline-variant/60 group">
-                                    <div class="w-6 flex justify-center text-lg font-light text-on-surface-variant/60">2</div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="text-sm font-light truncate text-primary">메리골드 마음 세탁소</h4>
-                                        <p class="text-xs text-on-surface-variant font-light">윤정은 저</p>
+                                <!-- 2위 -->
+                                <li class="flex items-center justify-between py-2 px-2 border-b border-dashed border-outline-variant/50 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-on-surface-variant/60">2</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">메리골드 마음 세탁소</h4>
+                                            <p class="text-[11px] text-on-surface-variant">윤정은 저</p>
+                                        </div>
                                     </div>
+                                    <span class="text-xs text-on-surface-variant bg-surface-container border border-outline-variant/40 px-2 py-0.5 rounded-full whitespace-nowrap">134회</span>
                                 </li>
-                                <!-- Rank 3 -->
-                                <li class="flex items-center gap-4 py-2 border-b border-dashed border-outline-variant/60 group">
-                                    <div class="w-6 flex justify-center text-lg font-light text-on-surface-variant/60">3</div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="text-sm font-light truncate text-primary">도둑맞은 집중력</h4>
-                                        <p class="text-xs text-on-surface-variant font-light">요한 하리 저</p>
+                                <!-- 3위 -->
+                                <li class="flex items-center justify-between py-2 px-2 border-b border-dashed border-outline-variant/50 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-on-surface-variant/60">3</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">도둑맞은 집중력</h4>
+                                            <p class="text-[11px] text-on-surface-variant">요한 하리 저</p>
+                                        </div>
                                     </div>
+                                    <span class="text-xs text-on-surface-variant bg-surface-container border border-outline-variant/40 px-2 py-0.5 rounded-full whitespace-nowrap">118회</span>
                                 </li>
-                                <!-- Rank 4 -->
-                                <li class="flex items-center gap-4 py-2 border-b border-dashed border-outline-variant/60 group">
-                                    <div class="w-6 flex justify-center text-lg font-light text-on-surface-variant/60">4</div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="text-sm font-light truncate text-primary">불편한 편의점</h4>
-                                        <p class="text-xs text-on-surface-variant font-light">김호연 저</p>
+                                <!-- 4위 -->
+                                <li class="flex items-center justify-between py-2 px-2 border-b border-dashed border-outline-variant/50 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-on-surface-variant/60">4</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">불편한 편의점</h4>
+                                            <p class="text-[11px] text-on-surface-variant">김호연 저</p>
+                                        </div>
                                     </div>
+                                    <span class="text-xs text-on-surface-variant bg-surface-container border border-outline-variant/40 px-2 py-0.5 rounded-full whitespace-nowrap">95회</span>
+                                </li>
+                                <!-- 5위 -->
+                                <li class="flex items-center justify-between py-2 px-2 border-b border-dashed border-outline-variant/50 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-on-surface-variant/60">5</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">하얼빈</h4>
+                                            <p class="text-[11px] text-on-surface-variant">김훈 저</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant bg-surface-container border border-outline-variant/40 px-2 py-0.5 rounded-full whitespace-nowrap">88회</span>
+                                </li>
+                                <!-- 6위 -->
+                                <li class="flex items-center justify-between py-2 px-2 border-b border-dashed border-outline-variant/50 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-on-surface-variant/60">6</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">역행자</h4>
+                                            <p class="text-[11px] text-on-surface-variant">자청 저</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant bg-surface-container border border-outline-variant/40 px-2 py-0.5 rounded-full whitespace-nowrap">79회</span>
+                                </li>
+                                <!-- 7위 -->
+                                <li class="flex items-center justify-between py-2 px-2 border-b border-dashed border-outline-variant/50 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-on-surface-variant/60">7</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">원씽 (The One Thing)</h4>
+                                            <p class="text-[11px] text-on-surface-variant">게리 켈러 저</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant bg-surface-container border border-outline-variant/40 px-2 py-0.5 rounded-full whitespace-nowrap">74회</span>
+                                </li>
+                                <!-- 8위 -->
+                                <li class="flex items-center justify-between py-2 px-2 border-b border-dashed border-outline-variant/50 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-on-surface-variant/60">8</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">쌀을 씻으면서</h4>
+                                            <p class="text-[11px] text-on-surface-variant">이성복 저</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant bg-surface-container border border-outline-variant/40 px-2 py-0.5 rounded-full whitespace-nowrap">63회</span>
+                                </li>
+                                <!-- 9위 -->
+                                <li class="flex items-center justify-between py-2 px-2 border-b border-dashed border-outline-variant/50 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-on-surface-variant/60">9</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">기분이 태도가 되지 않게</h4>
+                                            <p class="text-[11px] text-on-surface-variant">레몬심리 저</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant bg-surface-container border border-outline-variant/40 px-2 py-0.5 rounded-full whitespace-nowrap">55회</span>
+                                </li>
+                                <!-- 10위 -->
+                                <li class="flex items-center justify-between py-2 px-2 hover:bg-surface-container/50 rounded-md transition-colors">
+                                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                                        <span class="w-5 text-center text-sm font-light text-on-surface-variant/60">10</span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-light truncate text-primary">돈의 속성</h4>
+                                            <p class="text-[11px] text-on-surface-variant">김승호 저</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs text-on-surface-variant bg-surface-container border border-outline-variant/40 px-2 py-0.5 rounded-full whitespace-nowrap">42회</span>
                                 </li>
                             </ol>
                         </div>
                         
-                        <button class="w-full mt-6 py-2.5 border border-outline text-on-surface-variant rounded-lg text-xs hover:bg-surface-container transition-colors flex items-center justify-center gap-2 font-light">
+                        <button class="w-full mt-5 py-2.5 border border-outline/70 text-on-surface-variant rounded-lg text-xs hover:bg-surface-container hover:text-primary transition-colors flex items-center justify-center gap-1 font-light">
                             전체 순위 보기
                             <span class="material-symbols-outlined text-[16px]">chevron_right</span>
                         </button>
@@ -299,21 +367,21 @@
         </div>
     </main>
 
-    <!-- 알림창(토스트) 컨테이너 -->
+    <!-- 알림창(토스트 메시지)용 홀더 -->
     <div id="toastContainer" class="fixed top-8 left-1/2 -translate-x-1/2 z-[9999]"></div>
 
-    <!-- 비즈니스 로직 스크립트 결합 -->
+    <!-- 스크립트 결합 구조 -->
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/app.js"></script>
     <script src="js/dashboard.js"></script>
     
     <script>
-        // 버튼 누름 피드백 애니메이션
+        // 클릭 애니메이션 인터랙션 효과 
         document.querySelectorAll('a, button, .cursor-pointer').forEach(el => {
-            el.addEventListener('mousedown', () => el.classList.add('scale-95'));
-            el.addEventListener('mouseup', () => el.classList.remove('scale-95'));
-            el.addEventListener('mouseleave', () => el.classList.remove('scale-95'));
+            el.addEventListener('mousedown', () => el.classList.add('scale-[0.98]'));
+            el.addEventListener('mouseup', () => el.classList.remove('scale-[0.98]'));
+            el.addEventListener('mouseleave', () => el.classList.remove('scale-[0.98]'));
         });
     </script>
 </body>
