@@ -2,10 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("대시보드 초기화 시작...");
 
-    // 1. UI 탭 기능 초기화 (ui.js에 있는 함수)
-    if (typeof UI !== 'undefined') {
-        UI.initTabs();
-    }
+    // UI.initTabs() 호출 부분을 삭제했습니다.
 
     // 2. 각 기능 파일들의 함수들 호출
     // 각각의 파일(dashboard-books.js, dashboard-user.js 등)에 있는 함수를 여기서 실행합니다.
