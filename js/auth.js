@@ -171,12 +171,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     UI.showToast("로그인 성공! 이동합니다.");
 
-                    // ==========================================
-                    // 이 부분만 수정되었습니다.
-                    // ==========================================
                     setTimeout(() => {
-    window.location.replace('dashboard.html');
-}, 500);
+                        window.location.replace('dashboard.html');
+                    }, 500);
 
                 } else {
 
