@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문화의집 소소책방 - 대여 현황</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=book" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <style>
+        body, input, button, a { font-family: 'Pretendard', sans-serif !important; font-weight: 300; }
+        .dashboard-container { display: flex; min-height: 100vh; background-color: #F5F3EE; }
+        
+        /* 사이드바 싱크 */
+        .sidebar { background-color: #2C2621; color: #FFFFFF; width: 260px; padding: 30px 20px; box-sizing: border-box; display: flex; flex-direction: column; }
+        .sidebar .brand { display: flex; align-items: center; gap: 8px; color: #FF5A36; font-size: 20px; font-weight: 400; margin-bottom: 40px; padding-left: 10px; }
+        .sidebar .brand .material-symbols-outlined { font-size: 28px; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li { margin-bottom: 8px; }
+        .sidebar-menu a { display: flex; align-items: center; gap: 12px; color: #A69E96; text-decoration: none; padding: 14px 16px; border-radius: 8px; font-size: 15px; transition: all 0.2s; }
+        .sidebar-menu li.active a, .sidebar-menu a:hover { background-color: #3D352E; color: #FFFFFF; font-weight: 400; }
+        .sidebar-menu li.active a i { color: #FF5A36; }
+        
+        /* 메인 콘텐츠 */
+        .main-content { flex: 1; padding: 40px; box-sizing: border-box; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 24px; color: #2C2621; margin: 0 0 6px 0; font-weight: 400; }
+        .page-header p { color: #8C8276; margin: 0; font-size: 14px; }
+
+        /* 대여 현황 테이블 스타일 */
+        .status-table-wrapper {
+            background: #FFFFFF;
+            border: 1px solid #E6E2D8;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(44, 38, 33, 0.01);
+            overflow-x: auto;
+        }
+
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .status-table th {
+            background-color: #F5F3EE;
+            color: #5C5247;
+            padding: 16px;
+            font-weight: 400;
+            border-bottom: 1px solid #E6E2D8;
+        }
+
+        .status-table td {
+            padding: 16px;
+            color: #2C2621;
+            border-bottom: 1px solid #F5F3EE;
+        }
+
+        .status-table tr:last-child td { border-bottom: none; }
+
+        /* 반납 완료 및 연체 뱃지 */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 400;
+        }
+        .badge-renting { background-color: #E6F7FF; color: #1890FF; }
+        .badge-overdue { background-color: #FFF0ED; color: #FF5A36; }
+
+        .btn-return {
+            background-color: #2C2621;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-return:hover { background-color: #FF5A36; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- 사이드바 네비게이션 -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="material-symbols-outlined">book</span>
+                <span>소소책방</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-home"></i> 홈 (대시보드)</a></li>
+                <li><a href="rent-books.html"><i class="fas fa-book-open"></i> 도서 대여</a></li>
+                <li><a href="book-location.html"><i class="fas fa-map-marked-alt"></i> 도서 위치</a></li>
+                <li class="active"><a href="rent-status.html"><i class="fas fa-list-ul"></i> 대여 현황</a></li> <!-- 현재 활성화 -->
+                <li><a href="profile.html"><i class="fas fa-user-cog"></i> 내 정보</a></li>
+            </ul>
+        </aside>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>나의 대여 현황</h1>
+                <p>현재 대여 중인 도서와 과거 대여 기록을 확인하고 반납할 수 있습니다.</p>
+            </header>
+
+            <div class="status-table-wrapper">
+                <table class="status-table">
+                    <thead>
+                        <tr>
+                            <th>도서명</th>
+                            <th>대여일</th>
+                            <th>반납기한</th>
+                            <th>상태</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rentStatusContainer">
+                        <!-- 자바스크립트가 데이터를 동적으로 채워 넣을 공간 -->
+                        <!-- 예시 행 (실제 스크립트 연결 시 대체됨) -->
+                        <tr>
+                            <td style="font-weight: 400;">불편한 편의점</td>
+                            <td>2026-07-01</td>
+                            <td>2026-07-15</td>
+                            <td><span class="badge badge-renting">대여중</span></td>
+                            <td><button class="btn-return">반납하기</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+    <!-- 대여 현황 전용 스크립트 파일이 있다면 아래에 연결하세요 -->
+    <!-- <script src="js/dashboard-status.js"></script> -->
+</body>
+</html>
