@@ -50,13 +50,19 @@ const API = {
         }
     },
 
-    // 도서 목록을 불러오는 함수 (dashboard-books.js와 연동)
+    // [수정] 액션명을 GAS 서버의 getBooks와 일치시킴
     async getBooks() {
-        return await this.post('getAllBooks', {});
+        return await this.post('getBooks', {});
     },
 
-    // 도서를 대여하는 함수 (dashboard-books.js와 연동)
-    async rentBook(bookId) {
-        return await this.post('rentBook', { bookId });
+    // [수정] 단순히 ID만 넘기지 않고 도서 객체 전체를 넘겨 GAS에서 처리
+    async rentBook(book) {
+        // GAS 서버의 rentBook 함수가 처리할 수 있도록 
+        // 도서명(제목)과 ISBN 정보를 포함하여 전달
+        return await this.post('rentBook', { 
+            ISBN: book.ISBN, 
+            도서명: book.도서명,
+            userId: localStorage.getItem('userId') || 'guest' // 로그인 정보가 있다면 사용
+        });
     }
 };
