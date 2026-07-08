@@ -156,9 +156,60 @@
 
     <div id="toastContainer"></div>
 
+    <div id="loginErrorModal" style="
+        position: fixed;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #FF5A36; /* 소소책방 고유 오렌지 톤 */
+        color: #FFFFFF;
+        padding: 14px 28px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(255, 90, 54, 0.25);
+        font-size: 14px;
+        font-weight: 400;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        letter-spacing: -0.5px;
+        z-index: 10000;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        opacity: 0;
+    ">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="loginErrorMessage">정보가 올바르지 않습니다.</span>
+    </div>
+
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/app.js"></script>
     <script src="js/auth.js"></script>
+
+    <script>
+        window.showIndexModal = function(message) {
+            // "확인 중", "처리 중" 같은 불필요한 중간 안내 멘트는 화면에 띄우지 않고 아예 무시합니다.
+            if (message.includes('확인 중') || message.includes('처리 중')) {
+                return;
+            }
+
+            const modal = document.getElementById('loginErrorModal');
+            const modalText = document.getElementById('loginErrorMessage');
+            
+            if (!modal || !modalText) return;
+
+            // 실패 원인 메시지 적용 ("아이디 없음", "비밀번호 실패" 등)
+            modalText.innerText = message;
+
+            // 상단에서 아래로 부드럽게 스르륵 내려오며 나타나기
+            modal.style.top = '30px';
+            modal.style.opacity = '1';
+
+            // 2.8초 동안 보여준 뒤 자동으로 다시 위로 숨기기
+            setTimeout(() => {
+                modal.style.top = '-100px';
+                modal.style.opacity = '0';
+            }, 2800);
+        };
+    </script>
 </body>
 </html>
