@@ -5,11 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>문화의집 소소책방 도서 대여 프로그램 - 로그인</title>
 
-    <!-- CSS 파일 경로 -->
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- 아이콘 폰트 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* 대시보드의 고유한 웜 베이지 톤앤매너 테마를 로그인 레이아웃에 직접 최적화 반영 */
+        .auth-body {
+            background-color: #F5F3EE; /* 대시보드 배경과 일치 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* 1200px 와이드 스케일 및 대시보드 카드 스타일 컴포넌트 디자인 적용 */
+        .auth-card {
+            width: 100%;
+            max-width: 1200px; /* 요청하신 1200px 설정 */
+            background: #FFFFFF;
+            border-radius: 16px;
+            border: 1px solid #E6E2D8;
+            box-shadow: 0 4px 20px rgba(44, 38, 33, 0.02);
+            padding: 50px 40px; /* 와이드 스크린에 맞춰 패딩 최적화 */
+            box-sizing: border-box;
+        }
+
+        /* 대시보드 사이드바 로고 컬러(#FF5A36) 및 헤더 디자인 요소 적용 */
+        .logo-area {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #E6E2D8;
+            padding-bottom: 25px;
+        }
+        .logo-area h2 {
+            font-size: 28px;
+            color: #2C2621;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin: 0 0 10px 0;
+        }
+        .logo-area h2 i {
+            color: #FF5A36; /* 시그니처 오렌지 포인트 */
+            margin-right: 8px;
+        }
+        .logo-area p {
+            font-size: 15px;
+            color: #8C8276;
+            margin: 0 0 15px 0;
+            font-weight: 500;
+        }
+
+        /* 대시보드 가이드 팁과 동일한 배지 느낌의 스타일 */
+        .login-guide {
+            display: inline-block;
+            background-color: #FFF5F2;
+            color: #FF5A36;
+            border: 1px solid #FF5A36;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px !important;
+            font-weight: 600;
+            margin: 5px 0 0 0 !important;
+        }
+
+        /* 내 정보 수정 폼과 일치하는 대시보드형 폼 그룹 스타일 */
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2C2621;
+            font-size: 14px;
+        }
+
+        /* 인풋창 포커스 시 대시보드 컬러(#FF5A36) 강조 */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            color: #8C8276;
+            font-size: 16px;
+        }
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            border: 1px solid #E6E2D8;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            font-size: 14px;
+            color: #2C2621;
+            background-color: #FFFFFF;
+            transition: border-color 0.2s;
+        }
+        .input-wrapper input:focus {
+            border-color: #FF5A36;
+        }
+
+        /* 대시보드 주요 액션 버튼 테마 일치 */
+        .auth-button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 35px;
+        }
+        .btn-primary {
+            flex: 1;
+            background-color: #FF5A36;
+            border: none;
+            color: white;
+            height: 50px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #E04825;
+        }
+
+        /* 대시보드 회원탈퇴/보조 버튼 테마 일치 */
+        .btn-secondary-custom {
+            flex: 1;
+            background-color: transparent;
+            color: #8C8276;
+            border: 1px solid #E6E2D8;
+            height: 50px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        .btn-secondary-custom:hover {
+            background-color: #FFF5F2;
+            color: #FF5A36;
+            border-color: #FF5A36;
+        }
+    </style>
 </head>
 
 <body class="auth-body">
@@ -17,12 +171,10 @@
     <div class="auth-card">
 
         <div class="logo-area">
-            <h2>소소책방 도서 대여 프로그램</h2>
+            <h2><i class="fas fa-book-reader"></i> 소소책방 도서 대여 프로그램</h2>
             <p>로그인하여 서비스를 이용하세요</p>
-
-            <!-- 추가 -->
             <p class="login-guide">
-                비밀번호는 회원가입 시 입력한 전화번호 뒤 4자리입니다.
+                <i class="fas fa-info-circle"></i> 비밀번호는 회원가입 시 입력한 전화번호 뒤 4자리입니다.
             </p>
         </div>
 
@@ -30,10 +182,8 @@
 
             <div class="form-group">
                 <label for="userId">아이디</label>
-
                 <div class="input-wrapper">
                     <i class="fas fa-user"></i>
-
                     <input 
                         type="text" 
                         id="userId" 
@@ -45,10 +195,8 @@
 
             <div class="form-group">
                 <label for="password">비밀번호</label>
-
                 <div class="input-wrapper">
                     <i class="fas fa-lock"></i>
-
                     <input 
                         type="password" 
                         id="password" 
@@ -58,27 +206,21 @@
                 </div>
             </div>
 
-            <!-- 버튼 그룹 -->
             <div class="auth-button-group">
-
                 <button type="submit" class="btn-primary">
-                    로그인
+                    <i class="fas fa-sign-in-alt"></i> 로그인
                 </button>
-
                 <a href="signup.html" class="btn-secondary-custom btn-link-style">
-                    회원가입
+                    <i class="fas fa-user-plus"></i> 회원가입
                 </a>
-
             </div>
 
         </form>
 
     </div>
 
-    <!-- 알림 메시지 컨테이너 -->
     <div id="toastContainer"></div>
 
-    <!-- 자바스크립트 로드 -->
     <script src="js/app.js"></script>
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
@@ -86,17 +228,13 @@
 
     <script>
         window.onload = function() {
-
             console.log("페이지 주소:", window.location.href);
 
             if (typeof window.GAS_URL === 'undefined') {
-
                 console.error(
                     "경고: app.js 로드 실패. js 폴더 내 app.js 파일과 경로를 확인하세요."
                 );
-
             } else {
-
                 console.log(
                     "GAS_URL 로드 성공:",
                     window.GAS_URL
