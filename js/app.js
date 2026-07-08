@@ -1,8 +1,5 @@
 // app.js
 
-// 1. 중복 제출 방지를 위한 상태 변수
-let isSubmitting = false;
-
 // 로그인 상태 체크
 function checkAuth() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -36,65 +33,3 @@ function setupTabs() {
         });
     });
 }
-
-/**
- * 출석 제출 함수 (실제 API 연동 및 중복 제출 방지 포함)
- */
-window.submitAttendance = async () => {
-    // 1. 이미 제출 중이면 함수 종료
-    if (isSubmitting) {
-        console.warn("이미 제출 처리 중입니다.");
-        return;
-    }
-
-    // 로그인 정보 확인
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (!user || !user.아이디) {
-        if (typeof UI !== 'undefined') UI.showToast("로그인 정보가 없습니다. 다시 로그인해주세요.", "error");
-        return;
-    }
-
-    const btn = document.querySelector('button[onclick="window.submitAttendance()"]');
-    if (!btn) return;
-
-    // 2. 버튼 상태를 '제출 중'으로 변경 (UI 잠금)
-    isSubmitting = true;
-    const originalText = btn.innerText;
-    btn.disabled = true;
-    btn.classList.add('opacity-50', 'cursor-not-allowed');
-    btn.innerText = "제출 중...";
-
-    try {
-        console.log("출석 데이터 전송 시도...");
-        
-        // [수정] 실제 GAS 서버로 현재 로그인 유저의 정보를 전송합니다.
-        const result = await API.post('submitAttendance', { 
-            userId: user.아이디,
-            userName: user.이름 || '사용자'
-        });
-        
-        if (result.success) {
-            if (typeof UI !== 'undefined') {
-                UI.showToast(result.message || "출석 완료되었습니다.", "success");
-            } else {
-                alert(result.message || "출석 완료되었습니다.");
-            }
-        } else {
-            if (typeof UI !== 'undefined') {
-                UI.showToast(result.message || "출석 실패", "error");
-            } else {
-                alert(result.message || "출석 실패");
-            }
-        }
-        
-    } catch (error) {
-        console.error("출석 제출 중 오류 발생:", error);
-        if (typeof UI !== 'undefined') UI.showToast("서버 통신 중 에러가 발생했습니다.", "error");
-    } finally {
-        // 3. 완료 후 상태 초기화
-        isSubmitting = false;
-        btn.disabled = false;
-        btn.classList.remove('opacity-50', 'cursor-not-allowed');
-        btn.innerText = originalText;
-    }
-};
