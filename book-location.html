@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문화의집 소소책방 - 도서 위치</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=book" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <style>
+        body, input, button, a { font-family: 'Pretendard', sans-serif !important; font-weight: 300; }
+        .dashboard-container { display: flex; min-height: 100vh; background-color: #F5F3EE; }
+        
+        /* 공통 사이드바 스타일 (싱크 유지) */
+        .sidebar { background-color: #2C2621; color: #FFFFFF; width: 260px; padding: 30px 20px; box-sizing: border-box; display: flex; flex-direction: column; }
+        .sidebar .brand { display: flex; align-items: center; gap: 8px; color: #FF5A36; font-size: 20px; font-weight: 400; margin-bottom: 40px; padding-left: 10px; }
+        .sidebar .brand .material-symbols-outlined { font-size: 28px; }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li { margin-bottom: 8px; }
+        .sidebar-menu a { display: flex; align-items: center; gap: 12px; color: #A69E96; text-decoration: none; padding: 14px 16px; border-radius: 8px; font-size: 15px; transition: all 0.2s; }
+        .sidebar-menu li.active a, .sidebar-menu a:hover { background-color: #3D352E; color: #FFFFFF; font-weight: 400; }
+        .sidebar-menu li.active a i { color: #FF5A36; }
+        
+        /* 메인 콘텐츠 영역 */
+        .main-content { flex: 1; padding: 40px; box-sizing: border-box; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 24px; color: #2C2621; margin: 0 0 6px 0; font-weight: 400; }
+        .page-header p { color: #8C8276; margin: 0; font-size: 14px; }
+
+        /* 서가 배치 카드 그리드 */
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+        }
+
+        .location-card {
+            background: #FFFFFF;
+            border: 1px solid #E6E2D8;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(44, 38, 33, 0.01);
+        }
+
+        .location-title {
+            font-size: 18px;
+            color: #2C2621;
+            font-weight: 400;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #F5F3EE;
+            padding-bottom: 12px;
+        }
+
+        .location-title i { color: #FF5A36; }
+
+        .shelf-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .shelf-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 8px;
+            border-bottom: 1px dashed #E6E2D8;
+            font-size: 14px;
+        }
+
+        .shelf-item:last-child { border-bottom: none; }
+        .shelf-name { color: #2C2621; font-weight: 400; }
+        .shelf-code { color: #FF5A36; background-color: #FFF5F2; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 400; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="material-symbols-outlined">book</span>
+                <span>소소책방</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-home"></i> 홈 (대시보드)</a></li>
+                <li><a href="rent-books.html"><i class="fas fa-book-open"></i> 도서 대여</a></li>
+                <li class="active"><a href="book-location.html"><i class="fas fa-map-marked-alt"></i> 도서 위치</a></li> <li><a href="rent-status.html"><i class="fas fa-list-ul"></i> 대여 현황</a></li>
+                <li><a href="profile.html"><i class="fas fa-user-cog"></i> 내 정보</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="page-header">
+                <h1>소소책방 서가 위치 안내</h1>
+                <p>도서 분류 코드에 따른 소소책방의 실제 서가 구역을 확인하실 수 있습니다.</p>
+            </header>
+
+            <section class="location-grid">
+                <div class="location-card">
+                    <h2 class="location-title"><i class="fas fa-layer-group"></i> 본관 1층 - 종합 자료실</h2>
+                    <ul class="shelf-list">
+                        <li class="shelf-item"><span class="shelf-name">철학 / 종교 / 사회과학</span><span class="shelf-code">A구역 (000-300)</span></li>
+                        <li class="shelf-item"><span class="shelf-name">자연과학 / 기술과학</span><span class="shelf-code">B구역 (400-500)</span></li>
+                        <li class="shelf-item"><span class="shelf-name">예술 / 언어</span><span class="shelf-code">C구역 (600-700)</span></li>
+                    </ul>
+                </div>
+
+                <div class="location-card">
+                    <h2 class="location-title"><i class="fas fa-book"></i> 본관 2층 - 문학 / 역사실</h2>
+                    <ul class="shelf-list">
+                        <li class="shelf-item"><span class="shelf-name">한국 소설 / 시 / 에세이</span><span class="shelf-code">D구역 (810)</span></li>
+                        <li class="shelf-item"><span class="shelf-name">해외 문학 (영미, 일미 문학 등)</span><span class="shelf-code">E구역 (820-890)</span></li>
+                        <li class="shelf-item"><span class="shelf-name">역사 / 지리 / 세계사</span><span class="shelf-code">F구역 (900)</span></li>
+                    </ul>
+                </div>
+
+                <div class="location-card">
+                    <h2 class="location-title"><i class="fas fa-child"></i> 별관 1층 - 아동 및 문화존</h2>
+                    <ul class="shelf-list">
+                        <li class="shelf-item"><span class="shelf-name">아동 그림책 / 유아 도서</span><span class="shelf-code">어린이 서가</span></li>
+                        <li class="shelf-item"><span class="shelf-name">청소년 문학 / 학습 만화</span><span class="shelf-code">북카페Zone</span></li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
