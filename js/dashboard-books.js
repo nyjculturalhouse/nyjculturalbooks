@@ -1,75 +1,61 @@
-// 도서 대여 페이지 (rent-books.html) 전용 스크립트
+// 도서 대여 페이지 전용 스크립트
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("도서 대여 페이지 초기화 시작...");
-    
-    // 1. 초기 도서 데이터 로드
     await loadBooks();
 
-    // 2. 검색 버튼 클릭 이벤트 바인딩
     const btnSearch = document.getElementById('btnSearch');
     const searchKeyword = document.getElementById('searchKeyword');
 
-    if (btnSearch) {
-        btnSearch.addEventListener('click', () => {
-            handleSearch();
-        });
-    }
-
-    // 엔터키 검색 이벤트 바인딩
+    if (btnSearch) btnSearch.addEventListener('click', handleSearch);
     if (searchKeyword) {
         searchKeyword.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                handleSearch();
-            }
+            if (e.key === 'Enter') handleSearch();
         });
     }
 });
 
-// 도서 목록을 API로부터 로드하고 화면에 렌더링하는 함수
 async function loadBooks() {
     const container = document.getElementById('bookListContainer');
     if (!container) return;
 
     try {
         const response = await API.getBooks();
-        
+        // 콘솔에서 데이터 구조 확인용
+        console.log("서버 응답 데이터:", response); 
+
         if (response && response.success && Array.isArray(response.data)) {
             window.allBooksData = response.data; 
-            renderBookList(response.data);
+            renderBookList(window.allBooksData);
         } else {
-            container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #FF5A36; padding: 40px 0;">도서 데이터를 불러오지 못했습니다.</div>`;
+            container.innerHTML = `<div class="col-span-full text-center py-12 text-[#FF5A36]">데이터를 불러올 수 없습니다.</div>`;
         }
     } catch (error) {
-        console.error("데이터 로드 오류:", error);
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #FF5A36; padding: 40px 0;">서버 통신 중 오류가 발생했습니다.</div>`;
+        container.innerHTML = `<div class="col-span-full text-center py-12 text-[#FF5A36]">서버 통신 오류가 발생했습니다.</div>`;
     }
 }
 
-// 도서 데이터를 카드 형태로 화면에 그려주는 함수
 function renderBookList(books) {
     const container = document.getElementById('bookListContainer');
     if (!container) return;
 
     if (books.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #8C8276; padding: 50px 0;">검색 결과와 일치하는 도서가 없습니다.</div>`;
+        container.innerHTML = `<div class="col-span-full text-center py-12 text-[#8C8276]">검색 결과가 없습니다.</div>`;
         return;
     }
 
     container.innerHTML = books.map(book => {
-        // 시트 헤더 '상태' 값 기준 ('대여가능' 문자열 확인)
-        const isAvailable = (book.상태 === '대여가능');
-        
+        const isAvailable = (String(book.상태).trim() === '대여가능');
         return `
-            <div class="book-card" data-id="${book.ISBN}">
-                <div class="book-info">
-                    <h3>${book.도서명}</h3>
-                    <div class="book-author">${book.저자} | ${book.출판사 || '소소출판'}</div>
-                </div>
-                <div class="book-action">
-                    <span class="book-status ${isAvailable ? 'status-available' : 'status-rented'}">
+            <div class="bg-white border border-outline-variant p-5 rounded-xl shadow-sm">
+                <h3 class="text-primary font-medium mb-1">${book.도서명}</h3>
+                <div class="text-xs text-on-surface-variant mb-4">${book.저자} | ${book.출판사 || '소소출판'}</div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs ${isAvailable ? 'text-blue-500' : 'text-red-500'}">
                         ${isAvailable ? '● 대여 가능' : '■ 대여 중'}
                     </span>
-                    <button class="btn-rent" ${isAvailable ? '' : 'disabled'} onclick="rentBook('${book.ISBN}', '${book.도서명.replace(/'/g, "\\'")}')">
+                    <button class="bg-primary text-white text-xs px-3 py-1.5 rounded-lg disabled:opacity-50" 
+                            ${isAvailable ? '' : 'disabled'} 
+                            onclick="rentBook('${book.ISBN}', '${book.도서명.replace(/'/g, "\\'")}')">
                         ${isAvailable ? '대여하기' : '대여불가'}
                     </button>
                 </div>
@@ -78,7 +64,6 @@ function renderBookList(books) {
     }).join('');
 }
 
-// 검색 처리 함수
 function handleSearch() {
     const category = document.getElementById('searchCategory').value;
     const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
@@ -87,43 +72,27 @@ function handleSearch() {
 
     const filteredBooks = window.allBooksData.filter(book => {
         if (!keyword) return true;
+        const titleMatch = book.도서명.toLowerCase().includes(keyword);
+        const authorMatch = book.저자.toLowerCase().includes(keyword);
         
-        // 시트 헤더 명칭(도서명, 저자)에 맞춰 필터링
-        if (category === 'title') {
-            return book.도서명.toLowerCase().includes(keyword);
-        } else if (category === 'author') {
-            return book.저자.toLowerCase().includes(keyword);
-        } else {
-            return book.도서명.toLowerCase().includes(keyword) || book.저자.toLowerCase().includes(keyword);
-        }
+        if (category === 'title') return titleMatch;
+        if (category === 'author') return authorMatch;
+        return titleMatch || authorMatch;
     });
 
     renderBookList(filteredBooks);
 }
 
-// 대여하기 버튼 클릭 이벤트 함수
 async function rentBook(isbn, bookTitle) {
-    // 1. 선택한 도서 정보 찾기
-    const book = window.allBooksData.find(b => b.ISBN === isbn);
-    
     if (!confirm(`[${bookTitle}] 도서를 대여하시겠습니까?`)) return;
 
-    try {
-        // 2. book 객체 전체를 전달 (API.rentBook에서 내부적으로 처리)
-        const response = await API.rentBook(book);
-        
-        if (response && response.success) {
-            if (typeof UI !== 'undefined' && typeof UI.showToast === 'function') {
-                UI.showToast('도서 대여가 성공적으로 완료되었습니다!', 'success');
-            } else {
-                alert('도서 대여가 성공적으로 완료되었습니다!');
-            }
-            await loadBooks(); // 리스트 새로고침
-        } else {
-            alert(response.message || '대여에 실패했습니다.');
-        }
-    } catch (error) {
-        console.error("대여 요청 중 오류:", error);
-        alert('서버와 통신 중 오류가 발생했습니다.');
+    const book = window.allBooksData.find(b => b.ISBN === isbn);
+    const response = await API.rentBook(book);
+    
+    if (response && response.success) {
+        alert('대여 완료!');
+        await loadBooks(); 
+    } else {
+        alert(response.message || '대여 실패');
     }
 }
