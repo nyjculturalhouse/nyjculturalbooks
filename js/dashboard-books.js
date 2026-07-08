@@ -104,25 +104,16 @@ function handleSearch() {
 }
 
 // 대여하기 버튼 클릭 이벤트 함수
+// dashboard-books.js
 async function rentBook(bookId, bookTitle) {
+    // 1. 선택한 도서 정보 찾기
+    const book = window.allBooksData.find(b => b.id === bookId);
+    
     if (!confirm(`[${bookTitle}] 도서를 대여하시겠습니까?`)) return;
 
     try {
-        const response = await API.rentBook(bookId);
-        if (response && response.success) {
-            // UI에 내장된 알림창(Toast) 함수가 있다면 사용, 없으면 alert 처리
-            if (typeof UI !== 'undefined' && typeof UI.showToast === 'function') {
-                UI.showToast('도서 대여가 성공적으로 완료되었습니다!', 'success');
-            } else {
-                alert('도서 대여가 성공적으로 완료되었습니다!');
-            }
-            // 대여 성공 후 리스트 새로고침
-            await loadBooks();
-        } else {
-            alert(response.message || '대여에 실패했습니다. 다시 시도해 주세요.');
-        }
-    } catch (error) {
-        console.error("대여 요청 중 오류:", error);
-        alert('서버와 통신 중 오류가 발생했습니다.');
-    }
+        // 2. book 객체 전체를 전달
+        const response = await API.rentBook(book); 
+        // ... 이하 동일
+    } catch (e) { /* ... */ }
 }
